@@ -116,18 +116,18 @@ typedef volatile unsigned long long  *PUINT64V;
 /* ********************************************************************************************************************* */
 /* Base macros */
 
-#ifndef min
-#define min(a,b)                (((a) < (b)) ? (a) : (b))
-#endif
-#ifndef max
-#define max(a,b)                (((a) > (b)) ? (a) : (b))
-#endif
+// #ifndef min
+// #define min(a,b)                (((a) < (b)) ? (a) : (b))
+// #endif
+// #ifndef max
+// #define max(a,b)                (((a) > (b)) ? (a) : (b))
+// #endif
 
-#ifdef  DEBUG
-#define PRINT(X...) printf(X)
-#else
-#define PRINT(X...)
-#endif
+// #ifdef  DEBUG
+// #define PRINT(X...) printf(X)
+// #else
+// #define PRINT(X...)
+// #endif
 
 /* Calculate the byte offset of a field in a structure of type */
 #define FIELD_OFFSET(Type, Field)    ((UINT16)&(((Type *)0)->Field))
@@ -1495,7 +1495,7 @@ extern "C" {
 #endif
 
 #ifndef USB_DEVICE_ADDR
-#define USB_DEVICE_ADDR         0x02    /* Ä¬ÈÏµÄUSBÉè±¸µØÖ· */
+#define USB_DEVICE_ADDR         0x02    /* Ä¬ï¿½Ïµï¿½USBï¿½è±¸ï¿½ï¿½Ö· */
 #endif
 #ifndef DEFAULT_ENDP0_SIZE
 #define DEFAULT_ENDP0_SIZE      8       /* default maximum packet size for endpoint 0 */
@@ -1504,12 +1504,12 @@ extern "C" {
 #define MAX_PACKET_SIZE         64      /* maximum packet size */
 #endif
 #ifndef USB_BO_CBW_SIZE
-#define USB_BO_CBW_SIZE         0x1F    /* ÃüÁî¿éCBWµÄ×Ü³¤¶È */
-#define USB_BO_CSW_SIZE         0x0D    /* ÃüÁî×´Ì¬¿éCSWµÄ×Ü³¤¶È */
+#define USB_BO_CBW_SIZE         0x1F    /* ï¿½ï¿½ï¿½ï¿½ï¿½CBWï¿½ï¿½ï¿½Ü³ï¿½ï¿½ï¿½ */
+#define USB_BO_CSW_SIZE         0x0D    /* ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½CSWï¿½ï¿½ï¿½Ü³ï¿½ï¿½ï¿½ */
 #endif
 #ifndef USB_BO_CBW_SIG
-#define USB_BO_CBW_SIG          0x43425355    /* ÃüÁî¿éCBWÊ¶±ð±êÖ¾'USBC' */
-#define USB_BO_CSW_SIG          0x53425355    /* ÃüÁî×´Ì¬¿éCSWÊ¶±ð±êÖ¾'USBS' */
+#define USB_BO_CBW_SIG          0x43425355    /* ï¿½ï¿½ï¿½ï¿½ï¿½CBWÊ¶ï¿½ï¿½ï¿½Ö¾'USBC' */
+#define USB_BO_CSW_SIG          0x53425355    /* ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½CSWÊ¶ï¿½ï¿½ï¿½Ö¾'USBS' */
 #endif
 
 #ifndef __PACKED
