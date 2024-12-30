@@ -8,6 +8,12 @@ extern "C" {
 #endif
 
 #ifndef CH32V10x
+#ifdef CH57x
+void systick_init(void)
+{
+    SysTick_Config(FREQ_SYS/2);
+}
+#else
 void systick_init(void)
 {
     SysTick->SR  = 0;
@@ -18,6 +24,7 @@ void systick_init(void)
     NVIC_SetPriority(SysTicK_IRQn,0xFF);
     NVIC_EnableIRQ(SysTicK_IRQn);
 }
+#endif
 #else  //QingKe_V3A registers are different from others 
 void systick_init(void)
 {

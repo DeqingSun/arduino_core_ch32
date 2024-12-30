@@ -80,6 +80,11 @@ const uint32_t pin_map[24] = {
   GPIO_Pin_22,
   GPIO_Pin_23
 };
+
+#elif defined(CH57x)
+const uint32_t pin_map[1] = { //todo: need to be fixed
+  GPIO_Pin_0
+};
 #endif
 
 
