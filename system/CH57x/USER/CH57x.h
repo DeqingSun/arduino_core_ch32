@@ -356,4 +356,169 @@ typedef struct
 #define USART_FLAG_FE                        ((uint16_t)0x0002)
 #define USART_FLAG_PE                        ((uint16_t)0x0001)
 
+enum {
+  AFIO_NONE,
+    // ENABLE:
+    /* GPIO_Remap_define */
+    /* PCFR1 */
+  AFIO_Remap_SPI1_ENABLE,
+  AFIO_Remap_SPI1_DISABLE,
+  
+  AFIO_PartialRemap_I2C1_ENABLE,
+  AFIO_FullRemap_I2C1_ENABLE,
+  AFIO_Remap_I2C1_DISABLE,
+
+  AFIO_PartialRemap1_USART1_ENABLE,
+  AFIO_PartialRemap2_USART1_ENABLE,
+  AFIO_FullRemap_USART1_ENABLE,
+  AFIO_Remap_USART1_DISABLE,
+
+  AFIO_PartialRemap1_TIM1_ENABLE,
+  AFIO_PartialRemap2_TIM1_ENABLE,
+  AFIO_FullRemap_TIM1_ENABLE,
+  AFIO_Remap_TIM1_DISABLE,
+
+  AFIO_PartialRemap1_TIM2_ENABLE,
+  AFIO_PartialRemap2_TIM2_ENABLE,
+  AFIO_FullRemap_TIM2_ENABLE,
+  AFIO_Remap_TIM2_DISABLE,
+
+  AFIO_Remap_PA1_2_ENABLE,
+  AFIO_Remap_PA1_2_DISABLE,
+
+  AFIO_Remap_ADC1_ETRGINJ_ENBALE,
+  AFIO_Remap_ADC1_ETRGINJ_DISABLE,
+  AFIO_Remap_ADC1_ETRGREG_ENABLE,
+  AFIO_Remap_ADC1_ETRGREG_DISABLE,
+
+  AFIO_Remap_LSI_CAL_ENABLE,
+  AFIO_Remap_LSI_CAL_DISABLE,
+
+  AFIO_Remap_SDI_Disable_ENABLE,
+  AFIO_Remap_SDI_Disable_DISABLE
+
+};
+
+#define TIM2_BASE                               (BA_TMR1)
+#define TIM3_BASE                               (BA_TMR2)
+#define TIM4_BASE                               (BA_TMR3)
+
+#define TIM2                                    ((TIM_TypeDef *)TIM2_BASE)
+#define TIM3                                    ((TIM_TypeDef *)TIM3_BASE)
+#define TIM4                                    ((TIM_TypeDef *)TIM4_BASE)
+
+/*********************************************************************
+ * @fn      NVIC_EnableIRQ
+ *
+ * @brief   Disable Interrupt
+ *
+ * @param   IRQn - Interrupt Numbers
+ *
+ * @return  none
+ */
+__attribute__( ( always_inline ) ) RV_STATIC_INLINE void NVIC_EnableIRQ(IRQn_Type IRQn)
+{
+  PFIC_EnableIRQ(IRQn);
+}
+
+/*********************************************************************
+ * @fn      NVIC_DisableIRQ
+ *
+ * @brief   Disable Interrupt
+ *
+ * @param   IRQn - Interrupt Numbers
+ *
+ * @return  none
+ */
+__attribute__( ( always_inline ) ) RV_STATIC_INLINE void NVIC_DisableIRQ(IRQn_Type IRQn)
+{
+  PFIC_DisableIRQ(IRQn);
+}
+
+/*********************************************************************
+ * @fn      NVIC_SetPriority
+ *
+ * @brief   Set Interrupt Priority
+ *
+ * @param   IRQn - Interrupt Numbers
+ *          priority -bit[7] - Pre-emption Priority
+ *                    bit[6:4] - Subpriority
+ * @return  None
+ */
+__attribute__( ( always_inline ) ) RV_STATIC_INLINE void NVIC_SetPriority(IRQn_Type IRQn, uint8_t priority)
+{
+  PFIC_SetPriority(IRQn, priority);
+}
+
+#define ADC_Channel_0                     (CH_EXTIN_0)
+#define ADC_Channel_1                     (CH_EXTIN_1)
+#define ADC_Channel_2                     (CH_EXTIN_2)
+#define ADC_Channel_3                     (CH_EXTIN_3)
+#define ADC_Channel_4                     (CH_EXTIN_4)
+#define ADC_Channel_5                     (CH_EXTIN_5)   
+#define ADC_Channel_6                     (0)   
+#define ADC_Channel_7                     (0)   
+
+
+void TIM_DeInit(TIM_TypeDef *TIMx);
+void TIM_CCxCmd(TIM_TypeDef *TIMx, uint16_t TIM_Channel, uint16_t TIM_CCx);
+
+
+//does not exist in CH57x, modify later
+#define TIM_MOE 0
+
+
+//may not exist in CH57x, modify later
+/* TIM_Capture_Compare_state */
+#define TIM_CCx_Enable                     ((uint16_t)0x0001)
+#define TIM_CCx_Disable                    ((uint16_t)0x0000)
+
+
+//todo: need more check
+/* EXTI_Lines */
+#define EXTI_Line0     ((uint32_t)0x00001) /* External interrupt line 0 */
+#define EXTI_Line1     ((uint32_t)0x00002) /* External interrupt line 1 */
+#define EXTI_Line2     ((uint32_t)0x00004) /* External interrupt line 2 */
+#define EXTI_Line3     ((uint32_t)0x00008) /* External interrupt line 3 */
+#define EXTI_Line4     ((uint32_t)0x00010) /* External interrupt line 4 */
+#define EXTI_Line5     ((uint32_t)0x00020) /* External interrupt line 5 */
+#define EXTI_Line6     ((uint32_t)0x00040) /* External interrupt line 6 */
+#define EXTI_Line7     ((uint32_t)0x00080) /* External interrupt line 7 */
+#define EXTI_Line8     ((uint32_t)0x00100) /* External interrupt line 8 Connected to the PVD Output */
+#define EXTI_Line9     ((uint32_t)0x00200) /* External interrupt line 9 Connected to the PWR Auto Wake-up event*/
+#define EXTI_Line10    ((uint32_t)0x00400) /* External interrupt line 10 */
+#define EXTI_Line11    ((uint32_t)0x00800) /* External interrupt line 11 */
+#define EXTI_Line12    ((uint32_t)0x01000) /* External interrupt line 12 */
+#define EXTI_Line13    ((uint32_t)0x02000) /* External interrupt line 13 */
+#define EXTI_Line14    ((uint32_t)0x04000) /* External interrupt line 14 */
+#define EXTI_Line15    ((uint32_t)0x08000) /* External interrupt line 15 */
+
+/* EXTI Init Structure definition */
+typedef struct
+{
+    uint32_t EXTI_Line; /* Specifies the EXTI lines to be enabled or disabled.
+                           This parameter can be any combination of @ref EXTI_Lines */
+
+    EXTIMode_TypeDef EXTI_Mode; /* Specifies the mode for the EXTI lines.
+                                   This parameter can be a value of @ref EXTIMode_TypeDef */
+
+    EXTITrigger_TypeDef EXTI_Trigger; /* Specifies the trigger signal active edge for the EXTI lines.
+                                         This parameter can be a value of @ref EXTIMode_TypeDef */
+
+    FunctionalState EXTI_LineCmd; /* Specifies the new state of the selected EXTI lines.
+                                     This parameter can be set either to ENABLE or DISABLE */
+} EXTI_InitTypeDef;
+
+void GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_InitStruct);
+
+/* GPIO_Port_Sources */
+#define GPIO_PortSourceGPIOA            ((uint8_t)0x00)
+#define GPIO_PortSourceGPIOB            ((uint8_t)0x01)
+
+void EXTI_ClearITPendingBit(uint32_t EXTI_Line);
+
+ITStatus EXTI_GetITStatus(uint32_t EXTI_Line);
+void EXTI_Init(EXTI_InitTypeDef *EXTI_InitStruct);
+void GPIO_EXTILineConfig(uint8_t GPIO_PortSource, uint8_t GPIO_PinSource);
+
 #endif  // __CH57x_H__
