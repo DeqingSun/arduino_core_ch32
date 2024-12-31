@@ -140,6 +140,55 @@ void SysTick_Handler(void)
 
 #endif
 
+#if defined (CH57x)
+
+#define SYSTICK_CNTL    (0xE000F004)   
+#define SYSTICK_CNTH    (0xE000F008)
+#define SYSTICK_CMPL    (0xE000F00C)
+#define SYSTICK_CMPH    (0xE000F010)
+
+uint32_t getCurrentMicros(void)
+{
+  
+  uint64_t m0 = GetTick();
+  uint64_t u0 = *((__IO uint32_t *)SYSTICK_CNTH);  
+           u0 = (u0 << 32) + *((__IO uint32_t *)SYSTICK_CNTL);
+  
+  uint64_t m1 = GetTick();
+  uint64_t u1 = *((__IO uint32_t *)SYSTICK_CNTH); //may be a interruption
+           u1 = (u1 << 32) + *((__IO uint32_t *)SYSTICK_CNTL);
+
+  uint64_t tms = *((__IO uint32_t *)SYSTICK_CMPH);
+           tms = (tms << 32) + *((__IO uint32_t *)SYSTICK_CMPL) + 1;     
+
+  if (m1 != m0) {
+    return (m1 * 1000 + ((tms - u1) * 1000) / tms);
+  } else {
+    return (m0 * 1000 + ((tms - u0) * 1000) / tms);
+  }
+}
+
+
+
+/*********************************************************************
+ * @fn      SysTick_Handler
+ *
+ * @brief   This function handles systick interrupt.
+ *
+ * @return  none
+ */
+void SysTick_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast"))) __attribute__((section(".highcode")));
+void SysTick_Handler(void)
+{
+  SysTick->CTLR=0;
+  msTick+=TICK_FREQ_1KHz;
+  SysTick->CNT=0;
+  SysTick->CTLR=0x1;
+  osSystickHandler();
+}
+
+#endif
+
 
 
 
