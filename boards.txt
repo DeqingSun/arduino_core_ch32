@@ -38,7 +38,8 @@ CH57x_EVT.menu.pnum.CH573.build.march=rv32imac
 CH57x_EVT.menu.pnum.CH573.build.mabi=ilp32
 CH57x_EVT.menu.pnum.CH573.build.math_lib_gcc=-lm
 CH57x_EVT.menu.pnum.CH573.build.IQ_math_RV32=
-#CH57x_EVT.menu.pnum.CH573.build.ch_extra_lib=-lprintf
+CH57x_EVT.menu.pnum.CH573.build.ch_extra_lib=
+CH57x_EVT.menu.pnum.CH573.build.flags.ldflags=
 
 
 
