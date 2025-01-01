@@ -27,8 +27,8 @@ CH57x_EVT.debug.tool=gdb-WCH_LinkE
 #CH573 EVT Board
 CH57x_EVT.menu.pnum.CH573=CH573 EVT
 CH57x_EVT.menu.pnum.CH573.node=NODE_CH573
-CH57x_EVT.menu.pnum.CH573.upload.maximum_size=131072
-CH57x_EVT.menu.pnum.CH573.upload.maximum_data_size=65536
+CH57x_EVT.menu.pnum.CH573.upload.maximum_size=458752
+CH57x_EVT.menu.pnum.CH573.upload.maximum_data_size=18432
 CH57x_EVT.menu.pnum.CH573.build.mcu=QingKe-V3A
 CH57x_EVT.menu.pnum.CH573.build.board=CH573
 CH57x_EVT.menu.pnum.CH573.build.series=CH57x
