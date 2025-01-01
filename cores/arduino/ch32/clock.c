@@ -168,8 +168,6 @@ uint32_t getCurrentMicros(void)
   }
 }
 
-
-
 /*********************************************************************
  * @fn      SysTick_Handler
  *
@@ -180,10 +178,8 @@ uint32_t getCurrentMicros(void)
 void SysTick_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast"))) __attribute__((section(".highcode")));
 void SysTick_Handler(void)
 {
-  SysTick->CTLR=0;
   msTick+=TICK_FREQ_1KHz;
-  SysTick->CNT=0;
-  SysTick->CTLR=0x1;
+  SysTick->CNTFG &= ~(1<<1);
   osSystickHandler();
 }
 
