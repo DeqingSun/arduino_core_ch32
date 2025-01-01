@@ -11,7 +11,8 @@ extern "C" {
 #ifdef CH57x
 void systick_init(void)
 {
-    SysTick_Config(FREQ_SYS/2);
+    SetSysClock(CLK_SOURCE_PLL_60MHz);
+    SysTick_Config(60*1000);
 }
 #else
 void systick_init(void)
