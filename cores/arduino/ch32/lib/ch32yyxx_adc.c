@@ -19,6 +19,10 @@
 
 #elif defined(CH32L10x)
 #include "ch32l103_adc.c"
+
+#elif defined(CH57x)
+#include "ch57x_adc.c"
+
 #endif
 
 
