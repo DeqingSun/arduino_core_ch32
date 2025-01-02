@@ -5,6 +5,9 @@
 #include "src/Profile/include/gattprofile.h"
 #include "peripheral.h"
 
+CH573BlePeripheral blePeripheral = CH573BlePeripheral();
+
+
 extern void CH57X_BLEInit(void);
 
 __attribute__((aligned(4))) uint32_t MEM_BUF[BLE_MEMHEAP_SIZE / 4];
@@ -23,19 +26,25 @@ void Main_Circulation()
     }
 }
 
+
+
 void setup() {
   // put your setup code here, to run once:
   //GPIO_AFIODeInit();
   asm("nop");
 
+  blePeripheral.setLocalName("CH573_BLE");
+
   GPIOA_ModeCfg(GPIO_Pin_5, GPIO_ModeOut_PP_5mA);
   GPIOA_ModeCfg(GPIO_Pin_15, GPIO_ModeOut_PP_5mA);
   GPIOA_ModeCfg(GPIO_Pin_4, GPIO_ModeOut_PP_5mA);
 
-  CH57X_BLEInit();
-    HAL_Init();
-    GAPRole_PeripheralInit();
-    Peripheral_Init();
+  blePeripheral.begin();
+
+  // CH57X_BLEInit();
+  //   HAL_Init();
+  //   GAPRole_PeripheralInit();
+  //   Peripheral_Init();
     Main_Circulation();
 
 }
