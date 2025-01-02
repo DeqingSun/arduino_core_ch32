@@ -174,6 +174,8 @@ void uart_init(serial_t *obj, uint32_t baudrate, uint32_t databits, uint32_t par
   {
     #if defined(CH32L10x) || defined(CH32VM00X)
     RCC_PB2PeriphClockCmd(RCC_PB2Periph_USART1, ENABLE);
+    #elif defined(CH57x)
+    //todo: check if the clock is ever needed.
     #else
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
     #endif
@@ -301,6 +303,8 @@ void uart_deinit(serial_t *obj)
       #if defined(CH32L10x) || defined(CH32VM00X)
       RCC_PB2PeriphResetCmd(RCC_PB2Periph_USART1, ENABLE);
       RCC_PB2PeriphResetCmd(RCC_PB2Periph_USART1, DISABLE);
+      #elif defined(CH57x)
+      //todo: check if the clock is ever needed.
       #else
       RCC_APB2PeriphResetCmd(RCC_APB2Periph_USART1, ENABLE);
       RCC_APB2PeriphResetCmd(RCC_APB2Periph_USART1, DISABLE);

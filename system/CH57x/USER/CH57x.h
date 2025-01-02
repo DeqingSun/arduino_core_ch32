@@ -171,20 +171,20 @@ typedef struct
 /* Universal Synchronous Asynchronous Receiver Transmitter */
 typedef struct
 {
-    // __IO uint16_t STATR;
-    // uint16_t      RESERVED0;
-    // __IO uint16_t DATAR;
-    // uint16_t      RESERVED1;
-    // __IO uint16_t BRR;
-    // uint16_t      RESERVED2;
-    // __IO uint16_t CTLR1;
-    // uint16_t      RESERVED3;
-    // __IO uint16_t CTLR2;
-    // uint16_t      RESERVED4;
-    // __IO uint16_t CTLR3;
-    // uint16_t      RESERVED5;
-    // __IO uint16_t GPR;
-    // uint16_t      RESERVED6;
+    __IO uint8_t MCR;
+    __IO uint8_t IER;
+    __IO uint8_t FCR;
+    __IO uint8_t LCR;
+    __IO uint8_t IIR;
+    __IO uint8_t LSR;
+    __IO uint8_t MSR;
+    __IO uint8_t RBR;
+    __IO uint8_t THR;
+    __IO uint8_t RFC;
+    __IO uint8_t TFC;
+    __IO uint16_t DL;
+    __IO uint8_t DIV;
+    __IO uint8_t ADR;   //only exist for UART0
 } USART_TypeDef;
 
 /* USART Init Structure definition */
@@ -311,11 +311,18 @@ typedef struct
 
 // } IRQn_Type;
 
+//UART0
+#define USART1_IRQn                         (26)
+
 /* TIM_Channel */
 #define TIM_Channel_1                      ((uint16_t)0x0000)
 #define TIM_Channel_2                      ((uint16_t)0x0004)
 #define TIM_Channel_3                      ((uint16_t)0x0008)
 #define TIM_Channel_4                      ((uint16_t)0x000C)
+
+//UART0 related registers
+#define USART1_BASE                             (0x40003000)
+#define USART1                                  ((USART_TypeDef *)USART1_BASE)
 
 
 /* USART_Hardware_Flow_Control */

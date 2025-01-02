@@ -241,3 +241,25 @@ void GPIO_EXTILineConfig(uint8_t GPIO_PortSource, uint8_t GPIO_PinSource)
     // AFIO->EXTICR[GPIO_PinSource >> 0x02] |= (((uint32_t)GPIO_PortSource) << (0x04 * (GPIO_PinSource & (uint8_t)0x03)));
 }
 
+/*********************************************************************
+ * @fn      USART_HalfDuplexCmd
+ *
+ * @brief   Enables or disables the USART Half Duplex communication.
+ *
+ * @param   USARTx - where x can be 1 only on CH573 to select the USART peripheral.
+ *                  NewState - ENABLE or DISABLE.
+ *
+ * @return  none
+ */
+void USART_HalfDuplexCmd(USART_TypeDef *USARTx, FunctionalState NewState)
+{
+    if(NewState != DISABLE)
+    {
+        USARTx->MCR |= RB_MCR_HALF;
+    }
+    else
+    {
+        USARTx->MCR &= ~RB_MCR_HALF;
+    }
+}
+

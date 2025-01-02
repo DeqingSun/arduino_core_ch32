@@ -28,4 +28,5 @@
 
 #if defined(CH57x)
 #include "CH57x_sys.c"
+#include "CH57x.c"
 #endif
