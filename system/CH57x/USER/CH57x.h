@@ -337,14 +337,14 @@ typedef struct
 
 /* USART_Stop_Bits */
 #define USART_StopBits_1                     ((uint16_t)0x0000)
-#define USART_StopBits_0_5                   ((uint16_t)0x1000)
-#define USART_StopBits_2                     ((uint16_t)0x2000)
-#define USART_StopBits_1_5                   ((uint16_t)0x3000)
+#define USART_StopBits_0_5                   ((uint16_t)0x0000)
+#define USART_StopBits_2                     ((uint16_t)RB_LCR_STOP_BIT)
+#define USART_StopBits_1_5                   ((uint16_t)RB_LCR_STOP_BIT)
 
 /* USART_Parity */
 #define USART_Parity_No                      ((uint16_t)0x0000)
-#define USART_Parity_Even                    ((uint16_t)0x0400)
-#define USART_Parity_Odd                     ((uint16_t)0x0600)
+#define USART_Parity_Even                    ((uint16_t)(RB_LCR_PAR_EN|0x10))
+#define USART_Parity_Odd                     ((uint16_t)(RB_LCR_PAR_EN|0x00))
 
 /* USART_Mode */
 #define USART_Mode_Rx                        ((uint16_t)0x0004)

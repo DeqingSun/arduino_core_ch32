@@ -263,3 +263,103 @@ void USART_HalfDuplexCmd(USART_TypeDef *USARTx, FunctionalState NewState)
     }
 }
 
+/*********************************************************************
+ * @fn      USART_Init
+ *
+ * @brief   Initializes the USARTx peripheral according to the specified
+ *        parameters in the USART_InitStruct.
+ *
+ * @param   USARTx - where x can be 1, 2 or 3 to select the UART peripheral.
+ *          USART_InitStruct - pointer to a USART_InitTypeDef structure
+ *        that contains the configuration information for the specified
+ *        USART peripheral.
+ *
+ * @return  none
+ */
+void USART_Init(USART_TypeDef *USARTx, USART_InitTypeDef *USART_InitStruct)
+{
+    uint32_t          tmpreg = 0x00, apbclock = 0x00;
+    uint32_t          integerdivider = 0x00;
+    uint32_t          fractionaldivider = 0x00;
+    uint32_t          usartxbase = 0;
+    //RCC_ClocksTypeDef RCC_ClocksStatus;
+
+    if(USART_InitStruct->USART_HardwareFlowControl != USART_HardwareFlowControl_None)
+    {
+    }
+
+    uint32_t x;
+    x = 10 * GetSysClock() / 8 / USART_InitStruct->USART_BaudRate;
+    x = (x + 5) / 10;
+    USARTx->DL = (uint16_t)x;
+
+    usartxbase = (uint32_t)USARTx;
+    tmpreg = USARTx->LCR;
+    tmpreg &= ~(RB_LCR_STOP_BIT|RB_LCR_PAR_MOD|RB_LCR_PAR_EN|RB_LCR_WORD_SZ);
+    tmpreg |= (uint32_t)(USART_InitStruct->USART_StopBits | USART_InitStruct->USART_Parity | USART_InitStruct->USART_WordLength);
+    USARTx->LCR = (uint8_t)tmpreg;
+
+    USARTx->IER = RB_IER_TXD_EN;
+    USARTx->DIV = 1;
+
+    //seems not useful
+    //USART_InitStruct->USART_Mode;
+
+    //only valid for USART0
+    //USART_HardwareFlowControl
+
+    //R8_UART1_FCR = (2 << 6) | RB_FCR_TX_FIFO_CLR | RB_FCR_RX_FIFO_CLR | RB_FCR_FIFO_EN; // FIFO打开，触发点4字节
+
+}
+
+/*********************************************************************
+ * @fn      USART_Cmd
+ *
+ * @brief   Enables or disables the specified USART peripheral.
+ *
+ * @param   USARTx - where x can be 1, 2, 3 or 4 to select the USART peripheral.
+ *          NewState - ENABLE or DISABLE.
+ *
+ * @return  none
+ */
+void USART_Cmd(USART_TypeDef *USARTx, FunctionalState NewState)
+{
+    if(NewState != DISABLE)
+    {
+        //USARTx->CTLR1 |= CTLR1_UE_Set;
+    }
+    else
+    {
+        //USARTx->CTLR1 &= CTLR1_UE_Reset;
+    }
+}
+
+/*********************************************************************
+ * @fn      USART_SendData
+ *
+ * @brief   Transmits single data through the USARTx peripheral.
+ *
+ * @param   USARTx - where x can be 1, 2, 3 or 4 to select the USART peripheral.
+ *          Data - the data to transmit.
+ *
+ * @return  none
+ */
+void USART_SendData(USART_TypeDef *USARTx, uint16_t Data)
+{
+    USARTx->THR = (Data & (uint16_t)0x01FF);
+}
+
+/*********************************************************************
+ * @fn      USART_ReceiveData
+ *
+ * @brief   Returns the most recent received data by the USARTx peripheral.
+ *
+ * @param   USARTx - where x can be 1, 2, 3 or 4 to select the USART peripheral.
+ *
+ * @return  The received data.
+ */
+uint16_t USART_ReceiveData(USART_TypeDef *USARTx)
+{
+    return (uint16_t)(USARTx->RBR & (uint16_t)0x01FF);
+}
+
