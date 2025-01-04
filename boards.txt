@@ -40,9 +40,52 @@ CH57x_EVT.menu.pnum.CH573.build.math_lib_gcc=-lm
 CH57x_EVT.menu.pnum.CH573.build.IQ_math_RV32=
 CH57x_EVT.menu.pnum.CH573.build.ch_extra_lib="{build.system.path}/{build.series}/SRC/StdPeriphDriver/libISP573.a"
 CH57x_EVT.menu.pnum.CH573.build.flags.ldflags=
-CH57x_EVT.menu.pnum.CH573.build.flags.optimize=-O0
-CH57x_EVT.menu.pnum.CH573.build.flags.debug=-g
 
+# Upload menu
+CH57x_EVT.menu.upload_method.swdMethod=WCH-SWD
+CH57x_EVT.menu.upload_method.swdMethod.upload.protocol=
+CH57x_EVT.menu.upload_method.swdMethod.upload.options=
+CH57x_EVT.menu.upload_method.swdMethod.upload.tool=WCH_linkE
+CH57x_EVT.menu.upload_method.ispMethod=WCH-ISP
+CH57x_EVT.menu.upload_method.ispMethod.upload.protocol=
+CH57x_EVT.menu.upload_method.ispMethod.upload.options=
+CH57x_EVT.menu.upload_method.ispMethod.upload.tool=wchisp
+
+# Optimizations
+CH57x_EVT.menu.opt.osstd=Smallest (-Os default)
+CH57x_EVT.menu.opt.osstd.build.flags.optimize=-Os
+CH57x_EVT.menu.opt.oslto=Smallest (-Os) with LTO
+CH57x_EVT.menu.opt.oslto.build.flags.optimize=-Os -flto
+CH57x_EVT.menu.opt.o1std=Fast (-O1)
+CH57x_EVT.menu.opt.o1std.build.flags.optimize=-O1
+CH57x_EVT.menu.opt.o1lto=Fast (-O1) with LTO
+CH57x_EVT.menu.opt.o1lto.build.flags.optimize=-O1 -flto
+CH57x_EVT.menu.opt.o2std=Faster (-O2)
+CH57x_EVT.menu.opt.o2std.build.flags.optimize=-O2
+CH57x_EVT.menu.opt.o2lto=Faster (-O2) with LTO
+CH57x_EVT.menu.opt.o2lto.build.flags.optimize=-O2 -flto
+CH57x_EVT.menu.opt.o3std=Fastest (-O3)
+CH57x_EVT.menu.opt.o3std.build.flags.optimize=-O3
+CH57x_EVT.menu.opt.o3lto=Fastest (-O3) with LTO
+CH57x_EVT.menu.opt.o3lto.build.flags.optimize=-O3 -flto
+CH57x_EVT.menu.opt.ogstd=Debug (-Og)
+CH57x_EVT.menu.opt.ogstd.build.flags.optimize=-Og
+CH57x_EVT.menu.opt.o0std=No Optimization (-O0)
+CH57x_EVT.menu.opt.o0std.build.flags.optimize=-O0
+
+
+# Debug information
+CH57x_EVT.menu.dbg.none=None
+CH57x_EVT.menu.dbg.none.build.flags.debug=-DNDEBUG
+CH57x_EVT.menu.dbg.enable_sym=Symbols Enabled (-g)
+CH57x_EVT.menu.dbg.enable_sym.build.flags.debug=-g -DNDEBUG
+CH57x_EVT.menu.dbg.enable_log=Core logs Enabled
+CH57x_EVT.menu.dbg.enable_log.build.flags.debug=
+CH57x_EVT.menu.dbg.enable_all=Core Logs and Symbols Enabled (-g)
+CH57x_EVT.menu.dbg.enable_all.build.flags.debug=-g
+
+CH57x_EVT.upload.use_1200bps_touch=true
+CH57x_EVT.upload.wait_for_upload_port=false
 
 
 ##############################################################################
