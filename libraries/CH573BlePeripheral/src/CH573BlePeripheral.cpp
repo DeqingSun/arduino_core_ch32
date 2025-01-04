@@ -20,10 +20,12 @@ CH573BlePeripheral::CH573BlePeripheral()
     // TMOS_TimerInit( NULL );
 
     advertisedServiceUuid = NULL;
+    localName = NULL;
 }
 
-void CH573BlePeripheral::setLocalName(const char *localName)
+void CH573BlePeripheral::setLocalName(const char *_localName)
 {
+    localName = _localName;
     // // Set the local name
     // GAPRole_SetParameter( GAPROLE_ADVERT_DATA, sizeof(localName), (void *)localName );
     // GAPRole_SetParameter( GAPROLE_SCAN_RSP_DATA, sizeof(localName), (void *)localName );
@@ -113,40 +115,40 @@ void CH573BlePeripheral::setLocalName(const char *localName)
 static uint8_t Peripheral_TaskID = INVALID_TASK_ID; // Task ID for internal task/event processing
 
 // GAP - SCAN RSP data (max size = 31 bytes)
-static uint8_t scanRspData[] = {
-    // complete name
-    0x12, // length of this data
-    GAP_ADTYPE_LOCAL_NAME_COMPLETE,
-    'S',
-    'i',
-    'm',
-    'p',
-    'l',
-    'e',
-    ' ',
-    'P',
-    'e',
-    'r',
-    'i',
-    'p',
-    'h',
-    'e',
-    'r',
-    'a',
-    'l',
-    // connection interval range
-    0x05, // length of this data
-    GAP_ADTYPE_SLAVE_CONN_INTERVAL_RANGE,
-    LO_UINT16(DEFAULT_DESIRED_MIN_CONN_INTERVAL), // 100ms
-    HI_UINT16(DEFAULT_DESIRED_MIN_CONN_INTERVAL),
-    LO_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL), // 1s
-    HI_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL),
+// static uint8_t scanRspData[] = {
+//     // complete name
+//     0x12, // length of this data
+//     GAP_ADTYPE_LOCAL_NAME_COMPLETE,
+//     'S',
+//     'i',
+//     'm',
+//     'p',
+//     'l',
+//     'e',
+//     ' ',
+//     'P',
+//     'e',
+//     'r',
+//     'i',
+//     'p',
+//     'h',
+//     'e',
+//     'r',
+//     'a',
+//     'l',
+//     // connection interval range
+//     0x05, // length of this data
+//     GAP_ADTYPE_SLAVE_CONN_INTERVAL_RANGE,
+//     LO_UINT16(DEFAULT_DESIRED_MIN_CONN_INTERVAL), // 100ms
+//     HI_UINT16(DEFAULT_DESIRED_MIN_CONN_INTERVAL),
+//     LO_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL), // 1s
+//     HI_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL),
 
-    // Tx power level
-    0x02, // length of this data
-    GAP_ADTYPE_POWER_LEVEL,
-    0 // 0dBm
-};
+//     // Tx power level
+//     0x02, // length of this data
+//     GAP_ADTYPE_POWER_LEVEL,
+//     0 // 0dBm
+// };
 
 
 // GAP GATT Attributes
@@ -678,13 +680,32 @@ void CH573BlePeripheral::begin()
             }
         }
 
+        // prepare scanRspData
+        scanRspDataLen = 0;
+
+        if (localName != NULL) {
+            unsigned char localNameLength = strlen(localName);
+            if (scanRspDataLen + localNameLength + 2 <= 31) {
+                scanRspData[scanRspDataLen++] = localNameLength + 1;
+                scanRspData[scanRspDataLen++] = GAP_ADTYPE_LOCAL_NAME_COMPLETE;
+                memcpy(scanRspData + scanRspDataLen, localName, localNameLength);
+                scanRspDataLen += localNameLength;
+            }
+        }
+
+        //// connection interval range?
+        // Tx power level?
+
+
+
+
 
 
 
 
         // Set the GAP Role Parameters
         GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t), &initial_advertising_enable);
-        GAPRole_SetParameter(GAPROLE_SCAN_RSP_DATA, sizeof(scanRspData), scanRspData);
+        GAPRole_SetParameter(GAPROLE_SCAN_RSP_DATA, scanRspDataLen, scanRspData);
         GAPRole_SetParameter(GAPROLE_ADVERT_DATA, advertDataLen, advertData);
         GAPRole_SetParameter(GAPROLE_MIN_CONN_INTERVAL, sizeof(uint16_t), &desired_min_interval);
         GAPRole_SetParameter(GAPROLE_MAX_CONN_INTERVAL, sizeof(uint16_t), &desired_max_interval);

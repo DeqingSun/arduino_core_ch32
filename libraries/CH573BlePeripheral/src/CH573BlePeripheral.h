@@ -9,14 +9,16 @@ class CH573BlePeripheral
   public:
     CH573BlePeripheral();
 
-    void setLocalName(const char *localName);
 
     void begin();
     // void poll();
     // void end();
 
+    void setLocalName(const char *_localName);
     void setAdvertisedServiceUuid(const char* _advertisedServiceUuid);
 
+
+    const char*                    localName;
     const char*                    advertisedServiceUuid;
 
     // GAP - Advertisement data (max size = 31 bytes, though this is
@@ -24,6 +26,7 @@ class CH573BlePeripheral
     uint8_t advertData[31];
     uint8_t advertDataLen;
     uint8_t scanRspData[31];
+    uint8_t scanRspDataLen;
 };
 
 
