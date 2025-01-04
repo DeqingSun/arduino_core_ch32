@@ -14,6 +14,16 @@ class CH573BlePeripheral
     void begin();
     // void poll();
     // void end();
+
+    void setAdvertisedServiceUuid(const char* _advertisedServiceUuid);
+
+    const char*                    advertisedServiceUuid;
+
+    // GAP - Advertisement data (max size = 31 bytes, though this is
+    // best kept short to conserve power while advertising)
+    uint8_t advertData[31];
+    uint8_t advertDataLen;
+    uint8_t scanRspData[31];
 };
 
 

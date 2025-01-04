@@ -34,6 +34,7 @@ void setup() {
   asm("nop");
 
   blePeripheral.setLocalName("CH573_BLE");
+  blePeripheral.setAdvertisedServiceUuid("1234");
 
   GPIOA_ModeCfg(GPIO_Pin_5, GPIO_ModeOut_PP_5mA);
   GPIOA_ModeCfg(GPIO_Pin_15, GPIO_ModeOut_PP_5mA);

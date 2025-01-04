@@ -5,6 +5,8 @@
 #include "src/Profile/include/gattprofile.h"
 #include "peripheral.h"
 
+#include "BLEUuid.h"
+
 extern "C" {
     extern uint32_t tmos_rand( void );// Declare functions provided by the .a file
     extern bStatus_t TMOS_TimerInit( pfnGetSysClock fnGetClock );
@@ -16,6 +18,8 @@ CH573BlePeripheral::CH573BlePeripheral()
     // tmos_rand();
     // // Initialize the timer
     // TMOS_TimerInit( NULL );
+
+    advertisedServiceUuid = NULL;
 }
 
 void CH573BlePeripheral::setLocalName(const char *localName)
@@ -25,20 +29,7 @@ void CH573BlePeripheral::setLocalName(const char *localName)
     // GAPRole_SetParameter( GAPROLE_SCAN_RSP_DATA, sizeof(localName), (void *)localName );
 }
 
-void CH573BlePeripheral::begin()
-{
-    // Initialize the BLE stack
-    CH57X_BLEInit();
-    // Initialize the hardware abstraction layer
-    HAL_Init();
-    // Initialize the GAP role
-    // The function is inside the BLE stack binary library
-    GAPRole_PeripheralInit();
-    // Initialize the peripheral
-    Peripheral_Init();
-    // // Start the main circulation
-    // Main_Circulation();
-}
+
 
 /********************************** (C) COPYRIGHT *******************************
  * File Name          : peripheral.C
@@ -157,23 +148,6 @@ static uint8_t scanRspData[] = {
     0 // 0dBm
 };
 
-// GAP - Advertisement data (max size = 31 bytes, though this is
-// best kept short to conserve power while advertising)
-static uint8_t advertData[] = {
-    // Flags; this sets the device to use limited discoverable
-    // mode (advertises for 30 seconds at a time) instead of general
-    // discoverable mode (advertises indefinitely)
-    0x02, // length of this data
-    GAP_ADTYPE_FLAGS,
-    DEFAULT_DISCOVERABLE_MODE | GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED,
-
-    // service UUID, to notify central devices what services are included
-    // in this peripheral
-    0x03,                  // length of this data
-    GAP_ADTYPE_16BIT_MORE, // some of the UUID's, but not all
-    LO_UINT16(SIMPLEPROFILE_SERV_UUID),
-    HI_UINT16(SIMPLEPROFILE_SERV_UUID)
-};
 
 // GAP GATT Attributes
 static uint8_t attDeviceName[GAP_DEVICE_NAME_LEN] = "Simple Peripheral";
@@ -242,79 +216,7 @@ static simpleProfileCBs_t Peripheral_SimpleProfileCBs = {
  */
 void Peripheral_Init()
 {
-    Peripheral_TaskID = TMOS_ProcessEventRegister(Peripheral_ProcessEvent);
-
-    // Setup the GAP Peripheral Role Profile
-    {
-        uint8_t  initial_advertising_enable = TRUE;
-        uint16_t desired_min_interval = DEFAULT_DESIRED_MIN_CONN_INTERVAL;
-        uint16_t desired_max_interval = DEFAULT_DESIRED_MAX_CONN_INTERVAL;
-
-        // Set the GAP Role Parameters
-        GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t), &initial_advertising_enable);
-        GAPRole_SetParameter(GAPROLE_SCAN_RSP_DATA, sizeof(scanRspData), scanRspData);
-        GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData), advertData);
-        GAPRole_SetParameter(GAPROLE_MIN_CONN_INTERVAL, sizeof(uint16_t), &desired_min_interval);
-        GAPRole_SetParameter(GAPROLE_MAX_CONN_INTERVAL, sizeof(uint16_t), &desired_max_interval);
-    }
-
-    // Set advertising interval
-    {
-        uint16_t advInt = DEFAULT_ADVERTISING_INTERVAL;
-
-        GAP_SetParamValue(TGAP_DISC_ADV_INT_MIN, advInt);
-        GAP_SetParamValue(TGAP_DISC_ADV_INT_MAX, advInt);
-    }
-
-    // Setup the GAP Bond Manager
-    {
-        uint32_t passkey = 0; // passkey "000000"
-        uint8_t  pairMode = GAPBOND_PAIRING_MODE_WAIT_FOR_REQ;
-        uint8_t  mitm = TRUE;
-        uint8_t  bonding = TRUE;
-        uint8_t  ioCap = GAPBOND_IO_CAP_DISPLAY_ONLY;
-        GAPBondMgr_SetParameter(GAPBOND_PERI_DEFAULT_PASSCODE, sizeof(uint32_t), &passkey);
-        GAPBondMgr_SetParameter(GAPBOND_PERI_PAIRING_MODE, sizeof(uint8_t), &pairMode);
-        GAPBondMgr_SetParameter(GAPBOND_PERI_MITM_PROTECTION, sizeof(uint8_t), &mitm);
-        GAPBondMgr_SetParameter(GAPBOND_PERI_IO_CAPABILITIES, sizeof(uint8_t), &ioCap);
-        GAPBondMgr_SetParameter(GAPBOND_PERI_BONDING_ENABLED, sizeof(uint8_t), &bonding);
-    }
-
-    // Initialize GATT attributes
-    GGS_AddService(GATT_ALL_SERVICES);           // GAP
-    GATTServApp_AddService(GATT_ALL_SERVICES);   // GATT attributes
-    DevInfo_AddService();                        // Device Information Service
-    SimpleProfile_AddService(GATT_ALL_SERVICES); // Simple GATT Profile
-
-    // Set the GAP Characteristics
-    GGS_SetParameter(GGS_DEVICE_NAME_ATT, GAP_DEVICE_NAME_LEN, attDeviceName);
-
-    // Setup the SimpleProfile Characteristic Values
-    {
-        uint8_t charValue1[SIMPLEPROFILE_CHAR1_LEN] = {1};
-        uint8_t charValue2[SIMPLEPROFILE_CHAR2_LEN] = {2};
-        uint8_t charValue3[SIMPLEPROFILE_CHAR3_LEN] = {3};
-        uint8_t charValue4[SIMPLEPROFILE_CHAR4_LEN] = {4};
-        uint8_t charValue5[SIMPLEPROFILE_CHAR5_LEN] = {1, 2, 3, 4, 5};
-
-        SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR1, SIMPLEPROFILE_CHAR1_LEN, charValue1);
-        SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR2, SIMPLEPROFILE_CHAR2_LEN, charValue2);
-        SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR3, SIMPLEPROFILE_CHAR3_LEN, charValue3);
-        SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR4, SIMPLEPROFILE_CHAR4_LEN, charValue4);
-        SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR5, SIMPLEPROFILE_CHAR5_LEN, charValue5);
-    }
-
-    // Init Connection Item
-    peripheralInitConnItem(&peripheralConnList);
-
-    // Register callback with SimpleGATTprofile
-    SimpleProfile_RegisterAppCBs(&Peripheral_SimpleProfileCBs);
-
-    // Register receive scan request callback
-    GAPRole_BroadcasterSetCB(&Broadcaster_BroadcasterCBs);
-
-    // Setup a delayed profile startup
-    tmos_set_event(Peripheral_TaskID, SBP_START_DEVICE_EVT);
+    
 }
 
 /*********************************************************************
@@ -731,3 +633,127 @@ static void simpleProfileChangeCB(uint8_t paramID, uint8_t *pValue, uint16_t len
 
 /*********************************************************************
 *********************************************************************/
+
+
+
+void CH573BlePeripheral::begin()
+{
+    // Initialize the BLE stack
+    CH57X_BLEInit();
+    // Initialize the hardware abstraction layer
+    HAL_Init();
+    // Initialize the GAP role
+    // The function is inside the BLE stack binary library
+    GAPRole_PeripheralInit();
+    // Initialize the peripheral
+    //Peripheral_Init();
+    Peripheral_TaskID = TMOS_ProcessEventRegister(Peripheral_ProcessEvent);
+
+    // Setup the GAP Peripheral Role Profile
+    {
+        uint8_t  initial_advertising_enable = TRUE;
+        uint16_t desired_min_interval = DEFAULT_DESIRED_MIN_CONN_INTERVAL;
+        uint16_t desired_max_interval = DEFAULT_DESIRED_MAX_CONN_INTERVAL;
+
+        // prepare advertData
+        advertDataLen = 0;
+        advertData[advertDataLen++] = 0x02; // length
+        advertData[advertDataLen++] = GAP_ADTYPE_FLAGS;
+        advertData[advertDataLen++] = DEFAULT_DISCOVERABLE_MODE | GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED;
+
+        //_serviceSolicitationUuid
+        //_advertisedServiceUuid
+        //_manufacturerData
+
+        if (advertisedServiceUuid != NULL)
+        {
+            BLEUuid advertisedServiceUuidDecoded = BLEUuid(advertisedServiceUuid);
+
+            unsigned char uuidLength = advertisedServiceUuidDecoded.length();
+            if (advertDataLen + uuidLength + 2 <= 31) {
+                advertData[advertDataLen++] = uuidLength + 1;
+                advertData[advertDataLen++] = (uuidLength > 2) ? GAP_ADTYPE_128BIT_MORE : GAP_ADTYPE_16BIT_MORE;
+                memcpy(advertData + advertDataLen, advertisedServiceUuidDecoded.data(), uuidLength);
+                advertDataLen += uuidLength;
+            }
+        }
+
+
+
+
+
+        // Set the GAP Role Parameters
+        GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t), &initial_advertising_enable);
+        GAPRole_SetParameter(GAPROLE_SCAN_RSP_DATA, sizeof(scanRspData), scanRspData);
+        GAPRole_SetParameter(GAPROLE_ADVERT_DATA, advertDataLen, advertData);
+        GAPRole_SetParameter(GAPROLE_MIN_CONN_INTERVAL, sizeof(uint16_t), &desired_min_interval);
+        GAPRole_SetParameter(GAPROLE_MAX_CONN_INTERVAL, sizeof(uint16_t), &desired_max_interval);
+    }
+
+    // Set advertising interval
+    {
+        uint16_t advInt = DEFAULT_ADVERTISING_INTERVAL;
+
+        GAP_SetParamValue(TGAP_DISC_ADV_INT_MIN, advInt);
+        GAP_SetParamValue(TGAP_DISC_ADV_INT_MAX, advInt);
+    }
+
+    // Setup the GAP Bond Manager
+    {
+        uint32_t passkey = 0; // passkey "000000"
+        uint8_t  pairMode = GAPBOND_PAIRING_MODE_WAIT_FOR_REQ;
+        uint8_t  mitm = TRUE;
+        uint8_t  bonding = TRUE;
+        uint8_t  ioCap = GAPBOND_IO_CAP_DISPLAY_ONLY;
+        GAPBondMgr_SetParameter(GAPBOND_PERI_DEFAULT_PASSCODE, sizeof(uint32_t), &passkey);
+        GAPBondMgr_SetParameter(GAPBOND_PERI_PAIRING_MODE, sizeof(uint8_t), &pairMode);
+        GAPBondMgr_SetParameter(GAPBOND_PERI_MITM_PROTECTION, sizeof(uint8_t), &mitm);
+        GAPBondMgr_SetParameter(GAPBOND_PERI_IO_CAPABILITIES, sizeof(uint8_t), &ioCap);
+        GAPBondMgr_SetParameter(GAPBOND_PERI_BONDING_ENABLED, sizeof(uint8_t), &bonding);
+    }
+
+    // Initialize GATT attributes
+    GGS_AddService(GATT_ALL_SERVICES);           // GAP
+    GATTServApp_AddService(GATT_ALL_SERVICES);   // GATT attributes
+    DevInfo_AddService();                        // Device Information Service
+    SimpleProfile_AddService(GATT_ALL_SERVICES); // Simple GATT Profile
+
+    // Set the GAP Characteristics
+    GGS_SetParameter(GGS_DEVICE_NAME_ATT, GAP_DEVICE_NAME_LEN, attDeviceName);
+
+    // Setup the SimpleProfile Characteristic Values
+    {
+        uint8_t charValue1[SIMPLEPROFILE_CHAR1_LEN] = {1};
+        uint8_t charValue2[SIMPLEPROFILE_CHAR2_LEN] = {2};
+        uint8_t charValue3[SIMPLEPROFILE_CHAR3_LEN] = {3};
+        uint8_t charValue4[SIMPLEPROFILE_CHAR4_LEN] = {4};
+        uint8_t charValue5[SIMPLEPROFILE_CHAR5_LEN] = {1, 2, 3, 4, 5};
+
+        SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR1, SIMPLEPROFILE_CHAR1_LEN, charValue1);
+        SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR2, SIMPLEPROFILE_CHAR2_LEN, charValue2);
+        SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR3, SIMPLEPROFILE_CHAR3_LEN, charValue3);
+        SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR4, SIMPLEPROFILE_CHAR4_LEN, charValue4);
+        SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR5, SIMPLEPROFILE_CHAR5_LEN, charValue5);
+    }
+
+    // Init Connection Item
+    peripheralInitConnItem(&peripheralConnList);
+
+    // Register callback with SimpleGATTprofile
+    SimpleProfile_RegisterAppCBs(&Peripheral_SimpleProfileCBs);
+
+    // Register receive scan request callback
+    GAPRole_BroadcasterSetCB(&Broadcaster_BroadcasterCBs);
+
+    // Setup a delayed profile startup
+    tmos_set_event(Peripheral_TaskID, SBP_START_DEVICE_EVT);
+
+
+
+    // // Start the main circulation
+    // Main_Circulation();
+}
+
+void CH573BlePeripheral::setAdvertisedServiceUuid(const char* _advertisedServiceUuid) {
+  advertisedServiceUuid = _advertisedServiceUuid;
+}
