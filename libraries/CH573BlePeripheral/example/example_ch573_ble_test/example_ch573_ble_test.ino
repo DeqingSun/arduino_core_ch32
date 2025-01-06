@@ -7,6 +7,12 @@
 
 CH573BlePeripheral blePeripheral = CH573BlePeripheral();
 
+// create one or more services
+BLEService service = BLEService("fff0");
+
+// create one or more characteristics
+BLECharCharacteristic characteristic = BLECharCharacteristic("fff1", BLERead | BLEWrite);
+
 
 extern void CH57X_BLEInit(void);
 
@@ -35,6 +41,14 @@ void setup() {
 
   blePeripheral.setLocalName("CH573_BLE");
   blePeripheral.setAdvertisedServiceUuid("1234");
+
+    // add attributes (services, characteristics, descriptors) to peripheral
+  blePeripheral.addAttribute(service);
+  blePeripheral.addAttribute(characteristic);
+  //blePeripheral.addAttribute(descriptor);
+
+  // set initial value
+  characteristic.setValue(0);
 
   GPIOA_ModeCfg(GPIO_Pin_5, GPIO_ModeOut_PP_5mA);
   GPIOA_ModeCfg(GPIO_Pin_15, GPIO_ModeOut_PP_5mA);

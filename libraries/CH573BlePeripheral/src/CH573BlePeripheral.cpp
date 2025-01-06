@@ -737,6 +737,7 @@ void CH573BlePeripheral::begin()
     GGS_AddService(GATT_ALL_SERVICES);           // GAP
     GATTServApp_AddService(GATT_ALL_SERVICES);   // GATT attributes
     DevInfo_AddService();                        // Device Information Service
+    //todo, edit here
     SimpleProfile_AddService(GATT_ALL_SERVICES); // Simple GATT Profile
 
     // Set the GAP Characteristics
@@ -778,3 +779,26 @@ void CH573BlePeripheral::begin()
 void CH573BlePeripheral::setAdvertisedServiceUuid(const char* _advertisedServiceUuid) {
   advertisedServiceUuid = _advertisedServiceUuid;
 }
+
+void CH573BlePeripheral::addAttribute(BLELocalAttribute& _attribute) {
+  addLocalAttribute(_attribute);
+}
+
+void CH573BlePeripheral::addLocalAttribute(BLELocalAttribute& _localAttribute) {
+//   if (this->_localAttributes == NULL) {
+//     this->initLocalAttributes();
+//   }
+
+//   this->_localAttributes[this->_numLocalAttributes] = &localAttribute;
+//   this->_numLocalAttributes++;
+}
+
+// void CH573BlePeripheral::addRemoteAttribute(BLERemoteAttribute& remoteAttribute) {
+//   if (this->_remoteAttributes == NULL) {
+//     this->_remoteAttributes = (BLERemoteAttribute**)malloc(BLERemoteAttribute::numAttributes() * sizeof(BLERemoteAttribute*));
+//   }
+
+//   this->_remoteAttributes[this->_numRemoteAttributes] = &remoteAttribute;
+//   this->_numRemoteAttributes++;
+// }
+

@@ -4,6 +4,20 @@
 #include <Arduino.h>
 #include "CH57xBLE_LIB.h"
 
+// #include "BLEBondStore.h"
+// #include "BLECentral.h"
+// #include "BLEConstantCharacteristic.h"
+// #include "BLEDescriptor.h"
+// #include "BLEDevice.h"
+// #include "BLEFixedLengthCharacteristic.h"
+#include "BLELocalAttribute.h"
+// #include "BLEProgmemConstantCharacteristic.h"
+// #include "BLERemoteAttribute.h"
+// #include "BLERemoteCharacteristic.h"
+// #include "BLERemoteService.h"
+#include "BLEService.h"
+#include "BLETypedCharacteristics.h"
+
 class CH573BlePeripheral 
 {
   public:
@@ -16,6 +30,10 @@ class CH573BlePeripheral
 
     void setLocalName(const char *_localName);
     void setAdvertisedServiceUuid(const char* _advertisedServiceUuid);
+
+    void addAttribute(BLELocalAttribute& _attribute);
+    void addLocalAttribute(BLELocalAttribute& _localAttribute);
+    //void addRemoteAttribute(BLERemoteAttribute& remoteAttribute);
 
 
     const char*                    localName;
