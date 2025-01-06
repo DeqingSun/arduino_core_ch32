@@ -12,15 +12,28 @@ extern "C" {
     extern bStatus_t TMOS_TimerInit( pfnGetSysClock fnGetClock );
 }
 
-CH573BlePeripheral::CH573BlePeripheral()
+CH573BlePeripheral::CH573BlePeripheral():
+    localName(NULL),
+    advertisedServiceUuid(NULL),
+    localAttributes(NULL),
+    numLocalAttributes(0),
+    remoteAttributes(NULL),
+    numRemoteAttributes(0),
+    genericAccessService("1800"),
+    deviceNameCharacteristic("2a00", BLERead, 19),
+    appearanceCharacteristic("2a01", BLERead, 2),
+    genericAttributeService("1801"),
+    servicesChangedCharacteristic("2a05", BLEIndicate, 4),
+
+    remoteGenericAttributeService("1801"),
+    remoteServicesChangedCharacteristic("2a05", BLEIndicate)
 {
     // // Initialize the random number generator
     // tmos_rand();
     // // Initialize the timer
     // TMOS_TimerInit( NULL );
 
-    advertisedServiceUuid = NULL;
-    localName = NULL;
+
 }
 
 void CH573BlePeripheral::setLocalName(const char *_localName)
@@ -697,6 +710,40 @@ void CH573BlePeripheral::begin()
         // Tx power level?
 
 
+        if (localAttributes == NULL) {
+            initLocalAttributes();
+        }
+        
+        for (int i = 0; i < this-numLocalAttributes; i++) {
+            BLELocalAttribute* localAttribute = localAttributes[i];
+            if (localAttribute->type() == BLETypeCharacteristic) {
+              BLECharacteristic* characteristic = (BLECharacteristic*)localAttribute;
+              characteristic->setValueChangeListener(*this);
+            }
+        }
+        
+        for (int i = 0; i < numRemoteAttributes; i++) {
+            BLERemoteAttribute* remoteAttribute = remoteAttributes[i];
+            if (remoteAttribute->type() == BLETypeCharacteristic) {
+              BLERemoteCharacteristic* remoteCharacteristic = (BLERemoteCharacteristic*)remoteAttribute;
+    
+              remoteCharacteristic->setValueChangeListener(*this);
+            }
+        }
+        
+        if (numRemoteAttributes) {
+            addRemoteAttribute(remoteGenericAttributeService);
+            addRemoteAttribute(remoteServicesChangedCharacteristic);
+        }
+        
+        //   this->_device->begin(advertisementDataSize, advertisementData,
+        //                         scanData.length > 0 ? 1 : 0, &scanData,
+        //                         this->_localAttributes, this->_numLocalAttributes,
+        //                         this->_remoteAttributes, this->_numRemoteAttributes);
+        
+        //   this->_device->requestAddress();
+
+
 
 
 
@@ -785,20 +832,34 @@ void CH573BlePeripheral::addAttribute(BLELocalAttribute& _attribute) {
 }
 
 void CH573BlePeripheral::addLocalAttribute(BLELocalAttribute& _localAttribute) {
-//   if (this->_localAttributes == NULL) {
-//     this->initLocalAttributes();
-//   }
+  if (localAttributes == NULL) {
+    initLocalAttributes();
+  }
 
-//   this->_localAttributes[this->_numLocalAttributes] = &localAttribute;
-//   this->_numLocalAttributes++;
+  localAttributes[numLocalAttributes] = &_localAttribute;
+  numLocalAttributes++;
 }
 
-// void CH573BlePeripheral::addRemoteAttribute(BLERemoteAttribute& remoteAttribute) {
-//   if (this->_remoteAttributes == NULL) {
-//     this->_remoteAttributes = (BLERemoteAttribute**)malloc(BLERemoteAttribute::numAttributes() * sizeof(BLERemoteAttribute*));
-//   }
+void CH573BlePeripheral::addRemoteAttribute(BLERemoteAttribute& _remoteAttribute) {
+  if (remoteAttributes == NULL) {
+    remoteAttributes = (BLERemoteAttribute**)malloc(BLERemoteAttribute::numAttributes() * sizeof(BLERemoteAttribute*));
+  }
 
-//   this->_remoteAttributes[this->_numRemoteAttributes] = &remoteAttribute;
-//   this->_numRemoteAttributes++;
-// }
+  remoteAttributes[numRemoteAttributes] = &_remoteAttribute;
+  numRemoteAttributes++;
+}
+
+void CH573BlePeripheral::initLocalAttributes() {
+    //numAttributes will increase when a new BLELocalAttribute (Service, Characteris, etc) is created, whereever it is created
+    localAttributes = (BLELocalAttribute**)malloc(BLELocalAttribute::numAttributes() * sizeof(BLELocalAttribute*));
+
+    localAttributes[0] = &genericAccessService;
+    localAttributes[1] = &deviceNameCharacteristic;
+    localAttributes[2] = &appearanceCharacteristic;
+
+    localAttributes[3] = &genericAttributeService;
+    localAttributes[4] = &servicesChangedCharacteristic;
+
+    numLocalAttributes = 5;
+}
 

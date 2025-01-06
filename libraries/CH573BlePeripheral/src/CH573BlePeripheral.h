@@ -8,7 +8,7 @@
 // #include "BLECentral.h"
 // #include "BLEConstantCharacteristic.h"
 // #include "BLEDescriptor.h"
-// #include "BLEDevice.h"
+#include "BLEDevice.h"
 // #include "BLEFixedLengthCharacteristic.h"
 #include "BLELocalAttribute.h"
 // #include "BLEProgmemConstantCharacteristic.h"
@@ -18,7 +18,7 @@
 #include "BLEService.h"
 #include "BLETypedCharacteristics.h"
 
-class CH573BlePeripheral 
+class CH573BlePeripheral : public BLEDeviceEventListener, public BLECharacteristicValueChangeListener, public BLERemoteCharacteristicValueChangeListener
 {
   public:
     CH573BlePeripheral();
@@ -33,11 +33,29 @@ class CH573BlePeripheral
 
     void addAttribute(BLELocalAttribute& _attribute);
     void addLocalAttribute(BLELocalAttribute& _localAttribute);
-    //void addRemoteAttribute(BLERemoteAttribute& remoteAttribute);
+    void addRemoteAttribute(BLERemoteAttribute& _remoteAttribute);
+  
+  private:
+    void initLocalAttributes();
 
+  public:
 
     const char*                    localName;
     const char*                    advertisedServiceUuid;
+
+    BLELocalAttribute**            localAttributes;
+    unsigned char                  numLocalAttributes;
+    BLERemoteAttribute**           remoteAttributes;
+    unsigned char                  numRemoteAttributes;
+
+    BLEService                     genericAccessService;
+    BLECharacteristic              deviceNameCharacteristic;
+    BLECharacteristic              appearanceCharacteristic;
+    BLEService                     genericAttributeService;
+    BLECharacteristic              servicesChangedCharacteristic;
+
+    BLERemoteService               remoteGenericAttributeService;
+    BLERemoteCharacteristic        remoteServicesChangedCharacteristic;
 
     // GAP - Advertisement data (max size = 31 bytes, though this is
     // best kept short to conserve power while advertising)
