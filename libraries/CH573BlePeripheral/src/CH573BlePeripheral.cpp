@@ -782,6 +782,24 @@ void CH573BlePeripheral::begin()
     //todo, edit here
     SimpleProfile_AddService(GATT_ALL_SERVICES); // Simple GATT Profile
 
+
+    {
+        int numberOfCharacteristics = 0;
+        for (int i = 0; i < numLocalAttributes; i++) {
+            BLELocalAttribute* localAttribute = localAttributes[i];
+            if (localAttribute->type() == BLETypeCharacteristic) {
+              BLECharacteristic* characteristic = (BLECharacteristic*)localAttribute;
+              numberOfCharacteristics++;
+            }
+        }
+        int gattAttributeTblSize =numLocalAttributes + numberOfCharacteristics;
+        profileAttrTbl = (gattAttribute_t *)malloc(sizeof(gattAttribute_t) * gattAttributeTblSize);
+        
+
+    }
+    
+
+
     // Set the GAP Characteristics
     GGS_SetParameter(GGS_DEVICE_NAME_ATT, GAP_DEVICE_NAME_LEN, attDeviceName);
 
