@@ -1,5 +1,9 @@
 #include "CH57x.h"
 
+// https://www.cnblogs.com/gscw/p/18029303
+// for c++
+void _fini(){}
+void _init(){}
 
 void TIM_DeInit(TIM_TypeDef *TIMx)
 {
@@ -362,4 +366,6 @@ uint16_t USART_ReceiveData(USART_TypeDef *USARTx)
 {
     return (uint16_t)(USARTx->RBR & (uint16_t)0x01FF);
 }
+
+
 
