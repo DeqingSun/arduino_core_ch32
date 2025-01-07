@@ -48,11 +48,12 @@ class CH573BlePeripheral : public BLEDeviceEventListener, public BLECharacterist
     BLERemoteAttribute**           remoteAttributes;
     unsigned char                  numRemoteAttributes;
 
-    BLEService                     genericAccessService;
-    BLECharacteristic              deviceNameCharacteristic;
-    BLECharacteristic              appearanceCharacteristic;
-    BLEService                     genericAttributeService;
-    BLECharacteristic              servicesChangedCharacteristic;
+    // seems not needed for TMOS
+    // BLEService                     genericAccessService;
+    // BLECharacteristic              deviceNameCharacteristic;
+    // BLECharacteristic              appearanceCharacteristic;
+    // BLEService                     genericAttributeService;
+    // BLECharacteristic              servicesChangedCharacteristic;
 
     BLERemoteService               remoteGenericAttributeService;
     BLERemoteCharacteristic        remoteServicesChangedCharacteristic;

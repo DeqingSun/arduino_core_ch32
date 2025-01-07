@@ -7,11 +7,6 @@
 
 #include "BLEUuid.h"
 
-extern "C" {
-    extern uint32_t tmos_rand( void );// Declare functions provided by the .a file
-    extern bStatus_t TMOS_TimerInit( pfnGetSysClock fnGetClock );
-}
-
 CH573BlePeripheral::CH573BlePeripheral():
     localName(NULL),
     advertisedServiceUuid(NULL),
@@ -19,11 +14,11 @@ CH573BlePeripheral::CH573BlePeripheral():
     numLocalAttributes(0),
     remoteAttributes(NULL),
     numRemoteAttributes(0),
-    genericAccessService("1800"),
-    deviceNameCharacteristic("2a00", BLERead, 19),
-    appearanceCharacteristic("2a01", BLERead, 2),
-    genericAttributeService("1801"),
-    servicesChangedCharacteristic("2a05", BLEIndicate, 4),
+    // genericAccessService("1800"),
+    // deviceNameCharacteristic("2a00", BLERead, 19),
+    // appearanceCharacteristic("2a01", BLERead, 2),
+    // genericAttributeService("1801"),
+    // servicesChangedCharacteristic("2a05", BLEIndicate, 4),
 
     remoteGenericAttributeService("1801"),
     remoteServicesChangedCharacteristic("2a05", BLEIndicate)
@@ -32,7 +27,7 @@ CH573BlePeripheral::CH573BlePeripheral():
     // tmos_rand();
     // // Initialize the timer
     // TMOS_TimerInit( NULL );
-
+    asm("nop");
 
 }
 
@@ -714,7 +709,7 @@ void CH573BlePeripheral::begin()
             initLocalAttributes();
         }
         
-        for (int i = 0; i < this-numLocalAttributes; i++) {
+        for (int i = 0; i < numLocalAttributes; i++) {
             BLELocalAttribute* localAttribute = localAttributes[i];
             if (localAttribute->type() == BLETypeCharacteristic) {
               BLECharacteristic* characteristic = (BLECharacteristic*)localAttribute;
@@ -853,13 +848,13 @@ void CH573BlePeripheral::initLocalAttributes() {
     //numAttributes will increase when a new BLELocalAttribute (Service, Characteris, etc) is created, whereever it is created
     localAttributes = (BLELocalAttribute**)malloc(BLELocalAttribute::numAttributes() * sizeof(BLELocalAttribute*));
 
-    localAttributes[0] = &genericAccessService;
-    localAttributes[1] = &deviceNameCharacteristic;
-    localAttributes[2] = &appearanceCharacteristic;
+    // localAttributes[0] = &genericAccessService;
+    // localAttributes[1] = &deviceNameCharacteristic;
+    // localAttributes[2] = &appearanceCharacteristic;
 
-    localAttributes[3] = &genericAttributeService;
-    localAttributes[4] = &servicesChangedCharacteristic;
+    // localAttributes[3] = &genericAttributeService;
+    // localAttributes[4] = &servicesChangedCharacteristic;
 
-    numLocalAttributes = 5;
+    numLocalAttributes = 0;
 }
 
