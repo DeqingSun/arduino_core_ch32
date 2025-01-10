@@ -65,6 +65,7 @@ class CH573BlePeripheral : public BLEDeviceEventListener, public BLECharacterist
     uint8_t scanRspData[31];
     uint8_t scanRspDataLen;
     gattAttribute_t *profileAttrTbl;
+    unsigned char *uuidTable;
 };
 
 

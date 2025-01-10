@@ -7,6 +7,8 @@
 
 #include "BLEUuid.h"
 
+extern gattServiceCBs_t simpleProfileCBs;
+
 CH573BlePeripheral::CH573BlePeripheral():
     localName(NULL),
     advertisedServiceUuid(NULL),
@@ -780,21 +782,135 @@ void CH573BlePeripheral::begin()
     GATTServApp_AddService(GATT_ALL_SERVICES);   // GATT attributes
     DevInfo_AddService();                        // Device Information Service
     //todo, edit here
-    SimpleProfile_AddService(GATT_ALL_SERVICES); // Simple GATT Profile
+    //SimpleProfile_AddService(GATT_ALL_SERVICES); // Simple GATT Profile
 
 
     {
+        //deal with 1 service for now
         int numberOfCharacteristics = 0;
+        int uuidMallocLength = 0;
         for (int i = 0; i < numLocalAttributes; i++) {
             BLELocalAttribute* localAttribute = localAttributes[i];
+            BLEUuid uuid = BLEUuid(localAttribute->uuid());
             if (localAttribute->type() == BLETypeCharacteristic) {
-              BLECharacteristic* characteristic = (BLECharacteristic*)localAttribute;
+              //BLECharacteristic* characteristic = (BLECharacteristic*)localAttribute;
               numberOfCharacteristics++;
+              uuidMallocLength += uuid.length();
+              uuidMallocLength += 1;    // 1 byte for the properties
+            }
+            if (localAttribute->type() == BLETypeService) {
+              //BLEService* service = (BLEService*)localAttribute;
+              uuidMallocLength += uuid.length();
+              uuidMallocLength += sizeof(gattAttrType_t);
             }
         }
         int gattAttributeTblSize =numLocalAttributes + numberOfCharacteristics;
         profileAttrTbl = (gattAttribute_t *)malloc(sizeof(gattAttribute_t) * gattAttributeTblSize);
-        
+        uuidTable = (unsigned char *)malloc(uuidMallocLength);
+
+        int profileAttrTblIndex = 0;
+        unsigned char* uuidTableWritePtr = uuidTable;
+
+        for (int i = 0; i < numLocalAttributes; i++) {
+            BLELocalAttribute* localAttribute = localAttributes[i];
+            BLEUuid uuid = BLEUuid(localAttribute->uuid());
+            if (localAttribute->type() == BLETypeCharacteristic) {
+                BLECharacteristic* characteristic = (BLECharacteristic*)localAttribute;
+                unsigned char *serviceCharacterUUID = (unsigned char *)uuidTableWritePtr;
+                memcpy(serviceCharacterUUID, uuid.data(), uuid.length());
+                uuidTableWritePtr += uuid.length();
+                unsigned char *charProperty = (unsigned char *)uuidTableWritePtr;
+                *charProperty = characteristic->properties();
+                uuidTableWritePtr += 1;
+                unsigned char characteristicPermission = 0;
+                if (characteristic->properties() & BLERead) {
+                    characteristicPermission |= GATT_PERMIT_READ;
+                }
+                if (characteristic->properties() & BLEWrite) {
+                    characteristicPermission |= GATT_PERMIT_WRITE;
+                }
+                if (characteristic->properties() & BLENotify) {
+                    //        // Initialize Client Characteristic Configuration attributes
+                    //GATTServApp_InitCharCfg( INVALID_CONNHANDLE, simpleProfileChar4Config );
+                }
+                //not do AUTHEN etc yet
+
+                gattAttribute_t *profileAttrTblOneEntry = &profileAttrTbl[profileAttrTblIndex];
+
+                profileAttrTblOneEntry->type.len = ATT_BT_UUID_SIZE;
+                uint8_t *characterUUIDPtr = (uint8_t *)characterUUID;
+                memcpy(&profileAttrTblOneEntry->type.uuid, &characterUUIDPtr, sizeof(const uint8_t *));
+                profileAttrTblOneEntry->permissions = GATT_PERMIT_READ;
+                ((unsigned char *)(&profileAttrTblOneEntry->handle))[0] = 0;
+                ((unsigned char *)(&profileAttrTblOneEntry->handle))[1] = 0;
+                memcpy(&profileAttrTblOneEntry->pValue, &charProperty, sizeof(uint8_t *));
+                // {{ATT_BT_UUID_SIZE, characterUUID},
+                // GATT_PERMIT_READ,
+                // 0,
+                // &simpleProfileChar1Props},
+
+                profileAttrTblIndex++;
+
+                profileAttrTblOneEntry = &profileAttrTbl[profileAttrTblIndex];
+
+                profileAttrTblOneEntry->type.len = uuid.length();
+                memcpy(&profileAttrTblOneEntry->type.uuid, &serviceCharacterUUID, sizeof(const uint8_t *));
+                profileAttrTblOneEntry->permissions = characteristicPermission;
+                ((unsigned char *)(&profileAttrTblOneEntry->handle))[0] = 0;
+                ((unsigned char *)(&profileAttrTblOneEntry->handle))[1] = 0;
+                unsigned char *charValuePtr = (unsigned char *)characteristic->_value;
+                memcpy(&profileAttrTblOneEntry->pValue, &charValuePtr, sizeof(uint8_t *));
+                // {
+                // {ATT_BT_UUID_SIZE, simpleProfilechar1UUID},
+                // GATT_PERMIT_READ | GATT_PERMIT_WRITE,
+                // 0,
+                // simpleProfileChar1},
+
+                profileAttrTblIndex++;
+
+            //   BLECharacteristic* characteristic = (BLECharacteristic*)localAttribute;
+            //   numberOfCharacteristics++;
+            //   uuidMallocLength += uuid.length();
+            }
+            if (localAttribute->type() == BLETypeService) {
+                unsigned char *serviceUUID = (unsigned char *)uuidTableWritePtr;
+                memcpy(serviceUUID, uuid.data(), uuid.length());
+                uuidTableWritePtr += uuid.length();
+                gattAttrType_t *seriveAttr = (gattAttrType_t *)uuidTableWritePtr;
+                seriveAttr->len = uuid.length();
+                //avoid alignment issue, the compiler tried to use sw that does not work with misaligned address, if assign directly
+                memcpy(&seriveAttr->uuid, &serviceUUID, sizeof(unsigned char *));
+                uuidTableWritePtr += sizeof(gattAttrType_t);
+
+                gattAttribute_t *profileAttrTblOneEntry = &profileAttrTbl[profileAttrTblIndex];
+
+                profileAttrTblOneEntry->type.len = ATT_BT_UUID_SIZE;
+                uint8_t *primaryServiceUUIDPtr = (uint8_t *)primaryServiceUUID;
+                memcpy(&profileAttrTblOneEntry->type.uuid, &primaryServiceUUIDPtr, sizeof(const uint8_t *));
+                profileAttrTblOneEntry->permissions = GATT_PERMIT_READ;
+                ((unsigned char *)(&profileAttrTblOneEntry->handle))[0] = 0;
+                ((unsigned char *)(&profileAttrTblOneEntry->handle))[1] = 0;
+                memcpy(&profileAttrTblOneEntry->pValue, &seriveAttr, sizeof(uint8_t *));
+                // profileAttrTbl[profileAttrTblIndex] = {
+                //     {ATT_BT_UUID_SIZE, primaryServiceUUID}, /* type */
+                //     GATT_PERMIT_READ,                       /* permissions */
+                //     0,                                      /* handle */
+                //     (uint8_t *)&seriveAttr        /* pValue */
+                // };
+                profileAttrTblIndex++;
+            }
+        }
+
+
+        uint8 status = SUCCESS;
+
+        // Register GATT attribute list and CBs with GATT Server App
+        status = GATTServApp_RegisterService( profileAttrTbl, profileAttrTblIndex,
+                                            GATT_MAX_ENCRYPT_KEY_SIZE,
+                                            &simpleProfileCBs );
+
+        //return ( status );
+
 
     }
     
