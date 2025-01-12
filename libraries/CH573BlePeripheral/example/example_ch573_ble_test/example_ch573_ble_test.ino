@@ -14,9 +14,9 @@ BLEService simpleService = BLEService("ffe0");
 // create one or more characteristics
 BLECharCharacteristic simpleProfilechar1 = BLECharCharacteristic("ffe1", BLERead | BLEWrite);
 BLECharCharacteristic simpleProfilechar2 = BLECharCharacteristic("ffe2", BLERead);
-BLECharCharacteristic simpleProfilechar3 = BLECharCharacteristic("ffe3", BLEWrite);
-BLECharCharacteristic simpleProfilechar4 = BLECharCharacteristic("ffe4", BLENotify);
-BLEFixedLengthCharacteristic simpleProfilechar5 = BLEFixedLengthCharacteristic("ffe5", BLERead, SIMPLEPROFILE_CHAR5_LEN);
+// BLECharCharacteristic simpleProfilechar3 = BLECharCharacteristic("ffe3", BLEWrite);
+// BLECharCharacteristic simpleProfilechar4 = BLECharCharacteristic("ffe4", BLENotify);
+// BLEFixedLengthCharacteristic simpleProfilechar5 = BLEFixedLengthCharacteristic("ffe5", BLERead, SIMPLEPROFILE_CHAR5_LEN);
 
 
 extern void CH57X_BLEInit(void);
@@ -51,9 +51,9 @@ void setup() {
   blePeripheral.addAttribute(simpleService);
   blePeripheral.addAttribute(simpleProfilechar1);
   blePeripheral.addAttribute(simpleProfilechar2);
-  blePeripheral.addAttribute(simpleProfilechar3);
-  blePeripheral.addAttribute(simpleProfilechar4);
-  blePeripheral.addAttribute(simpleProfilechar5);
+  // blePeripheral.addAttribute(simpleProfilechar3);
+  // blePeripheral.addAttribute(simpleProfilechar4);
+  // blePeripheral.addAttribute(simpleProfilechar5);
   //blePeripheral.addAttribute(descriptor);
 
   // set initial value

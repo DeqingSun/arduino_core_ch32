@@ -134,7 +134,7 @@ static uint8_t simpleProfileChar5UserDesp[] = "Characteristic 5\0";
  * Profile Attributes - Table
  */
 
-static gattAttribute_t simpleProfileAttrTbl[] = {
+gattAttribute_t simpleProfileAttrTbl[] = {
     // Simple Profile Service
     {
         {ATT_BT_UUID_SIZE, primaryServiceUUID}, /* type */
@@ -157,12 +157,12 @@ static gattAttribute_t simpleProfileAttrTbl[] = {
         0,
         simpleProfileChar1},
 
-    // Characteristic 1 User Description
-    {
-        {ATT_BT_UUID_SIZE, charUserDescUUID},
-        GATT_PERMIT_READ,
-        0,
-        simpleProfileChar1UserDesp},
+    // // Characteristic 1 User Description
+    // {
+    //     {ATT_BT_UUID_SIZE, charUserDescUUID},
+    //     GATT_PERMIT_READ,
+    //     0,
+    //     simpleProfileChar1UserDesp},
 
     // Characteristic 2 Declaration
     {
@@ -178,82 +178,82 @@ static gattAttribute_t simpleProfileAttrTbl[] = {
         0,
         simpleProfileChar2},
 
-    // Characteristic 2 User Description
-    {
-        {ATT_BT_UUID_SIZE, charUserDescUUID},
-        GATT_PERMIT_READ,
-        0,
-        simpleProfileChar2UserDesp},
+    // // Characteristic 2 User Description
+    // {
+    //     {ATT_BT_UUID_SIZE, charUserDescUUID},
+    //     GATT_PERMIT_READ,
+    //     0,
+    //     simpleProfileChar2UserDesp},
 
-    // Characteristic 3 Declaration
-    {
-        {ATT_BT_UUID_SIZE, characterUUID},
-        GATT_PERMIT_READ,
-        0,
-        &simpleProfileChar3Props},
+    // // Characteristic 3 Declaration
+    // {
+    //     {ATT_BT_UUID_SIZE, characterUUID},
+    //     GATT_PERMIT_READ,
+    //     0,
+    //     &simpleProfileChar3Props},
 
-    // Characteristic Value 3
-    {
-        {ATT_BT_UUID_SIZE, simpleProfilechar3UUID},
-        GATT_PERMIT_WRITE,
-        0,
-        simpleProfileChar3},
+    // // Characteristic Value 3
+    // {
+    //     {ATT_BT_UUID_SIZE, simpleProfilechar3UUID},
+    //     GATT_PERMIT_WRITE,
+    //     0,
+    //     simpleProfileChar3},
 
-    // Characteristic 3 User Description
-    {
-        {ATT_BT_UUID_SIZE, charUserDescUUID},
-        GATT_PERMIT_READ,
-        0,
-        simpleProfileChar3UserDesp},
+    // // // Characteristic 3 User Description
+    // // {
+    // //     {ATT_BT_UUID_SIZE, charUserDescUUID},
+    // //     GATT_PERMIT_READ,
+    // //     0,
+    // //     simpleProfileChar3UserDesp},
 
-    // Characteristic 4 Declaration
-    {
-        {ATT_BT_UUID_SIZE, characterUUID},
-        GATT_PERMIT_READ,
-        0,
-        &simpleProfileChar4Props},
+    // // Characteristic 4 Declaration
+    // {
+    //     {ATT_BT_UUID_SIZE, characterUUID},
+    //     GATT_PERMIT_READ,
+    //     0,
+    //     &simpleProfileChar4Props},
 
-    // Characteristic Value 4
-    {
-        {ATT_BT_UUID_SIZE, simpleProfilechar4UUID},
-        0,
-        0,
-        simpleProfileChar4},
+    // // Characteristic Value 4
+    // {
+    //     {ATT_BT_UUID_SIZE, simpleProfilechar4UUID},
+    //     0,
+    //     0,
+    //     simpleProfileChar4},
 
-    // Characteristic 4 configuration
-    {
-        {ATT_BT_UUID_SIZE, clientCharCfgUUID},
-        GATT_PERMIT_READ | GATT_PERMIT_WRITE,
-        0,
-        (uint8_t *)simpleProfileChar4Config},
+    // // Characteristic 4 configuration
+    // {
+    //     {ATT_BT_UUID_SIZE, clientCharCfgUUID},
+    //     GATT_PERMIT_READ | GATT_PERMIT_WRITE,
+    //     0,
+    //     (uint8_t *)simpleProfileChar4Config},
 
-    // Characteristic 4 User Description
-    {
-        {ATT_BT_UUID_SIZE, charUserDescUUID},
-        GATT_PERMIT_READ,
-        0,
-        simpleProfileChar4UserDesp},
+    // // // Characteristic 4 User Description
+    // // {
+    // //     {ATT_BT_UUID_SIZE, charUserDescUUID},
+    // //     GATT_PERMIT_READ,
+    // //     0,
+    // //     simpleProfileChar4UserDesp},
 
-    // Characteristic 5 Declaration
-    {
-        {ATT_BT_UUID_SIZE, characterUUID},
-        GATT_PERMIT_READ,
-        0,
-        &simpleProfileChar5Props},
+    // // Characteristic 5 Declaration
+    // {
+    //     {ATT_BT_UUID_SIZE, characterUUID},
+    //     GATT_PERMIT_READ,
+    //     0,
+    //     &simpleProfileChar5Props},
 
-    // Characteristic Value 5
-    {
-        {ATT_BT_UUID_SIZE, simpleProfilechar5UUID},
-        GATT_PERMIT_AUTHEN_READ,
-        0,
-        simpleProfileChar5},
+    // // Characteristic Value 5
+    // {
+    //     {ATT_BT_UUID_SIZE, simpleProfilechar5UUID},
+    //     GATT_PERMIT_AUTHEN_READ,
+    //     0,
+    //     simpleProfileChar5},
 
-    // Characteristic 5 User Description
-    {
-        {ATT_BT_UUID_SIZE, charUserDescUUID},
-        GATT_PERMIT_READ,
-        0,
-        simpleProfileChar5UserDesp},
+    // // Characteristic 5 User Description
+    // {
+    //     {ATT_BT_UUID_SIZE, charUserDescUUID},
+    //     GATT_PERMIT_READ,
+    //     0,
+    //     simpleProfileChar5UserDesp},
 };
 
 /*********************************************************************

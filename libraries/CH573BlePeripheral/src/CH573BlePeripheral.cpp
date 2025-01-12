@@ -8,6 +8,7 @@
 #include "BLEUuid.h"
 
 extern gattServiceCBs_t simpleProfileCBs;
+extern gattAttribute_t simpleProfileAttrTbl[];
 
 CH573BlePeripheral::CH573BlePeripheral():
     localName(NULL),
@@ -781,8 +782,7 @@ void CH573BlePeripheral::begin()
     GGS_AddService(GATT_ALL_SERVICES);           // GAP
     GATTServApp_AddService(GATT_ALL_SERVICES);   // GATT attributes
     DevInfo_AddService();                        // Device Information Service
-    //todo, edit here
-    //SimpleProfile_AddService(GATT_ALL_SERVICES); // Simple GATT Profile
+
 
 
     {
@@ -795,13 +795,13 @@ void CH573BlePeripheral::begin()
             if (localAttribute->type() == BLETypeCharacteristic) {
               //BLECharacteristic* characteristic = (BLECharacteristic*)localAttribute;
               numberOfCharacteristics++;
-              uuidMallocLength += uuid.length();
-              uuidMallocLength += 1;    // 1 byte for the properties
+              uuidMallocLength += (uuid.length()+3)&0xFC; // Upround to 4 bytes
+              uuidMallocLength += (1+3)&0xFC;    // 1 byte for the properties
             }
             if (localAttribute->type() == BLETypeService) {
               //BLEService* service = (BLEService*)localAttribute;
-              uuidMallocLength += uuid.length();
-              uuidMallocLength += sizeof(gattAttrType_t);
+              uuidMallocLength += (uuid.length()+3)&0xFC; // Upround to 4 bytes
+              uuidMallocLength += (sizeof(gattAttrType_t)+3)&0xFC; // Upround to 4 bytes
             }
         }
         int gattAttributeTblSize =numLocalAttributes + numberOfCharacteristics;
@@ -818,10 +818,10 @@ void CH573BlePeripheral::begin()
                 BLECharacteristic* characteristic = (BLECharacteristic*)localAttribute;
                 unsigned char *serviceCharacterUUID = (unsigned char *)uuidTableWritePtr;
                 memcpy(serviceCharacterUUID, uuid.data(), uuid.length());
-                uuidTableWritePtr += uuid.length();
+                uuidTableWritePtr += (uuid.length()+3)&0xFC; // Upround to 4 bytes
                 unsigned char *charProperty = (unsigned char *)uuidTableWritePtr;
                 *charProperty = characteristic->properties();
-                uuidTableWritePtr += 1;
+                uuidTableWritePtr += (1+3)&0xFC;
                 unsigned char characteristicPermission = 0;
                 if (characteristic->properties() & BLERead) {
                     characteristicPermission |= GATT_PERMIT_READ;
@@ -875,12 +875,12 @@ void CH573BlePeripheral::begin()
             if (localAttribute->type() == BLETypeService) {
                 unsigned char *serviceUUID = (unsigned char *)uuidTableWritePtr;
                 memcpy(serviceUUID, uuid.data(), uuid.length());
-                uuidTableWritePtr += uuid.length();
+                uuidTableWritePtr += (uuid.length()+3)&0xFC; // Upround to 4 bytes
                 gattAttrType_t *seriveAttr = (gattAttrType_t *)uuidTableWritePtr;
                 seriveAttr->len = uuid.length();
                 //avoid alignment issue, the compiler tried to use sw that does not work with misaligned address, if assign directly
                 memcpy(&seriveAttr->uuid, &serviceUUID, sizeof(unsigned char *));
-                uuidTableWritePtr += sizeof(gattAttrType_t);
+                uuidTableWritePtr += (sizeof(gattAttrType_t)+3)&0xFC;
 
                 gattAttribute_t *profileAttrTblOneEntry = &profileAttrTbl[profileAttrTblIndex];
 
@@ -901,19 +901,22 @@ void CH573BlePeripheral::begin()
             }
         }
 
+        memcpy(simpleProfileAttrTbl, profileAttrTbl, sizeof(gattAttribute_t) * 5);
 
-        uint8 status = SUCCESS;
 
-        // Register GATT attribute list and CBs with GATT Server App
-        status = GATTServApp_RegisterService( profileAttrTbl, profileAttrTblIndex,
-                                            GATT_MAX_ENCRYPT_KEY_SIZE,
-                                            &simpleProfileCBs );
+        // uint8 status = SUCCESS;
 
-        //return ( status );
+        // // Register GATT attribute list and CBs with GATT Server App
+        // status = GATTServApp_RegisterService( profileAttrTbl, profileAttrTblIndex,
+        //                                     GATT_MAX_ENCRYPT_KEY_SIZE,
+        //                                     &simpleProfileCBs );
+
+        // //return ( status );
 
 
     }
-    
+        //todo, edit here
+    SimpleProfile_AddService(GATT_ALL_SERVICES); // Simple GATT Profile
 
 
     // Set the GAP Characteristics
