@@ -15,8 +15,8 @@ BLEService simpleService = BLEService("ffe0");
 BLECharCharacteristic simpleProfilechar1 = BLECharCharacteristic("ffe1", BLERead | BLEWrite);
 BLECharCharacteristic simpleProfilechar2 = BLECharCharacteristic("ffe2", BLERead);
 // BLECharCharacteristic simpleProfilechar3 = BLECharCharacteristic("ffe3", BLEWrite);
-// BLECharCharacteristic simpleProfilechar4 = BLECharCharacteristic("ffe4", BLENotify);
-// BLEFixedLengthCharacteristic simpleProfilechar5 = BLEFixedLengthCharacteristic("ffe5", BLERead, SIMPLEPROFILE_CHAR5_LEN);
+// BLECharCharacteristic simpleProfilechar4 = BLECharCharacteristic("ffe4", BLENotify); //do it later
+// BLEFixedLengthCharacteristic simpleProfilechar5 = BLEFixedLengthCharacteristic("ffe5", BLERead, SIMPLEPROFILE_CHAR5_LEN);  //do it later
 
 
 extern void CH57X_BLEInit(void);
@@ -62,6 +62,8 @@ void setup() {
   GPIOA_ModeCfg(GPIO_Pin_5, GPIO_ModeOut_PP_5mA);
   GPIOA_ModeCfg(GPIO_Pin_15, GPIO_ModeOut_PP_5mA);
   GPIOA_ModeCfg(GPIO_Pin_4, GPIO_ModeOut_PP_5mA);
+
+  simpleProfilechar2.setValue(0x55);
 
   blePeripheral.begin();
 

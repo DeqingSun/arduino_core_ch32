@@ -264,17 +264,17 @@ static bStatus_t simpleProfile_ReadAttrCB(uint16_t connHandle, gattAttribute_t *
 static bStatus_t simpleProfile_WriteAttrCB(uint16_t connHandle, gattAttribute_t *pAttr,
                                            uint8_t *pValue, uint16_t len, uint16_t offset, uint8_t method);
 
-static void simpleProfile_HandleConnStatusCB(uint16_t connHandle, uint8_t changeType);
+void simpleProfile_HandleConnStatusCB(uint16_t connHandle, uint8_t changeType);
 
 /*********************************************************************
  * PROFILE CALLBACKS
  */
 // Simple Profile Service Callbacks
-gattServiceCBs_t simpleProfileCBs = {
-    simpleProfile_ReadAttrCB,  // Read callback function pointer
-    simpleProfile_WriteAttrCB, // Write callback function pointer
-    NULL                       // Authorization callback function pointer
-};
+// gattServiceCBs_t simpleProfileCBs = {
+//     simpleProfile_ReadAttrCB,  // Read callback function pointer
+//     simpleProfile_WriteAttrCB, // Write callback function pointer
+//     NULL                       // Authorization callback function pointer
+// };
 
 /*********************************************************************
  * PUBLIC FUNCTIONS
@@ -296,19 +296,19 @@ bStatus_t SimpleProfile_AddService(uint32_t services)
     uint8_t status = SUCCESS;
 
     // Initialize Client Characteristic Configuration attributes
-    GATTServApp_InitCharCfg(INVALID_CONNHANDLE, simpleProfileChar4Config);
+    //GATTServApp_InitCharCfg(INVALID_CONNHANDLE, simpleProfileChar4Config);
 
     // Register with Link DB to receive link status change callback
-    linkDB_Register(simpleProfile_HandleConnStatusCB);
+    //linkDB_Register(simpleProfile_HandleConnStatusCB);
 
-    if(services & SIMPLEPROFILE_SERVICE)
-    {
-        // Register GATT attribute list and CBs with GATT Server App
-        status = GATTServApp_RegisterService(simpleProfileAttrTbl,
-                                             GATT_NUM_ATTRS(simpleProfileAttrTbl),
-                                             GATT_MAX_ENCRYPT_KEY_SIZE,
-                                             &simpleProfileCBs);
-    }
+    // if(services & SIMPLEPROFILE_SERVICE)
+    // {
+    //     // Register GATT attribute list and CBs with GATT Server App
+    //     status = GATTServApp_RegisterService(simpleProfileAttrTbl,
+    //                                          GATT_NUM_ATTRS(simpleProfileAttrTbl),
+    //                                          GATT_MAX_ENCRYPT_KEY_SIZE,
+    //                                          &simpleProfileCBs);
+    // }
 
     return (status);
 }
@@ -492,213 +492,213 @@ bStatus_t simpleProfile_Notify(uint16_t connHandle, attHandleValueNoti_t *pNoti)
     return bleIncorrectMode;
 }
 
-/*********************************************************************
- * @fn          simpleProfile_ReadAttrCB
- *
- * @brief       Read an attribute.
- *
- * @param       connHandle - connection message was received on
- * @param       pAttr - pointer to attribute
- * @param       pValue - pointer to data to be read
- * @param       pLen - length of data to be read
- * @param       offset - offset of the first octet to be read
- * @param       maxLen - maximum length of data to be read
- *
- * @return      Success or Failure
- */
-static bStatus_t simpleProfile_ReadAttrCB(uint16_t connHandle, gattAttribute_t *pAttr,
-                                          uint8_t *pValue, uint16_t *pLen, uint16_t offset, uint16_t maxLen, uint8_t method)
-{
-    bStatus_t status = SUCCESS;
+// /*********************************************************************
+//  * @fn          simpleProfile_ReadAttrCB
+//  *
+//  * @brief       Read an attribute.
+//  *
+//  * @param       connHandle - connection message was received on
+//  * @param       pAttr - pointer to attribute
+//  * @param       pValue - pointer to data to be read
+//  * @param       pLen - length of data to be read
+//  * @param       offset - offset of the first octet to be read
+//  * @param       maxLen - maximum length of data to be read
+//  *
+//  * @return      Success or Failure
+//  */
+// static bStatus_t simpleProfile_ReadAttrCB(uint16_t connHandle, gattAttribute_t *pAttr,
+//                                           uint8_t *pValue, uint16_t *pLen, uint16_t offset, uint16_t maxLen, uint8_t method)
+// {
+//     bStatus_t status = SUCCESS;
 
-    // Make sure it's not a blob operation (no attributes in the profile are long)
-    if(offset > 0)
-    {
-        return (ATT_ERR_ATTR_NOT_LONG);
-    }
+//     // Make sure it's not a blob operation (no attributes in the profile are long)
+//     if(offset > 0)
+//     {
+//         return (ATT_ERR_ATTR_NOT_LONG);
+//     }
 
-    if(pAttr->type.len == ATT_BT_UUID_SIZE)
-    {
-        // 16-bit UUID
-        uint16_t uuid = BUILD_UINT16(pAttr->type.uuid[0], pAttr->type.uuid[1]);
-        switch(uuid)
-        {
-            // No need for "GATT_SERVICE_UUID" or "GATT_CLIENT_CHAR_CFG_UUID" cases;
-            // gattserverapp handles those reads
+//     if(pAttr->type.len == ATT_BT_UUID_SIZE)
+//     {
+//         // 16-bit UUID
+//         uint16_t uuid = BUILD_UINT16(pAttr->type.uuid[0], pAttr->type.uuid[1]);
+//         switch(uuid)
+//         {
+//             // No need for "GATT_SERVICE_UUID" or "GATT_CLIENT_CHAR_CFG_UUID" cases;
+//             // gattserverapp handles those reads
 
-            // characteristics 1 and 2 have read permissions
-            // characteritisc 3 does not have read permissions; therefore it is not
-            //   included here
-            // characteristic 4 does not have read permissions, but because it
-            //   can be sent as a notification, it is included here
-            case SIMPLEPROFILE_CHAR1_UUID:
-                if(maxLen > SIMPLEPROFILE_CHAR1_LEN)
-                {
-                    *pLen = SIMPLEPROFILE_CHAR1_LEN;
-                }
-                else
-                {
-                    *pLen = maxLen;
-                }
-                tmos_memcpy(pValue, pAttr->pValue, *pLen);
-                break;
+//             // characteristics 1 and 2 have read permissions
+//             // characteritisc 3 does not have read permissions; therefore it is not
+//             //   included here
+//             // characteristic 4 does not have read permissions, but because it
+//             //   can be sent as a notification, it is included here
+//             case SIMPLEPROFILE_CHAR1_UUID:
+//                 if(maxLen > SIMPLEPROFILE_CHAR1_LEN)
+//                 {
+//                     *pLen = SIMPLEPROFILE_CHAR1_LEN;
+//                 }
+//                 else
+//                 {
+//                     *pLen = maxLen;
+//                 }
+//                 tmos_memcpy(pValue, pAttr->pValue, *pLen);
+//                 break;
 
-            case SIMPLEPROFILE_CHAR2_UUID:
-                if(maxLen > SIMPLEPROFILE_CHAR2_LEN)
-                {
-                    *pLen = SIMPLEPROFILE_CHAR2_LEN;
-                }
-                else
-                {
-                    *pLen = maxLen;
-                }
-                tmos_memcpy(pValue, pAttr->pValue, *pLen);
-                break;
+//             case SIMPLEPROFILE_CHAR2_UUID:
+//                 if(maxLen > SIMPLEPROFILE_CHAR2_LEN)
+//                 {
+//                     *pLen = SIMPLEPROFILE_CHAR2_LEN;
+//                 }
+//                 else
+//                 {
+//                     *pLen = maxLen;
+//                 }
+//                 tmos_memcpy(pValue, pAttr->pValue, *pLen);
+//                 break;
 
-            case SIMPLEPROFILE_CHAR4_UUID:
-                if(maxLen > SIMPLEPROFILE_CHAR4_LEN)
-                {
-                    *pLen = SIMPLEPROFILE_CHAR4_LEN;
-                }
-                else
-                {
-                    *pLen = maxLen;
-                }
-                tmos_memcpy(pValue, pAttr->pValue, *pLen);
-                break;
+//             case SIMPLEPROFILE_CHAR4_UUID:
+//                 if(maxLen > SIMPLEPROFILE_CHAR4_LEN)
+//                 {
+//                     *pLen = SIMPLEPROFILE_CHAR4_LEN;
+//                 }
+//                 else
+//                 {
+//                     *pLen = maxLen;
+//                 }
+//                 tmos_memcpy(pValue, pAttr->pValue, *pLen);
+//                 break;
 
-            case SIMPLEPROFILE_CHAR5_UUID:
-                if(maxLen > SIMPLEPROFILE_CHAR5_LEN)
-                {
-                    *pLen = SIMPLEPROFILE_CHAR5_LEN;
-                }
-                else
-                {
-                    *pLen = maxLen;
-                }
-                tmos_memcpy(pValue, pAttr->pValue, *pLen);
-                break;
+//             case SIMPLEPROFILE_CHAR5_UUID:
+//                 if(maxLen > SIMPLEPROFILE_CHAR5_LEN)
+//                 {
+//                     *pLen = SIMPLEPROFILE_CHAR5_LEN;
+//                 }
+//                 else
+//                 {
+//                     *pLen = maxLen;
+//                 }
+//                 tmos_memcpy(pValue, pAttr->pValue, *pLen);
+//                 break;
 
-            default:
-                // Should never get here! (characteristics 3 and 4 do not have read permissions)
-                *pLen = 0;
-                status = ATT_ERR_ATTR_NOT_FOUND;
-                break;
-        }
-    }
-    else
-    {
-        // 128-bit UUID
-        *pLen = 0;
-        status = ATT_ERR_INVALID_HANDLE;
-    }
+//             default:
+//                 // Should never get here! (characteristics 3 and 4 do not have read permissions)
+//                 *pLen = 0;
+//                 status = ATT_ERR_ATTR_NOT_FOUND;
+//                 break;
+//         }
+//     }
+//     else
+//     {
+//         // 128-bit UUID
+//         *pLen = 0;
+//         status = ATT_ERR_INVALID_HANDLE;
+//     }
 
-    return (status);
-}
+//     return (status);
+// }
 
-/*********************************************************************
- * @fn      simpleProfile_WriteAttrCB
- *
- * @brief   Validate attribute data prior to a write operation
- *
- * @param   connHandle - connection message was received on
- * @param   pAttr - pointer to attribute
- * @param   pValue - pointer to data to be written
- * @param   len - length of data
- * @param   offset - offset of the first octet to be written
- *
- * @return  Success or Failure
- */
-static bStatus_t simpleProfile_WriteAttrCB(uint16_t connHandle, gattAttribute_t *pAttr,
-                                           uint8_t *pValue, uint16_t len, uint16_t offset, uint8_t method)
-{
-    bStatus_t status = SUCCESS;
-    uint8_t   notifyApp = 0xFF;
+// /*********************************************************************
+//  * @fn      simpleProfile_WriteAttrCB
+//  *
+//  * @brief   Validate attribute data prior to a write operation
+//  *
+//  * @param   connHandle - connection message was received on
+//  * @param   pAttr - pointer to attribute
+//  * @param   pValue - pointer to data to be written
+//  * @param   len - length of data
+//  * @param   offset - offset of the first octet to be written
+//  *
+//  * @return  Success or Failure
+//  */
+// static bStatus_t simpleProfile_WriteAttrCB(uint16_t connHandle, gattAttribute_t *pAttr,
+//                                            uint8_t *pValue, uint16_t len, uint16_t offset, uint8_t method)
+// {
+//     bStatus_t status = SUCCESS;
+//     uint8_t   notifyApp = 0xFF;
 
-    // If attribute permissions require authorization to write, return error
-    if(gattPermitAuthorWrite(pAttr->permissions))
-    {
-        // Insufficient authorization
-        return (ATT_ERR_INSUFFICIENT_AUTHOR);
-    }
+//     // If attribute permissions require authorization to write, return error
+//     if(gattPermitAuthorWrite(pAttr->permissions))
+//     {
+//         // Insufficient authorization
+//         return (ATT_ERR_INSUFFICIENT_AUTHOR);
+//     }
 
-    if(pAttr->type.len == ATT_BT_UUID_SIZE)
-    {
-        // 16-bit UUID
-        uint16_t uuid = BUILD_UINT16(pAttr->type.uuid[0], pAttr->type.uuid[1]);
-        switch(uuid)
-        {
-            case SIMPLEPROFILE_CHAR1_UUID:
-                //Validate the value
-                // Make sure it's not a blob oper
-                if(offset == 0)
-                {
-                    if(len > SIMPLEPROFILE_CHAR1_LEN)
-                    {
-                        status = ATT_ERR_INVALID_VALUE_SIZE;
-                    }
-                }
-                else
-                {
-                    status = ATT_ERR_ATTR_NOT_LONG;
-                }
+//     if(pAttr->type.len == ATT_BT_UUID_SIZE)
+//     {
+//         // 16-bit UUID
+//         uint16_t uuid = BUILD_UINT16(pAttr->type.uuid[0], pAttr->type.uuid[1]);
+//         switch(uuid)
+//         {
+//             case SIMPLEPROFILE_CHAR1_UUID:
+//                 //Validate the value
+//                 // Make sure it's not a blob oper
+//                 if(offset == 0)
+//                 {
+//                     if(len > SIMPLEPROFILE_CHAR1_LEN)
+//                     {
+//                         status = ATT_ERR_INVALID_VALUE_SIZE;
+//                     }
+//                 }
+//                 else
+//                 {
+//                     status = ATT_ERR_ATTR_NOT_LONG;
+//                 }
 
-                //Write the value
-                if(status == SUCCESS)
-                {
-                    tmos_memcpy(pAttr->pValue, pValue, SIMPLEPROFILE_CHAR1_LEN);
-                    notifyApp = SIMPLEPROFILE_CHAR1;
-                }
-                break;
+//                 //Write the value
+//                 if(status == SUCCESS)
+//                 {
+//                     tmos_memcpy(pAttr->pValue, pValue, SIMPLEPROFILE_CHAR1_LEN);
+//                     notifyApp = SIMPLEPROFILE_CHAR1;
+//                 }
+//                 break;
 
-            case SIMPLEPROFILE_CHAR3_UUID:
-                //Validate the value
-                // Make sure it's not a blob oper
-                if(offset == 0)
-                {
-                    if(len > SIMPLEPROFILE_CHAR3_LEN)
-                    {
-                        status = ATT_ERR_INVALID_VALUE_SIZE;
-                    }
-                }
-                else
-                {
-                    status = ATT_ERR_ATTR_NOT_LONG;
-                }
+//             case SIMPLEPROFILE_CHAR3_UUID:
+//                 //Validate the value
+//                 // Make sure it's not a blob oper
+//                 if(offset == 0)
+//                 {
+//                     if(len > SIMPLEPROFILE_CHAR3_LEN)
+//                     {
+//                         status = ATT_ERR_INVALID_VALUE_SIZE;
+//                     }
+//                 }
+//                 else
+//                 {
+//                     status = ATT_ERR_ATTR_NOT_LONG;
+//                 }
 
-                //Write the value
-                if(status == SUCCESS)
-                {
-                    tmos_memcpy(pAttr->pValue, pValue, SIMPLEPROFILE_CHAR3_LEN);
-                    notifyApp = SIMPLEPROFILE_CHAR3;
-                }
-                break;
+//                 //Write the value
+//                 if(status == SUCCESS)
+//                 {
+//                     tmos_memcpy(pAttr->pValue, pValue, SIMPLEPROFILE_CHAR3_LEN);
+//                     notifyApp = SIMPLEPROFILE_CHAR3;
+//                 }
+//                 break;
 
-            case GATT_CLIENT_CHAR_CFG_UUID:
-                status = GATTServApp_ProcessCCCWriteReq(connHandle, pAttr, pValue, len,
-                                                        offset, GATT_CLIENT_CFG_NOTIFY);
-                break;
+//             case GATT_CLIENT_CHAR_CFG_UUID:
+//                 status = GATTServApp_ProcessCCCWriteReq(connHandle, pAttr, pValue, len,
+//                                                         offset, GATT_CLIENT_CFG_NOTIFY);
+//                 break;
 
-            default:
-                // Should never get here! (characteristics 2 and 4 do not have write permissions)
-                status = ATT_ERR_ATTR_NOT_FOUND;
-                break;
-        }
-    }
-    else
-    {
-        // 128-bit UUID
-        status = ATT_ERR_INVALID_HANDLE;
-    }
+//             default:
+//                 // Should never get here! (characteristics 2 and 4 do not have write permissions)
+//                 status = ATT_ERR_ATTR_NOT_FOUND;
+//                 break;
+//         }
+//     }
+//     else
+//     {
+//         // 128-bit UUID
+//         status = ATT_ERR_INVALID_HANDLE;
+//     }
 
-    // If a charactersitic value changed then callback function to notify application of change
-    if((notifyApp != 0xFF) && simpleProfile_AppCBs && simpleProfile_AppCBs->pfnSimpleProfileChange)
-    {
-        simpleProfile_AppCBs->pfnSimpleProfileChange(notifyApp, pValue, len);
-    }
+//     // If a charactersitic value changed then callback function to notify application of change
+//     if((notifyApp != 0xFF) && simpleProfile_AppCBs && simpleProfile_AppCBs->pfnSimpleProfileChange)
+//     {
+//         simpleProfile_AppCBs->pfnSimpleProfileChange(notifyApp, pValue, len);
+//     }
 
-    return (status);
-}
+//     return (status);
+// }
 
 /*********************************************************************
  * @fn          simpleProfile_HandleConnStatusCB
@@ -710,7 +710,7 @@ static bStatus_t simpleProfile_WriteAttrCB(uint16_t connHandle, gattAttribute_t 
  *
  * @return      none
  */
-static void simpleProfile_HandleConnStatusCB(uint16_t connHandle, uint8_t changeType)
+void simpleProfile_HandleConnStatusCB(uint16_t connHandle, uint8_t changeType)
 {
     // Make sure this is not loopback connection
     if(connHandle != LOOPBACK_CONNHANDLE)
