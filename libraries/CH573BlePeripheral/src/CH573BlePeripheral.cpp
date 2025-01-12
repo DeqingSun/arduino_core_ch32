@@ -3,7 +3,6 @@
 #include "config.h"
 #include "HAL.h"
 #include "src/Profile/include/gattprofile.h"
-#include "peripheral.h"
 
 #include "BLEUuid.h"
 
@@ -80,7 +79,6 @@ void CH573BlePeripheral::setLocalName(const char *_localName)
 #include "CONFIG.h"
 #include "src/Profile/include/devinfoservice.h"
 #include "src/Profile/include/gattprofile.h"
-#include "peripheral.h"
 
 /*********************************************************************
  * MACROS
