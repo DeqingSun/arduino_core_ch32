@@ -17,6 +17,7 @@ BLECharCharacteristic simpleProfilechar2 = BLECharCharacteristic("ffe2", BLERead
 // BLECharCharacteristic simpleProfilechar4 = BLECharCharacteristic("ffe4", BLENotify); //do it later
 // BLEFixedLengthCharacteristic simpleProfilechar5 = BLEFixedLengthCharacteristic("ffe5", BLERead, SIMPLEPROFILE_CHAR5_LEN);  //do it later
 
+tmosTaskID  loop_task_id = INVALID_TASK_ID;
 
 extern void CH57X_BLEInit(void);
 
@@ -34,6 +35,25 @@ void Main_Circulation()
     {
         TMOS_SystemProcess();
     }
+}
+
+
+#define LOOP_TASK_TMOS_EVT_TEST_1   (0x0001<<0)
+
+//task的event处理回调函数,需要在注册task时候,传进去
+static uint16_t loop_task_process_event( uint8_t task_id, uint16_t events ) 
+{
+ 
+    //event 处理
+    if(events & LOOP_TASK_TMOS_EVT_TEST_1) 
+    {
+        loop();
+        tmos_start_task( loop_task_id, LOOP_TASK_TMOS_EVT_TEST_1, MS1_TO_SYSTEM_TIME(100) ); //100ms
+        return (events ^ LOOP_TASK_TMOS_EVT_TEST_1); //异或的方式清除该事件运行标志，并返回未运行的事件标志       
+    }
+   
+    // Discard unknown events
+    return 0;
 }
 
 
@@ -66,6 +86,9 @@ void setup() {
 
   blePeripheral.begin();
 
+  loop_task_id = TMOS_ProcessEventRegister( loop_task_process_event );
+  tmos_set_event( loop_task_id, LOOP_TASK_TMOS_EVT_TEST_1 );
+
   // CH57X_BLEInit();
   //   HAL_Init();
   //   GAPRole_PeripheralInit();
@@ -79,13 +102,13 @@ long pastMillis = 0;
 void loop() {
   // put your main code here, to run repeatedly:
 
-        long millisNow = millis();
+        //long millisNow = millis();
 
-        if ((millisNow-pastMillis)>=1000){
-          pastMillis =  millisNow;
-          R32_PA_OUT^=(1<<4);
-          R32_PA_OUT^=(1<<5);
-        }
+        //if ((millisNow-pastMillis)>=1000){
+          //pastMillis =  millisNow;
+          //R32_PA_OUT^=(1<<4);
+          //R32_PA_OUT^=(1<<5);
+        //}
 
 
         // GPIOA_ResetBits(GPIO_Pin_4);
@@ -95,4 +118,9 @@ void loop() {
         //tx_on_PA4(0x55);
         //tx_on_PA4(0xF5);
         //tx_on_PA4(millisNow);
+  if (simpleProfilechar1.value() & 1){
+    R32_PA_OUT|=(1<<4);
+  }else{
+    R32_PA_OUT&=~(1<<4);
+  }
 }

@@ -669,13 +669,13 @@ void CH573BlePeripheral::begin()
     // Initialize the BLE stack
     CH57X_BLEInit();
     // Initialize the hardware abstraction layer
-    HAL_Init();
+    HAL_Init(); //halTaskID = 2
     // Initialize the GAP role
     // The function is inside the BLE stack binary library
     GAPRole_PeripheralInit();
     // Initialize the peripheral
     //Peripheral_Init();
-    Peripheral_TaskID = TMOS_ProcessEventRegister(Peripheral_ProcessEvent);
+    Peripheral_TaskID = TMOS_ProcessEventRegister(Peripheral_ProcessEvent); //Peripheral_TaskID = 11
 
     // Setup the GAP Peripheral Role Profile
     {
