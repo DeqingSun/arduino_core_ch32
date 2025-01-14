@@ -772,7 +772,7 @@ void CH573BlePeripheral::begin()
     peripheralInitConnItem(&peripheralConnList);
 
     // Register callback with SimpleGATTprofile
-    SimpleProfile_RegisterAppCBs(&Peripheral_SimpleProfileCBs);
+    //SimpleProfile_RegisterAppCBs(&Peripheral_SimpleProfileCBs);
 
     // Register receive scan request callback
     GAPRole_BroadcasterSetCB(&Broadcaster_BroadcasterCBs);

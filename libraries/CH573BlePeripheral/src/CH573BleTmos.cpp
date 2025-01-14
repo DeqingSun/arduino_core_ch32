@@ -146,6 +146,7 @@ bStatus_t ch573BleTmosProfile_WriteAttrCB(uint16_t connHandle, gattAttribute_t *
     // {
     //     simpleProfile_AppCBs->pfnSimpleProfileChange(notifyApp, pValue, len);
     // }
+    // In this code, we do not really use simpleProfile_AppCBs, just callback in our own way when needed
 
     return (status);
 }
@@ -298,6 +299,10 @@ void CH573BleTmos::begin(unsigned char _advertisementDataSize,
             uuidMallocLength += (uuid.length()+3)&0xFC; // Upround to 4 bytes
             uuidMallocLength += (sizeof(gattAttrType_t)+3)&0xFC; // Upround to 4 bytes
         }
+        if (localAttribute->type() == BLETypeDescriptor) {
+            //BLEDescriptor* descriptor = (BLEDescriptor*)localAttribute;
+            //uuid is fixed
+        }
     }
     profileAttrTblLength = numLocalAttributes + numberOfCharacteristics;
     profileAttrTbl = (gattAttribute_t *)malloc(sizeof(gattAttribute_t) * profileAttrTblLength);
@@ -398,6 +403,25 @@ void CH573BleTmos::begin(unsigned char _advertisementDataSize,
             //     0,                                      /* handle */
             //     (uint8_t *)&seriveAttr        /* pValue */
             // };
+            profileAttrTblIndex++;
+        }
+        if (localAttribute->type() == BLETypeDescriptor) {
+            BLEDescriptor* descriptor = (BLEDescriptor*)localAttribute;
+            gattAttribute_t *profileAttrTblOneEntry = &profileAttrTbl[profileAttrTblIndex];
+
+            profileAttrTblOneEntry->type.len = ATT_BT_UUID_SIZE;
+            uint8_t *charUserDescUUIDPtr = (uint8_t *)charUserDescUUID;
+            memcpy(&profileAttrTblOneEntry->type.uuid, &charUserDescUUIDPtr, sizeof(const uint8_t *));
+            profileAttrTblOneEntry->permissions = GATT_PERMIT_READ;
+            ((unsigned char *)(&profileAttrTblOneEntry->handle))[0] = 0;
+            ((unsigned char *)(&profileAttrTblOneEntry->handle))[1] = 0;
+            char *descriptorValue = (char *)descriptor->value();
+            memcpy(&profileAttrTblOneEntry->pValue, &descriptorValue, descriptor->valueLength());
+            //     {ATT_BT_UUID_SIZE, charUserDescUUID},
+            //     GATT_PERMIT_READ,
+            //     0,
+            //     simpleProfileChar1UserDesp},
+
             profileAttrTblIndex++;
         }
     }

@@ -92,7 +92,7 @@ extern bStatus_t SimpleProfile_AddService(uint32_t services);
  *
  *    appCallbacks - pointer to application callbacks.
  */
-extern bStatus_t SimpleProfile_RegisterAppCBs(simpleProfileCBs_t *appCallbacks);
+//extern bStatus_t SimpleProfile_RegisterAppCBs(simpleProfileCBs_t *appCallbacks);
 
 /*
  * SimpleProfile_SetParameter - Set a Simple GATT Profile parameter.

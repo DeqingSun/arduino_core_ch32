@@ -12,6 +12,7 @@ BLEService simpleService = BLEService("ffe0");
 
 // create one or more characteristics
 BLECharCharacteristic simpleProfilechar1 = BLECharCharacteristic("ffe1", BLERead | BLEWrite);
+BLEDescriptor descriptorChar1 = BLEDescriptor("2901", "characteristic 1");
 BLECharCharacteristic simpleProfilechar2 = BLECharCharacteristic("ffe2", BLERead);
 // BLECharCharacteristic simpleProfilechar3 = BLECharCharacteristic("ffe3", BLEWrite);
 // BLECharCharacteristic simpleProfilechar4 = BLECharCharacteristic("ffe4", BLENotify); //do it later
@@ -69,6 +70,7 @@ void setup() {
     // add attributes (services, characteristics, descriptors) to peripheral
   blePeripheral.addAttribute(simpleService);
   blePeripheral.addAttribute(simpleProfilechar1);
+  blePeripheral.addAttribute(descriptorChar1);
   blePeripheral.addAttribute(simpleProfilechar2);
   // blePeripheral.addAttribute(simpleProfilechar3);
   // blePeripheral.addAttribute(simpleProfilechar4);

@@ -7,7 +7,7 @@
 // #include "BLEBondStore.h"
 // #include "BLECentral.h"
 // #include "BLEConstantCharacteristic.h"
-// #include "BLEDescriptor.h"
+#include "BLEDescriptor.h"
 #include "BLEDevice.h"
 // #include "BLEFixedLengthCharacteristic.h"
 #include "BLELocalAttribute.h"

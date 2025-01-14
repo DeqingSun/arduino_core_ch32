@@ -4,6 +4,7 @@
 #include <Arduino.h>
 
 #include "BLEDevice.h"
+#include "BLEDescriptor.h"
 
 #include "CH57xBLE_LIB.h"
 

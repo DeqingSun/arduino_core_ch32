@@ -70,7 +70,7 @@ const uint8_t simpleProfilechar5UUID[ATT_BT_UUID_SIZE] = {
  * LOCAL VARIABLES
  */
 
-static simpleProfileCBs_t *simpleProfile_AppCBs = NULL;
+//static simpleProfileCBs_t *simpleProfile_AppCBs = NULL;
 
 /*********************************************************************
  * Profile Attributes - variables
@@ -313,29 +313,29 @@ bStatus_t SimpleProfile_AddService(uint32_t services)
     return (status);
 }
 
-/*********************************************************************
- * @fn      SimpleProfile_RegisterAppCBs
- *
- * @brief   Registers the application callback function. Only call
- *          this function once.
- *
- * @param   callbacks - pointer to application callbacks.
- *
- * @return  SUCCESS or bleAlreadyInRequestedMode
- */
-bStatus_t SimpleProfile_RegisterAppCBs(simpleProfileCBs_t *appCallbacks)
-{
-    if(appCallbacks)
-    {
-        simpleProfile_AppCBs = appCallbacks;
+// /*********************************************************************
+//  * @fn      SimpleProfile_RegisterAppCBs
+//  *
+//  * @brief   Registers the application callback function. Only call
+//  *          this function once.
+//  *
+//  * @param   callbacks - pointer to application callbacks.
+//  *
+//  * @return  SUCCESS or bleAlreadyInRequestedMode
+//  */
+// bStatus_t SimpleProfile_RegisterAppCBs(simpleProfileCBs_t *appCallbacks)
+// {
+//     if(appCallbacks)
+//     {
+//         simpleProfile_AppCBs = appCallbacks;
 
-        return (SUCCESS);
-    }
-    else
-    {
-        return (bleAlreadyInRequestedMode);
-    }
-}
+//         return (SUCCESS);
+//     }
+//     else
+//     {
+//         return (bleAlreadyInRequestedMode);
+//     }
+// }
 
 /*********************************************************************
  * @fn      SimpleProfile_SetParameter
