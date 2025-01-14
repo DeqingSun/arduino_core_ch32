@@ -39,6 +39,11 @@
 // Company Identifier: WCH
 #define WCH_COMPANY_ID                       0x07D7
 
+struct ProfileAttrTableFastLutEntry {
+    gattAttribute_t *profileAttrPtr;
+    uint8_t profileAttrValueLen;
+};
+
 class CH573BleTmos : public BLEDevice
 {
   friend class CH573BlePeripheral;
@@ -75,14 +80,14 @@ public:
 
     virtual ~CH573BleTmos();
 
-    virtual void begin(unsigned char advertisementDataSize,
-                BLEEirData *advertisementData,
-                unsigned char scanDataSize,
-                BLEEirData *scanData,
-                BLELocalAttribute** localAttributes,
-                unsigned char numLocalAttributes,
-                BLERemoteAttribute** remoteAttributes,
-                unsigned char numRemoteAttributes);
+    virtual void begin(unsigned char _advertisementDataSize,
+                BLEEirData *_advertisementData,
+                unsigned char _scanDataSize,
+                BLEEirData *_scanData,
+                BLELocalAttribute** _localAttributes,
+                unsigned char _numLocalAttributes,
+                BLERemoteAttribute** _remoteAttributes,
+                unsigned char _numRemoteAttributes);
 
 //     virtual void poll();
 
@@ -123,6 +128,9 @@ public:
     int profileAttrTblLength;
     unsigned char *uuidTable;
     int uuidTableLength;
+
+    BLELocalAttribute**            localAttributes;
+    unsigned char                  numLocalAttributes;
 
 
 //     bool                              _hasScanData;

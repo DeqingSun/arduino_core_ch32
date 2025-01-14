@@ -9,9 +9,9 @@
 /*********************************************************************
  * LOCAL FUNCTIONS
  */
-static bStatus_t ch573BleTmosProfile_ReadAttrCB(uint16_t connHandle, gattAttribute_t *pAttr,
+bStatus_t ch573BleTmosProfile_ReadAttrCB(uint16_t connHandle, gattAttribute_t *pAttr,
                                           uint8_t *pValue, uint16_t *pLen, uint16_t offset, uint16_t maxLen, uint8_t method);
-static bStatus_t ch573BleTmosProfile_WriteAttrCB(uint16_t connHandle, gattAttribute_t *pAttr,
+bStatus_t ch573BleTmosProfile_WriteAttrCB(uint16_t connHandle, gattAttribute_t *pAttr,
                                            uint8_t *pValue, uint16_t len, uint16_t offset, uint8_t method);
 
 /*********************************************************************
@@ -23,6 +23,10 @@ gattServiceCBs_t ch573BleTmosProfileCBs = {
     ch573BleTmosProfile_WriteAttrCB, // Write callback function pointer
     NULL                       // Authorization callback function pointer
 };
+
+CH573BleTmos *ch573TmosInstance = NULL;
+struct ProfileAttrTableFastLutEntry* profileAttrTableFastLut;
+int profileAttrTableFastLutLength;
 
 
 /*********************************************************************
@@ -39,7 +43,7 @@ gattServiceCBs_t ch573BleTmosProfileCBs = {
  *
  * @return      Success or Failure
  */
-static bStatus_t ch573BleTmosProfile_ReadAttrCB(uint16_t connHandle, gattAttribute_t *pAttr,
+bStatus_t ch573BleTmosProfile_ReadAttrCB(uint16_t connHandle, gattAttribute_t *pAttr,
                                           uint8_t *pValue, uint16_t *pLen, uint16_t offset, uint16_t maxLen, uint8_t method)
 {
     bStatus_t status = SUCCESS;
@@ -50,80 +54,27 @@ static bStatus_t ch573BleTmosProfile_ReadAttrCB(uint16_t connHandle, gattAttribu
         return (ATT_ERR_ATTR_NOT_LONG);
     }
 
-    if(pAttr->type.len == ATT_BT_UUID_SIZE)
-    {
-        // 16-bit UUID
-        uint16_t uuid = BUILD_UINT16(pAttr->type.uuid[0], pAttr->type.uuid[1]);
-        switch(uuid)
-        {
-            // No need for "GATT_SERVICE_UUID" or "GATT_CLIENT_CHAR_CFG_UUID" cases;
-            // gattserverapp handles those reads
-
-            // characteristics 1 and 2 have read permissions
-            // characteritisc 3 does not have read permissions; therefore it is not
-            //   included here
-            // characteristic 4 does not have read permissions, but because it
-            //   can be sent as a notification, it is included here
-            case SIMPLEPROFILE_CHAR1_UUID:
-                if(maxLen > SIMPLEPROFILE_CHAR1_LEN)
-                {
-                    *pLen = SIMPLEPROFILE_CHAR1_LEN;
-                }
-                else
-                {
+    //check permission from pAttr
+    if (pAttr->permissions & GATT_PERMIT_READ) {
+        int i;
+        for (i = 0; i < profileAttrTableFastLutLength; i++) {
+            if (profileAttrTableFastLut[i].profileAttrPtr == pAttr) {
+                if (profileAttrTableFastLut[i].profileAttrValueLen > maxLen) {
                     *pLen = maxLen;
+                } else {
+                    *pLen = profileAttrTableFastLut[i].profileAttrValueLen;
                 }
                 tmos_memcpy(pValue, pAttr->pValue, *pLen);
                 break;
-
-            case SIMPLEPROFILE_CHAR2_UUID:
-                if(maxLen > SIMPLEPROFILE_CHAR2_LEN)
-                {
-                    *pLen = SIMPLEPROFILE_CHAR2_LEN;
-                }
-                else
-                {
-                    *pLen = maxLen;
-                }
-                tmos_memcpy(pValue, pAttr->pValue, *pLen);
-                break;
-
-            case SIMPLEPROFILE_CHAR4_UUID:
-                if(maxLen > SIMPLEPROFILE_CHAR4_LEN)
-                {
-                    *pLen = SIMPLEPROFILE_CHAR4_LEN;
-                }
-                else
-                {
-                    *pLen = maxLen;
-                }
-                tmos_memcpy(pValue, pAttr->pValue, *pLen);
-                break;
-
-            case SIMPLEPROFILE_CHAR5_UUID:
-                if(maxLen > SIMPLEPROFILE_CHAR5_LEN)
-                {
-                    *pLen = SIMPLEPROFILE_CHAR5_LEN;
-                }
-                else
-                {
-                    *pLen = maxLen;
-                }
-                tmos_memcpy(pValue, pAttr->pValue, *pLen);
-                break;
-
-            default:
-                // Should never get here! (characteristics 3 and 4 do not have read permissions)
-                *pLen = 0;
-                status = ATT_ERR_ATTR_NOT_FOUND;
-                break;
+            }
         }
-    }
-    else
-    {
-        // 128-bit UUID
+        if (i == profileAttrTableFastLutLength) {
+            *pLen = 0;
+            status = ATT_ERR_ATTR_NOT_FOUND;
+        }
+    } else {
         *pLen = 0;
-        status = ATT_ERR_INVALID_HANDLE;
+        return (ATT_ERR_READ_NOT_PERMITTED);
     }
 
     return (status);
@@ -142,7 +93,7 @@ static bStatus_t ch573BleTmosProfile_ReadAttrCB(uint16_t connHandle, gattAttribu
  *
  * @return  Success or Failure
  */
-static bStatus_t ch573BleTmosProfile_WriteAttrCB(uint16_t connHandle, gattAttribute_t *pAttr,
+bStatus_t ch573BleTmosProfile_WriteAttrCB(uint16_t connHandle, gattAttribute_t *pAttr,
                                            uint8_t *pValue, uint16_t len, uint16_t offset, uint8_t method)
 {
     bStatus_t status = SUCCESS;
@@ -155,18 +106,16 @@ static bStatus_t ch573BleTmosProfile_WriteAttrCB(uint16_t connHandle, gattAttrib
         return (ATT_ERR_INSUFFICIENT_AUTHOR);
     }
 
-    if(pAttr->type.len == ATT_BT_UUID_SIZE)
-    {
-        // 16-bit UUID
-        uint16_t uuid = BUILD_UINT16(pAttr->type.uuid[0], pAttr->type.uuid[1]);
-        switch(uuid)
-        {
-            case SIMPLEPROFILE_CHAR1_UUID:
+    //check permission from pAttr
+    if (pAttr->permissions & GATT_PERMIT_WRITE) {
+        int i;
+        for (i = 0; i < profileAttrTableFastLutLength; i++) {
+            if (profileAttrTableFastLut[i].profileAttrPtr == pAttr) {
                 //Validate the value
                 // Make sure it's not a blob oper
                 if(offset == 0)
                 {
-                    if(len > SIMPLEPROFILE_CHAR1_LEN)
+                    if(len > profileAttrTableFastLut[i].profileAttrValueLen)
                     {
                         status = ATT_ERR_INVALID_VALUE_SIZE;
                     }
@@ -179,49 +128,17 @@ static bStatus_t ch573BleTmosProfile_WriteAttrCB(uint16_t connHandle, gattAttrib
                 //Write the value
                 if(status == SUCCESS)
                 {
-                    tmos_memcpy(pAttr->pValue, pValue, SIMPLEPROFILE_CHAR1_LEN);
-                    notifyApp = SIMPLEPROFILE_CHAR1;
+                    tmos_memcpy(pAttr->pValue, pValue, profileAttrTableFastLut[i].profileAttrValueLen);
+                    //notifyApp = SIMPLEPROFILE_CHAR1;
                 }
                 break;
-
-            case SIMPLEPROFILE_CHAR3_UUID:
-                //Validate the value
-                // Make sure it's not a blob oper
-                if(offset == 0)
-                {
-                    if(len > SIMPLEPROFILE_CHAR3_LEN)
-                    {
-                        status = ATT_ERR_INVALID_VALUE_SIZE;
-                    }
-                }
-                else
-                {
-                    status = ATT_ERR_ATTR_NOT_LONG;
-                }
-
-                //Write the value
-                if(status == SUCCESS)
-                {
-                    tmos_memcpy(pAttr->pValue, pValue, SIMPLEPROFILE_CHAR3_LEN);
-                    notifyApp = SIMPLEPROFILE_CHAR3;
-                }
-                break;
-
-            case GATT_CLIENT_CHAR_CFG_UUID:
-                status = GATTServApp_ProcessCCCWriteReq(connHandle, pAttr, pValue, len,
-                                                        offset, GATT_CLIENT_CFG_NOTIFY);
-                break;
-
-            default:
-                // Should never get here! (characteristics 2 and 4 do not have write permissions)
-                status = ATT_ERR_ATTR_NOT_FOUND;
-                break;
+            }
         }
-    }
-    else
-    {
-        // 128-bit UUID
-        status = ATT_ERR_INVALID_HANDLE;
+        if (i == profileAttrTableFastLutLength) {
+            status = ATT_ERR_ATTR_NOT_FOUND;
+        }
+    } else {
+        return (ATT_ERR_WRITE_NOT_PERMITTED);
     }
 
     // // If a charactersitic value changed then callback function to notify application of change
@@ -266,22 +183,26 @@ CH573BleTmos::CH573BleTmos() :
 //   this->_authStatus = (ble_gap_evt_auth_status_t*)&this->_authStatusBuffer;
 //   memset(&this->_authStatusBuffer, 0, sizeof(this->_authStatusBuffer));
 // #endif
+    ch573TmosInstance = this;
+    profileAttrTableFastLutLength = 0;
 }
 
 CH573BleTmos::~CH573BleTmos() {
   //this->end();
 }
 
-void CH573BleTmos::begin(unsigned char advertisementDataSize,
-                      BLEEirData *advertisementData,
-                      unsigned char scanDataSize,
-                      BLEEirData *scanData,
-                      BLELocalAttribute** localAttributes,
-                      unsigned char numLocalAttributes,
-                      BLERemoteAttribute** remoteAttributes,
-                      unsigned char numRemoteAttributes)
+void CH573BleTmos::begin(unsigned char _advertisementDataSize,
+                      BLEEirData *_advertisementData,
+                      unsigned char _scanDataSize,
+                      BLEEirData *_scanData,
+                      BLELocalAttribute** _localAttributes,
+                      unsigned char _numLocalAttributes,
+                      BLERemoteAttribute** _remoteAttributes,
+                      unsigned char _numRemoteAttributes)
 {
 
+    localAttributes = _localAttributes;
+    numLocalAttributes = _numLocalAttributes;
 
     // prepare advertData
     // flags
@@ -290,15 +211,15 @@ void CH573BleTmos::begin(unsigned char advertisementDataSize,
     advertData[advertDataLen++] = GAP_ADTYPE_FLAGS;
     advertData[advertDataLen++] = DEFAULT_DISCOVERABLE_MODE | GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED;
 
-    if (advertisementDataSize && advertisementData) {
-        for (int i = 0; i < advertisementDataSize; i++) {
-            advertData[advertDataLen + 0] = advertisementData[i].length + 1;
-            advertData[advertDataLen + 1] = advertisementData[i].type;
+    if (_advertisementDataSize && _advertisementData) {
+        for (int i = 0; i < _advertisementDataSize; i++) {
+            advertData[advertDataLen + 0] = _advertisementData[i].length + 1;
+            advertData[advertDataLen + 1] = _advertisementData[i].type;
             advertDataLen += 2;
 
-            memcpy(&advertData[advertDataLen], advertisementData[i].data, advertisementData[i].length);
+            memcpy(&advertData[advertDataLen], _advertisementData[i].data, _advertisementData[i].length);
 
-            advertDataLen += advertisementData[i].length;
+            advertDataLen += _advertisementData[i].length;
         }
     }
 
@@ -306,15 +227,15 @@ void CH573BleTmos::begin(unsigned char advertisementDataSize,
     // prepare scanRspData
     scanRspDataLen = 0;
 
-    if (scanDataSize && scanData) {
-        for (int i = 0; i < scanDataSize; i++) {
-            scanRspData[scanRspDataLen + 0] = scanData[i].length + 1;
-            scanRspData[scanRspDataLen + 1] = scanData[i].type;
+    if (_scanDataSize && _scanData) {
+        for (int i = 0; i < _scanDataSize; i++) {
+            scanRspData[scanRspDataLen + 0] = _scanData[i].length + 1;
+            scanRspData[scanRspDataLen + 1] = _scanData[i].type;
             scanRspDataLen += 2;
 
-            memcpy(&scanRspData[scanRspDataLen], scanData[i].data, scanData[i].length);
+            memcpy(&scanRspData[scanRspDataLen], _scanData[i].data, _scanData[i].length);
 
-            scanRspDataLen += scanData[i].length;
+            scanRspDataLen += _scanData[i].length;
             //_hasScanData = true;
         }
     }
@@ -382,8 +303,11 @@ void CH573BleTmos::begin(unsigned char advertisementDataSize,
     profileAttrTbl = (gattAttribute_t *)malloc(sizeof(gattAttribute_t) * profileAttrTblLength);
     uuidTable = (unsigned char *)malloc(uuidMallocLength);
     uuidTableLength = uuidMallocLength;
+    profileAttrTableFastLutLength = numberOfCharacteristics;
+    profileAttrTableFastLut = (struct ProfileAttrTableFastLutEntry *)malloc(sizeof(ProfileAttrTableFastLutEntry) * profileAttrTableFastLutLength);
 
     int profileAttrTblIndex = 0;
+    int profileAttrTableFastLutIndex = 0;
     unsigned char* uuidTableWritePtr = uuidTable;
 
     for (int i = 0; i < numLocalAttributes; i++) {
@@ -440,6 +364,11 @@ void CH573BleTmos::begin(unsigned char advertisementDataSize,
             // GATT_PERMIT_READ | GATT_PERMIT_WRITE,
             // 0,
             // simpleProfileChar1},
+
+            //get the fast lut for characteristic callback
+            profileAttrTableFastLut[profileAttrTableFastLutIndex].profileAttrPtr = profileAttrTblOneEntry;
+            profileAttrTableFastLut[profileAttrTableFastLutIndex].profileAttrValueLen = characteristic->valueLength();
+            profileAttrTableFastLutIndex++;
 
             profileAttrTblIndex++;
 
