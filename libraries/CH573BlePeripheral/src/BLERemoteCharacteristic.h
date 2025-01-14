@@ -34,6 +34,7 @@ typedef void (*BLERemoteCharacteristicEventHandler)(BLECentral& central, BLERemo
 class BLERemoteCharacteristic : public BLERemoteAttribute
 {
   friend class CH573BlePeripheral;
+  friend class CH573BleTmos;
 
   public:
     BLERemoteCharacteristic(const char* uuid, unsigned char properties);

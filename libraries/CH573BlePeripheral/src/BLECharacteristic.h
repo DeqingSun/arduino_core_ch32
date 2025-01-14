@@ -29,6 +29,7 @@ class BLECharacteristicValueChangeListener
 class BLECharacteristic : public BLELocalAttribute
 {
   friend class CH573BlePeripheral;
+  friend class CH573BleTmos;
 
   public:
     BLECharacteristic(const char* uuid, unsigned char properties, unsigned char valueSize);

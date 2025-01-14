@@ -43,6 +43,7 @@ class BLEDeviceEventListener
 class BLEDevice
 {
   friend class CH573BlePeripheral;
+  friend class CH573BleTmos;
 
   protected:
     BLEDevice();

@@ -9,6 +9,7 @@
 class BLERemoteAttribute : public BLEAttribute
 {
   friend class CH573BlePeripheral;
+  friend class CH573BleTmos;
 
   public:
     BLERemoteAttribute(const char* uuid, enum BLEAttributeType type);

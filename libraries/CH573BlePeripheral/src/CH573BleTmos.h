@@ -42,6 +42,7 @@
 class CH573BleTmos : public BLEDevice
 {
   friend class CH573BlePeripheral;
+  friend class CH573BleTmos;
 public:
 
 // protected:
@@ -117,6 +118,13 @@ public:
     uint8_t advertDataLen;
     uint8_t scanRspData[31];
     uint8_t scanRspDataLen;
+
+    gattAttribute_t *profileAttrTbl;
+    int profileAttrTblLength;
+    unsigned char *uuidTable;
+    int uuidTableLength;
+
+
 //     bool                              _hasScanData;
 //     BLECharacteristic*                _broadcastCharacteristic;
 

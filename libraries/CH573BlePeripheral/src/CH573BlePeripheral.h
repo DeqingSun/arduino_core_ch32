@@ -63,14 +63,7 @@ class CH573BlePeripheral : public BLEDeviceEventListener, public BLECharacterist
     BLERemoteService               remoteGenericAttributeService;
     BLERemoteCharacteristic        remoteServicesChangedCharacteristic;
 
-    // GAP - Advertisement data (max size = 31 bytes, though this is
-    // best kept short to conserve power while advertising)
-    // uint8_t advertData[31];
-    // uint8_t advertDataLen;
-    // uint8_t scanRspData[31];
-    // uint8_t scanRspDataLen;
-    gattAttribute_t *profileAttrTbl;
-    unsigned char *uuidTable;
+
 };
 
 
