@@ -42,11 +42,19 @@ CH573BlePeripheral::CH573BlePeripheral():
     remoteGenericAttributeService("1801"),
     remoteServicesChangedCharacteristic("2a05", BLEIndicate)
 {
+    device = &ch573BleTmos;
     // // Initialize the random number generator
     // tmos_rand();
     // // Initialize the timer
     // TMOS_TimerInit( NULL );
     asm("nop");
+
+//       memset(this->_eventHandlers, 0x00, sizeof(this->_eventHandlers));
+
+//   this->setDeviceName(DEFAULT_DEVICE_NAME);
+//   this->setAppearance(DEFAULT_APPEARANCE);
+
+//   this->_device->setEventListener(this);
 
 }
 
@@ -88,36 +96,6 @@ void CH573BlePeripheral::setLocalName(const char *_localName)
  * CONSTANTS
  */
 
-// How often to perform periodic event
-#define SBP_PERIODIC_EVT_PERIOD              1600
-
-// How often to perform read rssi event
-#define SBP_READ_RSSI_EVT_PERIOD             3200
-
-// Parameter update delay
-#define SBP_PARAM_UPDATE_DELAY               6400
-
-// What is the advertising interval when device is discoverable (units of 625us, 80=50ms)
-#define DEFAULT_ADVERTISING_INTERVAL         80
-
-// Limited discoverable mode advertises for 30.72s, and then stops
-// General discoverable mode advertises indefinitely
-#define DEFAULT_DISCOVERABLE_MODE            GAP_ADTYPE_FLAGS_GENERAL
-
-// Minimum connection interval (units of 1.25ms, 6=7.5ms)
-#define DEFAULT_DESIRED_MIN_CONN_INTERVAL    6
-
-// Maximum connection interval (units of 1.25ms, 100=125ms)
-#define DEFAULT_DESIRED_MAX_CONN_INTERVAL    100
-
-// Slave latency to use parameter update
-#define DEFAULT_DESIRED_SLAVE_LATENCY        0
-
-// Supervision timeout value (units of 10ms, 100=1s)
-#define DEFAULT_DESIRED_CONN_TIMEOUT         100
-
-// Company Identifier: WCH
-#define WCH_COMPANY_ID                       0x07D7
 
 /*********************************************************************
  * TYPEDEFS
@@ -666,6 +644,72 @@ static void simpleProfileChangeCB(uint8_t paramID, uint8_t *pValue, uint16_t len
 
 void CH573BlePeripheral::begin()
 {
+
+    unsigned char advertisementDataSize = 0;
+
+    BLEEirData advertisementData[3];
+    BLEEirData scanData;
+
+    scanData.length = 0;
+
+    unsigned char remainingAdvertisementDataLength = BLE_ADVERTISEMENT_DATA_MAX_VALUE_LENGTH + 2;
+
+    // if (this->_serviceSolicitationUuid){
+    //     BLEUuid serviceSolicitationUuid = BLEUuid(this->_serviceSolicitationUuid);
+
+    //     unsigned char uuidLength = serviceSolicitationUuid.length();
+    //     advertisementData[advertisementDataSize].length = uuidLength;
+    //     advertisementData[advertisementDataSize].type = (uuidLength > 2) ? 0x15 : 0x14;
+
+    //     memcpy(advertisementData[advertisementDataSize].data, serviceSolicitationUuid.data(), uuidLength);
+    //     advertisementDataSize += 1;
+    //     remainingAdvertisementDataLength -= uuidLength + 2;
+    // }
+    if (this->advertisedServiceUuid){
+        BLEUuid advertisedServiceUuid = BLEUuid(this->advertisedServiceUuid);
+
+        unsigned char uuidLength = advertisedServiceUuid.length();
+        if (uuidLength + 2 <= remainingAdvertisementDataLength) {
+            advertisementData[advertisementDataSize].length = uuidLength;   //add by one in CH573Tmos.begin
+            advertisementData[advertisementDataSize].type = (uuidLength > 2) ? GAP_ADTYPE_128BIT_MORE : GAP_ADTYPE_16BIT_MORE;
+
+            memcpy(advertisementData[advertisementDataSize].data, advertisedServiceUuid.data(), uuidLength);
+            advertisementDataSize += 1;
+            remainingAdvertisementDataLength -= uuidLength + 2;
+        }
+    }
+    // if (this->_manufacturerData && this->_manufacturerDataLength > 0) {
+    //     if (remainingAdvertisementDataLength >= 3) {
+    //     unsigned char dataLength = this->_manufacturerDataLength;
+
+    //     if (dataLength + 2 > remainingAdvertisementDataLength) {
+    //         dataLength = remainingAdvertisementDataLength - 2;
+    //     }
+
+    //     advertisementData[advertisementDataSize].length = dataLength;
+    //     advertisementData[advertisementDataSize].type = 0xff;
+
+    //     memcpy(advertisementData[advertisementDataSize].data, this->_manufacturerData, dataLength);
+    //     advertisementDataSize += 1;
+    //     remainingAdvertisementDataLength -= dataLength + 2;
+    //     }
+    // }
+
+    if (this->localName){
+        unsigned char localNameLength = strlen(this->localName);
+        scanData.length = localNameLength;   //add by one in CH573Tmos.begin
+
+        if (scanData.length > BLE_SCAN_DATA_MAX_VALUE_LENGTH) {
+            scanData.length = BLE_SCAN_DATA_MAX_VALUE_LENGTH;
+        }
+
+        scanData.type = (localNameLength > scanData.length) ? 0x08 : 0x09;
+
+        memcpy(scanData.data, this->localName, scanData.length);
+    }
+
+
+
     // Initialize the BLE stack
     CH57X_BLEInit();
     // Initialize the hardware abstraction layer
@@ -679,48 +723,8 @@ void CH573BlePeripheral::begin()
 
     // Setup the GAP Peripheral Role Profile
     {
-        uint8_t  initial_advertising_enable = TRUE;
-        uint16_t desired_min_interval = DEFAULT_DESIRED_MIN_CONN_INTERVAL;
-        uint16_t desired_max_interval = DEFAULT_DESIRED_MAX_CONN_INTERVAL;
-
-        // prepare advertData
-        advertDataLen = 0;
-        advertData[advertDataLen++] = 0x02; // length
-        advertData[advertDataLen++] = GAP_ADTYPE_FLAGS;
-        advertData[advertDataLen++] = DEFAULT_DISCOVERABLE_MODE | GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED;
-
-        //_serviceSolicitationUuid
-        //_advertisedServiceUuid
-        //_manufacturerData
-
-        if (advertisedServiceUuid != NULL)
-        {
-            BLEUuid advertisedServiceUuidDecoded = BLEUuid(advertisedServiceUuid);
-
-            unsigned char uuidLength = advertisedServiceUuidDecoded.length();
-            if (advertDataLen + uuidLength + 2 <= 31) {
-                advertData[advertDataLen++] = uuidLength + 1;
-                advertData[advertDataLen++] = (uuidLength > 2) ? GAP_ADTYPE_128BIT_MORE : GAP_ADTYPE_16BIT_MORE;
-                memcpy(advertData + advertDataLen, advertisedServiceUuidDecoded.data(), uuidLength);
-                advertDataLen += uuidLength;
-            }
-        }
-
-        // prepare scanRspData
-        scanRspDataLen = 0;
-
-        if (localName != NULL) {
-            unsigned char localNameLength = strlen(localName);
-            if (scanRspDataLen + localNameLength + 2 <= 31) {
-                scanRspData[scanRspDataLen++] = localNameLength + 1;
-                scanRspData[scanRspDataLen++] = GAP_ADTYPE_LOCAL_NAME_COMPLETE;
-                memcpy(scanRspData + scanRspDataLen, localName, localNameLength);
-                scanRspDataLen += localNameLength;
-            }
-        }
-
-        //// connection interval range?
-        // Tx power level?
+        
+        
 
 
         if (localAttributes == NULL) {
@@ -749,26 +753,13 @@ void CH573BlePeripheral::begin()
             addRemoteAttribute(remoteServicesChangedCharacteristic);
         }
         
-        //   this->_device->begin(advertisementDataSize, advertisementData,
-        //                         scanData.length > 0 ? 1 : 0, &scanData,
-        //                         this->_localAttributes, this->_numLocalAttributes,
-        //                         this->_remoteAttributes, this->_numRemoteAttributes);
+        device->begin(advertisementDataSize, advertisementData,
+                        scanData.length > 0 ? 1 : 0, &scanData,
+                        this->localAttributes, this->numLocalAttributes,
+                        this->remoteAttributes, this->numRemoteAttributes);
         
         //   this->_device->requestAddress();
 
-
-
-
-
-
-
-
-        // Set the GAP Role Parameters
-        GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t), &initial_advertising_enable);
-        GAPRole_SetParameter(GAPROLE_SCAN_RSP_DATA, scanRspDataLen, scanRspData);
-        GAPRole_SetParameter(GAPROLE_ADVERT_DATA, advertDataLen, advertData);
-        GAPRole_SetParameter(GAPROLE_MIN_CONN_INTERVAL, sizeof(uint16_t), &desired_min_interval);
-        GAPRole_SetParameter(GAPROLE_MAX_CONN_INTERVAL, sizeof(uint16_t), &desired_max_interval);
     }
 
     // Set advertising interval

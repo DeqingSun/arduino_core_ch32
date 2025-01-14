@@ -64,7 +64,7 @@ void setup() {
   asm("nop");
 
   blePeripheral.setLocalName("CH573_BLE");
-  blePeripheral.setAdvertisedServiceUuid("1234");
+  blePeripheral.setAdvertisedServiceUuid(simpleService.uuid());
 
     // add attributes (services, characteristics, descriptors) to peripheral
   blePeripheral.addAttribute(simpleService);

@@ -18,6 +18,8 @@
 #include "BLEService.h"
 #include "BLETypedCharacteristics.h"
 
+#include "CH573BleTmos.h"
+
 class CH573BlePeripheral : public BLEDeviceEventListener, public BLECharacteristicValueChangeListener, public BLERemoteCharacteristicValueChangeListener
 {
   public:
@@ -40,6 +42,9 @@ class CH573BlePeripheral : public BLEDeviceEventListener, public BLECharacterist
 
   public:
 
+    BLEDevice*                     device;
+    CH573BleTmos                   ch573BleTmos;
+
     const char*                    localName;
     const char*                    advertisedServiceUuid;
 
@@ -60,10 +65,10 @@ class CH573BlePeripheral : public BLEDeviceEventListener, public BLECharacterist
 
     // GAP - Advertisement data (max size = 31 bytes, though this is
     // best kept short to conserve power while advertising)
-    uint8_t advertData[31];
-    uint8_t advertDataLen;
-    uint8_t scanRspData[31];
-    uint8_t scanRspDataLen;
+    // uint8_t advertData[31];
+    // uint8_t advertDataLen;
+    // uint8_t scanRspData[31];
+    // uint8_t scanRspDataLen;
     gattAttribute_t *profileAttrTbl;
     unsigned char *uuidTable;
 };
