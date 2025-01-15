@@ -25,6 +25,8 @@
 #endif
 #include "CH57x_common.h"
 
+#define PRINT(...) //printf(__VA_ARGS__)
+
 /*********************************************************************
  【MAC】
  BLE_MAC                                    - 是否自定义蓝牙Mac地址 ( 默认:FALSE - 使用芯片Mac地址 )，需要在main.c修改Mac地址定义

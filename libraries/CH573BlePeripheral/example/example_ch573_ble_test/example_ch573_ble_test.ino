@@ -2,7 +2,6 @@
 
 #include "config.h"
 #include "HAL.h"
-#include "src/Profile/include/gattprofile.h"
 
 CH573BlePeripheral blePeripheral = CH573BlePeripheral();
 
