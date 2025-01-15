@@ -88,6 +88,8 @@ void setup() {
 
   blePeripheral.begin();
 
+  simpleProfilechar4.setValue(0x55);
+
   loop_task_id = TMOS_ProcessEventRegister( loop_task_process_event );
   tmos_set_event( loop_task_id, LOOP_TASK_TMOS_EVT_TEST_1 );
 
@@ -101,16 +103,24 @@ void setup() {
 
 long pastMillis = 0;
 
+int counter = 0;
+
 void loop() {
   // put your main code here, to run repeatedly:
 
-        //long millisNow = millis();
+        // long millisNow = millis();
 
-        //if ((millisNow-pastMillis)>=1000){
-          //pastMillis =  millisNow;
-          //R32_PA_OUT^=(1<<4);
-          //R32_PA_OUT^=(1<<5);
-        //}
+        // if ((millisNow-pastMillis)>=1000){
+        //   pastMillis =  millisNow;
+        //   // R32_PA_OUT^=(1<<4);
+        //   // R32_PA_OUT^=(1<<5);
+        //   simpleProfilechar4.setValue(millisNow/1000);
+        // }
+
+        counter++;
+        if ((counter & 7) == 0){
+          simpleProfilechar4.setValue(counter);
+        }
 
 
         // GPIOA_ResetBits(GPIO_Pin_4);
@@ -125,4 +135,6 @@ void loop() {
   }else{
     R32_PA_OUT&=~(1<<4);
   }
+
+
 }
