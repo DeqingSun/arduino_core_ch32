@@ -367,5 +367,21 @@ uint16_t USART_ReceiveData(USART_TypeDef *USARTx)
     return (uint16_t)(USARTx->RBR & (uint16_t)0x01FF);
 }
 
+FlagStatus USART_GetFlagStatus(USART_TypeDef *USARTx, uint16_t USART_FLAG)
+{
+    FlagStatus bitstatus = RESET;
+
+
+    if((USARTx->LSR & USART_FLAG) != (uint16_t)RESET)
+    {
+        bitstatus = SET;
+    }
+    else
+    {
+        bitstatus = RESET;
+    }
+
+    return bitstatus;
+}
 
 
