@@ -27,6 +27,8 @@ gattServiceCBs_t ch573BleTmosProfileCBs = {
 CH573BleTmos *ch573TmosInstance = NULL;
 struct ProfileAttrTableFastLutEntry* profileAttrTableFastLut;
 int profileAttrTableFastLutLength;
+struct NotificationConfigEntry* notificationConfigTable;
+int notificationConfigTableLength;
 
 
 /*********************************************************************
@@ -108,34 +110,38 @@ bStatus_t ch573BleTmosProfile_WriteAttrCB(uint16_t connHandle, gattAttribute_t *
 
     //check permission from pAttr
     if (pAttr->permissions & GATT_PERMIT_WRITE) {
-        int i;
-        for (i = 0; i < profileAttrTableFastLutLength; i++) {
-            if (profileAttrTableFastLut[i].profileAttrPtr == pAttr) {
-                //Validate the value
-                // Make sure it's not a blob oper
-                if(offset == 0)
-                {
-                    if(len > profileAttrTableFastLut[i].profileAttrValueLen)
+        if ((pAttr->type.len == ATT_BT_UUID_SIZE) && (pAttr->type.uuid[0]==LO_UINT16(GATT_CLIENT_CHAR_CFG_UUID)) && (pAttr->type.uuid[1]==HI_UINT16(GATT_CLIENT_CHAR_CFG_UUID))) {
+            status = GATTServApp_ProcessCCCWriteReq(connHandle, pAttr, pValue, len, offset, GATT_CLIENT_CFG_NOTIFY);
+        } else{
+            int i;
+            for (i = 0; i < profileAttrTableFastLutLength; i++) {
+                if (profileAttrTableFastLut[i].profileAttrPtr == pAttr) {
+                    //Validate the value
+                    // Make sure it's not a blob oper
+                    if(offset == 0)
                     {
-                        status = ATT_ERR_INVALID_VALUE_SIZE;
+                        if(len > profileAttrTableFastLut[i].profileAttrValueLen)
+                        {
+                            status = ATT_ERR_INVALID_VALUE_SIZE;
+                        }
                     }
-                }
-                else
-                {
-                    status = ATT_ERR_ATTR_NOT_LONG;
-                }
+                    else
+                    {
+                        status = ATT_ERR_ATTR_NOT_LONG;
+                    }
 
-                //Write the value
-                if(status == SUCCESS)
-                {
-                    tmos_memcpy(pAttr->pValue, pValue, profileAttrTableFastLut[i].profileAttrValueLen);
-                    //notifyApp = SIMPLEPROFILE_CHAR1;
+                    //Write the value
+                    if(status == SUCCESS)
+                    {
+                        tmos_memcpy(pAttr->pValue, pValue, profileAttrTableFastLut[i].profileAttrValueLen);
+                        //notifyApp = SIMPLEPROFILE_CHAR1;
+                    }
+                    break;
                 }
-                break;
             }
-        }
-        if (i == profileAttrTableFastLutLength) {
-            status = ATT_ERR_ATTR_NOT_FOUND;
+            if (i == profileAttrTableFastLutLength) {
+                status = ATT_ERR_ATTR_NOT_FOUND;
+            }
         }
     } else {
         return (ATT_ERR_WRITE_NOT_PERMITTED);
@@ -151,7 +157,21 @@ bStatus_t ch573BleTmosProfile_WriteAttrCB(uint16_t connHandle, gattAttribute_t *
     return (status);
 }
 
-
+void ch573BleTmosProfile_HandleConnStatusCB(uint16_t connHandle, uint8_t changeType){
+    // Make sure this is not loopback connection
+    if(connHandle != LOOPBACK_CONNHANDLE)
+    {
+        // Reset Client Char Config if connection has dropped
+        if((changeType == LINKDB_STATUS_UPDATE_REMOVED) ||
+           ((changeType == LINKDB_STATUS_UPDATE_STATEFLAGS) &&
+            (!linkDB_Up(connHandle))))
+        {
+            for (int i = 0; i < notificationConfigTableLength; i++) {
+                GATTServApp_InitCharCfg(connHandle, notificationConfigTable[i].charConfig);
+            }
+        }
+    }
+}
 
 
 CH573BleTmos::CH573BleTmos() :
@@ -186,6 +206,7 @@ CH573BleTmos::CH573BleTmos() :
 // #endif
     ch573TmosInstance = this;
     profileAttrTableFastLutLength = 0;
+    notificationConfigTableLength = 0;
 }
 
 CH573BleTmos::~CH573BleTmos() {
@@ -284,15 +305,19 @@ void CH573BleTmos::begin(unsigned char _advertisementDataSize,
 
     //deal with 1 service for now
     int numberOfCharacteristics = 0;
+    int numberOfNotifyCharacteristics = 0;
     int uuidMallocLength = 0;
     for (int i = 0; i < numLocalAttributes; i++) {
         BLELocalAttribute* localAttribute = localAttributes[i];
         BLEUuid uuid = BLEUuid(localAttribute->uuid());
         if (localAttribute->type() == BLETypeCharacteristic) {
-            //BLECharacteristic* characteristic = (BLECharacteristic*)localAttribute;
+            BLECharacteristic* characteristic = (BLECharacteristic*)localAttribute;
             numberOfCharacteristics++;
             uuidMallocLength += (uuid.length()+3)&0xFC; // Upround to 4 bytes
             uuidMallocLength += (1+3)&0xFC;    // 1 byte for the properties
+            if (characteristic->properties() & BLENotify) {
+                numberOfNotifyCharacteristics++;
+            }
         }
         if (localAttribute->type() == BLETypeService) {
             //BLEService* service = (BLEService*)localAttribute;
@@ -304,15 +329,18 @@ void CH573BleTmos::begin(unsigned char _advertisementDataSize,
             //uuid is fixed
         }
     }
-    profileAttrTblLength = numLocalAttributes + numberOfCharacteristics;
+    profileAttrTblLength = numLocalAttributes + numberOfCharacteristics+numberOfNotifyCharacteristics;
     profileAttrTbl = (gattAttribute_t *)malloc(sizeof(gattAttribute_t) * profileAttrTblLength);
     uuidTable = (unsigned char *)malloc(uuidMallocLength);
     uuidTableLength = uuidMallocLength;
     profileAttrTableFastLutLength = numberOfCharacteristics;
     profileAttrTableFastLut = (struct ProfileAttrTableFastLutEntry *)malloc(sizeof(ProfileAttrTableFastLutEntry) * profileAttrTableFastLutLength);
+    notificationConfigTableLength = numberOfNotifyCharacteristics;
+    notificationConfigTable = (struct NotificationConfigEntry *)malloc(sizeof(NotificationConfigEntry) * notificationConfigTableLength);
 
     int profileAttrTblIndex = 0;
     int profileAttrTableFastLutIndex = 0;
+    int notificationConfigTableIndex = 0;
     unsigned char* uuidTableWritePtr = uuidTable;
 
     for (int i = 0; i < numLocalAttributes; i++) {
@@ -334,8 +362,7 @@ void CH573BleTmos::begin(unsigned char _advertisementDataSize,
                 characteristicPermission |= GATT_PERMIT_WRITE;
             }
             if (characteristic->properties() & BLENotify) {
-                //        // Initialize Client Characteristic Configuration attributes
-                //GATTServApp_InitCharCfg( INVALID_CONNHANDLE, simpleProfileChar4Config );
+                //characteristicPermission |= GATT_PERMIT_READ; //seem read not really needed
             }
             //not do AUTHEN etc yet
 
@@ -376,6 +403,35 @@ void CH573BleTmos::begin(unsigned char _advertisementDataSize,
             profileAttrTableFastLutIndex++;
 
             profileAttrTblIndex++;
+
+            if (characteristic->properties() & BLENotify) {
+                //using error to print sizeof(NotificationConfigEntry)
+                NotificationConfigEntry *notificationConfigEntry = &notificationConfigTable[notificationConfigTableIndex];
+                notificationConfigEntry->valueProfileAttrIndex = profileAttrTblIndex - 1;   //previous one is characteristic value
+
+                //add config for notify
+                //     {ATT_BT_UUID_SIZE, clientCharCfgUUID},
+                //     GATT_PERMIT_READ | GATT_PERMIT_WRITE,
+                //     0,
+                //     (uint8_t *)simpleProfileChar4Config},
+
+                profileAttrTblOneEntry = &profileAttrTbl[profileAttrTblIndex];
+
+                profileAttrTblOneEntry->type.len = ATT_BT_UUID_SIZE;
+                uint8_t *clientCharCfgUUIDPtr = (uint8_t *)clientCharCfgUUID;
+                memcpy(&profileAttrTblOneEntry->type.uuid, &clientCharCfgUUIDPtr, sizeof(const uint8_t *));
+                profileAttrTblOneEntry->permissions = GATT_PERMIT_READ | GATT_PERMIT_WRITE;
+                ((unsigned char *)(&profileAttrTblOneEntry->handle))[0] = 0;
+                ((unsigned char *)(&profileAttrTblOneEntry->handle))[1] = 0;
+                gattCharCfg_t *charConfigPtr = (gattCharCfg_t *)notificationConfigEntry->charConfig;
+                memcpy(&profileAttrTblOneEntry->pValue, &charConfigPtr, sizeof(uint8_t *));
+
+                notificationConfigTableIndex++;
+                profileAttrTblIndex++;
+
+                // Initialize Client Characteristic Configuration attributes
+                GATTServApp_InitCharCfg( INVALID_CONNHANDLE, charConfigPtr );
+            }
 
         }
         if (localAttribute->type() == BLETypeService) {
@@ -426,11 +482,8 @@ void CH573BleTmos::begin(unsigned char _advertisementDataSize,
         }
     }
 
-     // Initialize Client Characteristic Configuration attributes
-    //GATTServApp_InitCharCfg(INVALID_CONNHANDLE, simpleProfileChar4Config);    //related to notify, do later
-
     // Register with Link DB to receive link status change callback
-    //linkDB_Register(simpleProfile_HandleConnStatusCB);    //related to notify, do later
+    linkDB_Register(ch573BleTmosProfile_HandleConnStatusCB);
 
     uint8 status = SUCCESS;
 

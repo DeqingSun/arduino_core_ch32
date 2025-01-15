@@ -8,6 +8,8 @@
 
 #include "CH57xBLE_LIB.h"
 
+#include "config.h"
+
 
 // How often to perform periodic event
 #define SBP_PERIODIC_EVT_PERIOD              1600
@@ -43,6 +45,11 @@
 struct ProfileAttrTableFastLutEntry {
     gattAttribute_t *profileAttrPtr;
     uint8_t profileAttrValueLen;
+};
+
+struct NotificationConfigEntry {
+    gattCharCfg_t charConfig[PERIPHERAL_MAX_CONNECTION];
+    uint16_t valueProfileAttrIndex;
 };
 
 class CH573BleTmos : public BLEDevice

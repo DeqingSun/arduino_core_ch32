@@ -15,7 +15,7 @@ BLECharCharacteristic simpleProfilechar1 = BLECharCharacteristic("ffe1", BLERead
 BLEDescriptor descriptorChar1 = BLEDescriptor("2901", "characteristic 1");
 BLECharCharacteristic simpleProfilechar2 = BLECharCharacteristic("ffe2", BLERead);
 BLECharCharacteristic simpleProfilechar3 = BLECharCharacteristic("ffe3", BLEWrite);
-// BLECharCharacteristic simpleProfilechar4 = BLECharCharacteristic("ffe4", BLENotify); //do it later
+BLECharCharacteristic simpleProfilechar4 = BLECharCharacteristic("ffe4", BLENotify);
 // BLEFixedLengthCharacteristic simpleProfilechar5 = BLEFixedLengthCharacteristic("ffe5", BLERead, SIMPLEPROFILE_CHAR5_LEN);  //do it later
 
 tmosTaskID  loop_task_id = INVALID_TASK_ID;
@@ -73,7 +73,7 @@ void setup() {
   blePeripheral.addAttribute(descriptorChar1);
   blePeripheral.addAttribute(simpleProfilechar2);
   blePeripheral.addAttribute(simpleProfilechar3);
-  // blePeripheral.addAttribute(simpleProfilechar4);
+  blePeripheral.addAttribute(simpleProfilechar4);
   // blePeripheral.addAttribute(simpleProfilechar5);
   //blePeripheral.addAttribute(descriptor);
 
