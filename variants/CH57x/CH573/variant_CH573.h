@@ -117,12 +117,15 @@
 
 // UART Definitions
 #ifndef SERIAL_UART_INSTANCE
-  #define SERIAL_UART_INSTANCE  1
+  #define SERIAL_UART_INSTANCE  2
+  #define HAVE_HWSERIAL1
+  #define HAVE_HWSERIAL2
 #endif
 // Default pin used for generic 'Serial' instance
 // Mandatory for Firmata
+// USE UART1 as it is available on all packages
 #ifndef PIN_SERIAL_RX
-  #define PIN_SERIAL_RX         PA10
+  #define PIN_SERIAL_RX         PA8
 #endif
 #ifndef PIN_SERIAL_TX
   #define PIN_SERIAL_TX         PA9

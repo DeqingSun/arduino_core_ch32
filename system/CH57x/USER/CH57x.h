@@ -311,8 +311,11 @@ typedef struct
 
 // } IRQn_Type;
 
-//UART0
+//UART IRQn
 #define USART1_IRQn                         (26)
+#define USART2_IRQn                         (27)
+#define USART3_IRQn                         (33)
+#define USART4_IRQn                         (34)
 
 /* TIM_Channel */
 #define TIM_Channel_1                      ((uint16_t)0x0000)
@@ -321,8 +324,13 @@ typedef struct
 #define TIM_Channel_4                      ((uint16_t)0x000C)
 
 //UART0 related registers
-#define USART1_BASE                             (0x40003000)
+#define USART1_BASE                             (BA_UART0)
 #define USART1                                  ((USART_TypeDef *)USART1_BASE)
+
+//UART1
+#define USART2_BASE                         (BA_UART1)
+#define USART2                              ((USART_TypeDef *)USART2_BASE)
+
 
 
 /* USART_Hardware_Flow_Control */
@@ -405,6 +413,8 @@ enum {
   AFIO_Remap_SDI_Disable_DISABLE
 
 };
+
+#define RCC_APB1Periph_USART2          ((uint32_t)0x00020000)
 
 #define TIM2_BASE                               (BA_TMR1)
 #define TIM3_BASE                               (BA_TMR2)

@@ -385,3 +385,14 @@ FlagStatus USART_GetFlagStatus(USART_TypeDef *USARTx, uint16_t USART_FLAG)
 }
 
 
+void RCC_APB1PeriphClockCmd(uint32_t RCC_APB1Periph, FunctionalState NewState)
+{
+//   if (NewState != DISABLE)
+//   {
+//     RCC->APB1PCENR |= RCC_APB1Periph;
+//   }
+//   else
+//   {
+//     RCC->APB1PCENR &= ~RCC_APB1Periph;
+//   }
+}
