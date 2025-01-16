@@ -33,7 +33,7 @@ extern "C" {
 // PinName mask
 #define PNAME_MASK                  0xFF
 
-#if !defined(CH32X035)
+#if (!defined(CH32X035))&&(!defined(CH57x))
 
 typedef enum {
   // Not connected
