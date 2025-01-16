@@ -18,29 +18,28 @@
 
 // Digital PinName array
 const PinName digitalPin[] = {
-  PA_4,  //D0/A0
-  PA_5,  //D1/A1
-  PA_8,  //D2/A12
-  PA_9,  //D3/A13
-  PA_10,  //D4   
-  PA_5,  //D5   
-
-  PA_10,  //D6      USART1_RX
-  PA_9,   //D7      USART1_TX
-  PB_4,   //D8   
-  PB_6,   //D9       
-  PB_7,   //D10       
-  PB_8,   //D11                 
-  PB_9,   //D12                 
-  PA_8,   //D13                  
-  PB_1,   //D14                    
-  PB_0,   //D15                     
-  PB_12,  //D16    SPI2_NSS
-  PB_15,  //D17    SPI2_MOSI  
-  PB_14,  //D18    SPI2_MISO
-  PB_13,  //D19    SPI2_SCK
-  PB_11,  //D20    I2C2_SDA
-  PB_10   //D21    I2C2_SCL
+  PA_4,   //D0/A0    RXD3
+  PA_5,   //D1/A1    TXD3
+  PA_8,   //D2/A12   RXD1
+  PA_9,   //D3/A13   TXD1/TMR0
+  PA_10,  //D4       TMR1/X32KI
+  PA_11,  //D5       TMR2/X32KO
+  PA_12,  //D6/A2    PWM4/SCS
+  PA_13,  //D7/A3    PWM5/SCK0
+  PA_14,  //D8/A4    MOSI/TXD0_
+  PA_15,  //D9/A5    MISO/RXD0_
+  PB_0,   //D10/A8   PWM6/CTS
+  PB_4,   //D11      PWM7/RXD0
+  PB_6,   //D12/A9   PWM8/RTS
+  PB_7,   //D13      PWM9/TXD0
+  PB_10,  //D14      UD-/TMR1_
+  PB_11,  //D15      UD+/TMR2_
+  PB_12,  //D16      SCS_/RXD1_ (5VT)
+  PB_13,  //D17      SCK0_/TXD1_ (5VT)
+  PB_14,  //D18      TIO/PWM10/DSR/MOSI_ (5VT)
+  PB_15,  //D19      TCK/DTR/MISO_ (5VT)
+  PB_22,  //D20      RXD2/TMR3
+  PB_23   //D21      RST#/PWM11/TXD2/TMR0_
 };
 
 // Analog (Ax) pin number array
