@@ -19,48 +19,42 @@
 // #define                         I2C_MODULE_ENABLED
 // #define                         TIM_MODULE_ENABLED
 
-/* CH32V307VCT6 Pins */
+/* CH57x Pins */
 
-#define PA0                     PIN_A0
-#define PA1                     PIN_A1
-#define PA2                     PIN_A2
-#define PA3                     PIN_A3
-#define PA4                     PIN_A4
-#define PA5                     PIN_A5
-
-#define PA10                    6
-#define PA9                     7
-#define PA8                     8                     
-#define PA7                     9
-#define PA6                     10
-#define PB5                     11 
-#define PB8                     12
-#define PB9                     13
-#define PB1                     14
-#define PB0                     15
+#define PA4                     0
+#define PA5                     1
+#define PA8                     2
+#define PA9                     3
+#define PA10                    4
+#define PA11                    5
+#define PA12                    6
+#define PA13                    7
+#define PA14                    8
+#define PA15                    9
+#define PB0                     10
+#define PB4                     11
+#define PB6                     12
+#define PB7                     13
+#define PB10                    14
+#define PB11                    15
 #define PB12                    16
-#define PB15                    17       
+#define PB13                    17
 #define PB14                    18
-#define PB13                    19
-#define PB11                    20
-#define PB10                    21 
-
+#define PB15                    19
+#define PB22                    20
+#define PB23                    21                     
 
 // Alternate pins number
-#define PA0_ALT1                (PA0  | ALT1) 
-#define PA1_ALT1                (PA1  | ALT1)
-#define PA2_ALT1                (PA2  | ALT1)
-#define PA3_ALT1                (PA3  | ALT1)
-#define PA4_ALT1                (PA4  | ALT1)
-#define PA5_ALT1                (PA5  | ALT1)
-
-
-
-
+// #define PA0_ALT1                (PA0  | ALT1) 
+// #define PA1_ALT1                (PA1  | ALT1)
+// #define PA2_ALT1                (PA2  | ALT1)
+// #define PA3_ALT1                (PA3  | ALT1)
+// #define PA4_ALT1                (PA4  | ALT1)
+// #define PA5_ALT1                (PA5  | ALT1)
 
 
 #define NUM_DIGITAL_PINS        22
-#define NUM_ANALOG_INPUTS       6
+#define NUM_ANALOG_INPUTS       10
 // #define ADC_CTLR_ADCAL          
 #define ADC_RESOLUTION          12
 
@@ -79,7 +73,7 @@
 
 // SPI definitions
 #ifndef PIN_SPI_SS
-  #define PIN_SPI_SS            PA4
+  #define PIN_SPI_SS            PA12
 #endif
 #ifndef PIN_SPI_SS1
   #define PIN_SPI_SS1           PNUM_NOT_DEFINED
@@ -92,18 +86,18 @@
 #endif
 
 #ifndef PIN_SPI_MOSI
-  #define PIN_SPI_MOSI          PA7
+  #define PIN_SPI_MOSI          PA14
 #endif
 #ifndef PIN_SPI_MISO
-  #define PIN_SPI_MISO          PA6
+  #define PIN_SPI_MISO          PA15
 #endif
 #ifndef PIN_SPI_SCK
-  #define PIN_SPI_SCK           PA5
+  #define PIN_SPI_SCK           PA13
 #endif
 
 // I2C definitions
-  #define PIN_WIRE_SDA          PB11
-  #define PIN_WIRE_SCL          PB10
+  #define PIN_WIRE_SDA          PNUM_NOT_DEFINED
+  #define PIN_WIRE_SCL          PNUM_NOT_DEFINED
 
 // Timer Definitions
 // Use TIM6/TIM7 when possible as servo and tone don't need GPIO output pin
