@@ -331,6 +331,14 @@ typedef struct
 #define USART2_BASE                         (BA_UART1)
 #define USART2                              ((USART_TypeDef *)USART2_BASE)
 
+//UART2
+#define USART3_BASE                         (BA_UART2)
+#define USART3                              ((USART_TypeDef *)USART3_BASE)
+
+//UART3
+#define USART4_BASE                         (BA_UART3)
+#define USART4                              ((USART_TypeDef *)USART4_BASE)
+
 
 
 /* USART_Hardware_Flow_Control */
@@ -371,48 +379,6 @@ typedef struct
 #define USART_FLAG_FE                        ((uint16_t)0x0002)
 #define USART_FLAG_PE                        ((uint16_t)0x0001)
 
-enum {
-  AFIO_NONE,
-    // ENABLE:
-    /* GPIO_Remap_define */
-    /* PCFR1 */
-  AFIO_Remap_SPI1_ENABLE,
-  AFIO_Remap_SPI1_DISABLE,
-  
-  AFIO_PartialRemap_I2C1_ENABLE,
-  AFIO_FullRemap_I2C1_ENABLE,
-  AFIO_Remap_I2C1_DISABLE,
-
-  AFIO_PartialRemap1_USART1_ENABLE,
-  AFIO_PartialRemap2_USART1_ENABLE,
-  AFIO_FullRemap_USART1_ENABLE,
-  AFIO_Remap_USART1_DISABLE,
-
-  AFIO_PartialRemap1_TIM1_ENABLE,
-  AFIO_PartialRemap2_TIM1_ENABLE,
-  AFIO_FullRemap_TIM1_ENABLE,
-  AFIO_Remap_TIM1_DISABLE,
-
-  AFIO_PartialRemap1_TIM2_ENABLE,
-  AFIO_PartialRemap2_TIM2_ENABLE,
-  AFIO_FullRemap_TIM2_ENABLE,
-  AFIO_Remap_TIM2_DISABLE,
-
-  AFIO_Remap_PA1_2_ENABLE,
-  AFIO_Remap_PA1_2_DISABLE,
-
-  AFIO_Remap_ADC1_ETRGINJ_ENBALE,
-  AFIO_Remap_ADC1_ETRGINJ_DISABLE,
-  AFIO_Remap_ADC1_ETRGREG_ENABLE,
-  AFIO_Remap_ADC1_ETRGREG_DISABLE,
-
-  AFIO_Remap_LSI_CAL_ENABLE,
-  AFIO_Remap_LSI_CAL_DISABLE,
-
-  AFIO_Remap_SDI_Disable_ENABLE,
-  AFIO_Remap_SDI_Disable_DISABLE
-
-};
 
 #define RCC_APB1Periph_USART2          ((uint32_t)0x00020000)
 

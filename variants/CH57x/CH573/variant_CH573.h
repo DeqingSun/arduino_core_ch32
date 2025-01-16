@@ -111,9 +111,11 @@
 
 // UART Definitions
 #ifndef SERIAL_UART_INSTANCE
-  #define SERIAL_UART_INSTANCE  2
+  #define SERIAL_UART_INSTANCE  4
   #define HAVE_HWSERIAL1
   #define HAVE_HWSERIAL2
+  #define HAVE_HWSERIAL3
+  #define HAVE_HWSERIAL4
 #endif
 // Default pin used for generic 'Serial' instance
 // Mandatory for Firmata
