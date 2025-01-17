@@ -5,7 +5,7 @@
 #include "CH57xBLE_LIB.h"
 
 // #include "BLEBondStore.h"
-// #include "BLECentral.h"
+#include "BLECentral.h"
 // #include "BLEConstantCharacteristic.h"
 #include "BLEDescriptor.h"
 #include "BLEDevice.h"
@@ -27,7 +27,7 @@ class CH573BlePeripheral : public BLEDeviceEventListener, public BLECharacterist
 
 
     void begin();
-    // void poll();
+    void poll();
     // void end();
 
     void setLocalName(const char *_localName);
@@ -36,12 +36,19 @@ class CH573BlePeripheral : public BLEDeviceEventListener, public BLECharacterist
     void addAttribute(BLELocalAttribute& _attribute);
     void addLocalAttribute(BLELocalAttribute& _localAttribute);
     void addRemoteAttribute(BLERemoteAttribute& _remoteAttribute);
+
+    void disconnect();
+
+    BLECentral central();
+    bool connected();
   
   private:
     void initLocalAttributes();
 
   protected:
     bool characteristicValueChanged(BLECharacteristic& characteristic);
+    virtual void BLEDeviceConnected(BLEDevice& device, const unsigned char* address);
+    virtual void BLEDeviceDisconnected(BLEDevice& device);
 
   public:
 
@@ -65,6 +72,8 @@ class CH573BlePeripheral : public BLEDeviceEventListener, public BLECharacterist
 
     BLERemoteService               remoteGenericAttributeService;
     BLERemoteCharacteristic        remoteServicesChangedCharacteristic;
+
+    BLECentral                     _central;
 
 
 };

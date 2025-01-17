@@ -73,6 +73,10 @@
  * EXTERNAL FUNCTIONS
  */
 
+void CH573BleTmosConnectedCallback(gapEstLinkReqEvent_t *pEvent);
+
+void CH573BleTmosDisconnectedCallback(gapTerminateLinkEvent_t *pEvent);
+
 /*********************************************************************
  * LOCAL VARIABLES
  */
@@ -278,6 +282,8 @@ static void Peripheral_LinkEstablished(gapRoleEvent_t *pEvent)
 {
     gapEstLinkReqEvent_t *event = (gapEstLinkReqEvent_t *)pEvent;
 
+    CH573BleTmosConnectedCallback(event);
+
     // See if already connected
     if(peripheralConnList.connHandle != GAP_CONNHANDLE_INIT)
     {
@@ -314,6 +320,8 @@ static void Peripheral_LinkEstablished(gapRoleEvent_t *pEvent)
 static void Peripheral_LinkTerminated(gapRoleEvent_t *pEvent)
 {
     gapTerminateLinkEvent_t *event = (gapTerminateLinkEvent_t *)pEvent;
+
+    CH573BleTmosDisconnectedCallback(event);
 
     if(event->connectionHandle == peripheralConnList.connHandle)
     {

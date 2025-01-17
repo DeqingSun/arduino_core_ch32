@@ -6,14 +6,14 @@
 CH573BlePeripheral blePeripheral = CH573BlePeripheral();
 
 // create one or more services
-BLEService simpleService = BLEService("ffe0");
+BLEService simpleService = BLEService("1111");
 
 
 // create one or more characteristics
 BLECharCharacteristic simpleProfilechar1 = BLECharCharacteristic("ffe1", BLERead | BLEWrite);
 BLEDescriptor descriptorChar1 = BLEDescriptor("2901", "characteristic 1");
-BLECharCharacteristic simpleProfilechar2 = BLECharCharacteristic("ffe2", BLERead);
-BLECharCharacteristic simpleProfilechar3 = BLECharCharacteristic("ffe3", BLEWrite);
+BLECharCharacteristic simpleProfilechar2 = BLECharCharacteristic("2222", BLERead);
+BLECharCharacteristic simpleProfilechar3 = BLECharCharacteristic("3333", BLEWrite);
 BLECharCharacteristic simpleProfilechar4 = BLECharCharacteristic("ffe4", BLENotify);
 // BLEFixedLengthCharacteristic simpleProfilechar5 = BLEFixedLengthCharacteristic("ffe5", BLERead, SIMPLEPROFILE_CHAR5_LEN);  //do it later
 
@@ -59,6 +59,10 @@ static uint16_t loop_task_process_event( uint8_t task_id, uint16_t events )
 
 
 void setup() {
+
+  Serial2.setRx(PA_8);
+  Serial2.setTx(PA_9);
+  Serial2.begin(9600);
   // put your setup code here, to run once:
   //GPIO_AFIODeInit();
   asm("nop");

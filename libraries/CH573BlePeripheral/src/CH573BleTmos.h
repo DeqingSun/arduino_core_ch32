@@ -98,6 +98,9 @@ public:
                 BLERemoteAttribute** _remoteAttributes,
                 unsigned char _numRemoteAttributes);
 
+    void bleConnectedCallback(gapEstLinkReqEvent_t *pEvent);
+    void bleDisconnectedCallback(gapTerminateLinkEvent_t *pEvent);
+
 //     virtual void poll();
 
 //     virtual void end();
