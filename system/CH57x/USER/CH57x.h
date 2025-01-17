@@ -9,11 +9,12 @@
 /* General Purpose I/O */
 typedef struct
 {
-    __IO uint32_t CFGLR;
-    //uint32_t RESERVED;
-    __IO uint32_t INDR;
-    __IO uint32_t OUTDR;
-    //todo
+    __IO uint32_t DIR;
+    __IO uint32_t PIN;
+    __IO uint32_t OUT;
+    __IO uint32_t CLR;
+    __IO uint32_t PU;
+    __IO uint32_t PD_DRV;
 } GPIO_TypeDef;
 
 
@@ -28,7 +29,6 @@ typedef enum
     GPIO_Mode_Out_PP = 0x10,
     GPIO_Mode_AF_OD = 0x1C,
     GPIO_Mode_AF_PP = 0x18,
-    DUMMY_GPIOMode_TypeDef
 } GPIOMode_TypeDef;
 
 /* EXTI mode enumeration */
@@ -239,9 +239,7 @@ void     GPIO_ResetBits(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin);
 /* Output Maximum frequency selection */
 typedef enum
 {
-    GPIO_Speed_10MHz = 1,
-    GPIO_Speed_2MHz,
-    GPIO_Speed_50MHz
+    GPIO_Speed_50MHz = 1
 } GPIOSpeed_TypeDef;
 
 typedef struct

@@ -67,77 +67,30 @@ void TIM_CCxCmd(TIM_TypeDef *TIMx, uint16_t TIM_Channel, uint16_t TIM_CCx)
  */
 void GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_InitStruct)
 {
-    // uint32_t currentmode = 0x00, currentpin = 0x00, pinpos = 0x00, pos = 0x00;
-    // uint32_t tmpreg = 0x00, pinmask = 0x00;
-
-    // currentmode = ((uint32_t)GPIO_InitStruct->GPIO_Mode) & ((uint32_t)0x0F);
-
-    // if((((uint32_t)GPIO_InitStruct->GPIO_Mode) & ((uint32_t)0x10)) != 0x00)
-    // {
-    //     currentmode |= (uint32_t)GPIO_InitStruct->GPIO_Speed;
-    // }
-
-    // if(((uint32_t)GPIO_InitStruct->GPIO_Pin & ((uint32_t)0x00FF)) != 0x00)
-    // {
-    //     tmpreg = GPIOx->CFGLR;
-
-    //     for(pinpos = 0x00; pinpos < 0x08; pinpos++)
-    //     {
-    //         pos = ((uint32_t)0x01) << pinpos;
-    //         currentpin = (GPIO_InitStruct->GPIO_Pin) & pos;
-
-    //         if(currentpin == pos)
-    //         {
-    //             pos = pinpos << 2;
-    //             pinmask = ((uint32_t)0x0F) << pos;
-    //             tmpreg &= ~pinmask;
-    //             tmpreg |= (currentmode << pos);
-
-    //             if(GPIO_InitStruct->GPIO_Mode == GPIO_Mode_IPD)
-    //             {
-    //                 GPIOx->BCR = (((uint32_t)0x01) << pinpos);
-    //             }
-    //             else
-    //             {
-    //                 if(GPIO_InitStruct->GPIO_Mode == GPIO_Mode_IPU)
-    //                 {
-    //                     GPIOx->BSHR = (((uint32_t)0x01) << pinpos);
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     GPIOx->CFGLR = tmpreg;
-    // }
-
-    // if(GPIO_InitStruct->GPIO_Pin > 0x00FF)
-    // {
-    //     tmpreg = GPIOx->CFGHR;
-
-    //     for(pinpos = 0x00; pinpos < 0x08; pinpos++)
-    //     {
-    //         pos = (((uint32_t)0x01) << (pinpos + 0x08));
-    //         currentpin = ((GPIO_InitStruct->GPIO_Pin) & pos);
-
-    //         if(currentpin == pos)
-    //         {
-    //             pos = pinpos << 2;
-    //             pinmask = ((uint32_t)0x0F) << pos;
-    //             tmpreg &= ~pinmask;
-    //             tmpreg |= (currentmode << pos);
-
-    //             if(GPIO_InitStruct->GPIO_Mode == GPIO_Mode_IPD)
-    //             {
-    //                 GPIOx->BCR = (((uint32_t)0x01) << (pinpos + 0x08));
-    //             }
-
-    //             if(GPIO_InitStruct->GPIO_Mode == GPIO_Mode_IPU)
-    //             {
-    //                 GPIOx->BSHR = (((uint32_t)0x01) << (pinpos + 0x08));
-    //             }
-    //         }
-    //     }
-    //     GPIOx->CFGHR = tmpreg;
-    // }
+    if((((uint32_t)GPIO_InitStruct->GPIO_Mode) & ((uint32_t)0x10)) != 0x00) //0x10 OUTPUT
+    {
+        GPIOx->DIR |= GPIO_InitStruct->GPIO_Pin;
+        GPIOx->PD_DRV |= GPIO_InitStruct->GPIO_Pin;
+    }else{
+        GPIOx->DIR &= ~GPIO_InitStruct->GPIO_Pin;
+        switch (GPIO_InitStruct->GPIO_Mode){
+        case GPIO_Mode_AIN:
+        case GPIO_Mode_IN_FLOATING:
+            GPIOx->PU &= ~GPIO_InitStruct->GPIO_Pin;
+            GPIOx->PD_DRV &= ~GPIO_InitStruct->GPIO_Pin;
+            break;
+        case GPIO_Mode_IPD:
+            GPIOx->PU &= ~GPIO_InitStruct->GPIO_Pin;
+            GPIOx->PD_DRV |= GPIO_InitStruct->GPIO_Pin;
+            break;
+        case GPIO_Mode_IPU:
+            GPIOx->PD_DRV &= ~GPIO_InitStruct->GPIO_Pin;
+            GPIOx->PU |= GPIO_InitStruct->GPIO_Pin;
+            break;
+        default:
+            break;
+        }
+    }
 }
 
 /*********************************************************************

@@ -85,11 +85,11 @@ static inline uint32_t digital_io_read(GPIO_TypeDef *port, uint32_t pin)
   */
 static inline void digital_io_toggle(GPIO_TypeDef *port, uint32_t pin)
 {
-  uint32_t odr = port->OUTDR;
 #if !defined(CH57x)
+  uint32_t odr = port->OUTDR;
   port->BSHR = ((odr & pin) << 16u) | (~odr & pin);
 #else
-  port->OUTDR = odr ^ pin;
+  port->OUT ^= pin;
 #endif
 }
 
