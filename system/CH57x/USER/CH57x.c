@@ -94,6 +94,64 @@ void GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_InitStruct)
 }
 
 /*********************************************************************
+ * @fn      GPIO_ReadInputDataBit
+ *
+ * @brief   GPIOx - where x can be (A..C) to select the GPIO peripheral.
+ *
+ * @param    GPIO_Pin - specifies the port bit to read.
+ *             This parameter can be GPIO_Pin_x where x can be (0..23).
+ *
+ * @return  The input port pin value.
+ */
+uint8_t GPIO_ReadInputDataBit(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin)
+{
+    uint8_t bitstatus = 0x00;
+
+    if((GPIOx->PIN & GPIO_Pin) != (uint32_t)Bit_RESET)
+    {
+        bitstatus = (uint8_t)Bit_SET;
+    }
+    else
+    {
+        bitstatus = (uint8_t)Bit_RESET;
+    }
+
+    return bitstatus;
+}
+
+/*********************************************************************
+ * @fn      GPIO_SetBits
+ *
+ * @brief   Sets the selected data port bits.
+ *
+ * @param   GPIOx - where x can be (A..C) to select the GPIO peripheral.
+ *          GPIO_Pin - specifies the port bits to be written.
+ *            This parameter can be any combination of GPIO_Pin_x where x can be (0..23).
+ *
+ * @return  none
+ */
+void GPIO_SetBits(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin)
+{
+    GPIOx->OUT |= GPIO_Pin;
+}
+
+/*********************************************************************
+ * @fn      GPIO_ResetBits
+ *
+ * @brief   Clears the selected data port bits.
+ *
+ * @param   GPIOx - where x can be (A..C) to select the GPIO peripheral.
+ *          GPIO_Pin - specifies the port bits to be written.
+ *            This parameter can be any combination of GPIO_Pin_x where x can be (0..23).
+ *
+ * @return  none
+ */
+void GPIO_ResetBits(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin)
+{
+    GPIOx->CLR = GPIO_Pin;
+}
+
+/*********************************************************************
  * @fn      EXTI_ClearITPendingBit
  *
  * @brief   Clears the EXTI's line pending bits.
