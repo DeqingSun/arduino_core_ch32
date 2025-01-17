@@ -250,6 +250,8 @@ void USART_Init(USART_TypeDef *USARTx, USART_InitTypeDef *USART_InitStruct)
     x = (x + 5) / 10;
     USARTx->DL = (uint16_t)x;
 
+    USARTx->FCR = (2 << 6) | RB_FCR_TX_FIFO_CLR | RB_FCR_RX_FIFO_CLR | RB_FCR_FIFO_EN; // FIFO打开，触发点4字节
+
     usartxbase = (uint32_t)USARTx;
     tmpreg = USARTx->LCR;
     tmpreg &= ~(RB_LCR_STOP_BIT|RB_LCR_PAR_MOD|RB_LCR_PAR_EN|RB_LCR_WORD_SZ);
@@ -272,7 +274,7 @@ void USART_Init(USART_TypeDef *USARTx, USART_InitTypeDef *USART_InitStruct)
 /*********************************************************************
  * @fn      USART_Cmd
  *
- * @brief   Enables or disables the specified USART peripheral.
+ * @brief   Enables or disables the specified USART peripheral. On CH573, this only control TX
  *
  * @param   USARTx - where x can be 1, 2, 3 or 4 to select the USART peripheral.
  *          NewState - ENABLE or DISABLE.
@@ -283,11 +285,11 @@ void USART_Cmd(USART_TypeDef *USARTx, FunctionalState NewState)
 {
     if(NewState != DISABLE)
     {
-        //USARTx->CTLR1 |= CTLR1_UE_Set;
+        USARTx->IER |= RB_IER_TXD_EN;
     }
     else
     {
-        //USARTx->CTLR1 &= CTLR1_UE_Reset;
+        USARTx->IER &= ~RB_IER_TXD_EN;
     }
 }
 
@@ -303,6 +305,8 @@ void USART_Cmd(USART_TypeDef *USARTx, FunctionalState NewState)
  */
 void USART_SendData(USART_TypeDef *USARTx, uint16_t Data)
 {
+    //USARTx->THR = (Data & (uint16_t)0x01FF);
+    while(R8_UART0_TFC == UART_FIFO_SIZE);  //wait until FIFO has space
     USARTx->THR = (Data & (uint16_t)0x01FF);
 }
 

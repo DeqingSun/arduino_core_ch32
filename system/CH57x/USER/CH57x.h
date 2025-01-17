@@ -346,8 +346,10 @@ typedef struct
 #define USART_HardwareFlowControl_RTS_CTS    ((uint16_t)0x0300)
 
 /* USART_Word_Length */
-#define USART_WordLength_8b                  ((uint16_t)0x0000)
-#define USART_WordLength_9b                  ((uint16_t)0x1000)
+#define USART_WordLength_5b                  ((uint16_t)0x0000)
+#define USART_WordLength_6b                  ((uint16_t)0x0001)
+#define USART_WordLength_7b                  ((uint16_t)0x0002)
+#define USART_WordLength_8b                  ((uint16_t)0x0003)
 
 /* USART_Stop_Bits */
 #define USART_StopBits_1                     ((uint16_t)0x0000)
