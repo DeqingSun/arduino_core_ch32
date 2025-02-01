@@ -87,6 +87,8 @@ void setup() {
   GPIOA_ModeCfg(GPIO_Pin_15, GPIO_ModeOut_PP_5mA);
   GPIOA_ModeCfg(GPIO_Pin_4, GPIO_ModeOut_PP_5mA);
 
+  pinMode(PA12,OUTPUT);
+
   simpleProfilechar2.setValue(0x55);
 
   blePeripheral.begin();
@@ -135,8 +137,10 @@ void loop() {
         //tx_on_PA4(millisNow);
   if (simpleProfilechar1.value() & 1){
     R32_PA_OUT|=(1<<4);
+    digitalWrite(PA12,HIGH);
   }else{
     R32_PA_OUT&=~(1<<4);
+    digitalWrite(PA12,LOW);
   }
 
 
