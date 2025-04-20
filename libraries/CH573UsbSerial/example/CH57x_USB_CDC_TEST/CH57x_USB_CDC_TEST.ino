@@ -117,17 +117,11 @@ void setup() {
   asm("nop");
   delay(1);
 
-  USBInit();
+  SerialUSB.begin();
+  
 
   GPIOA_ModeCfg(GPIO_Pin_12, GPIO_ModeOut_PP_5mA);
 
-}
-
-extern "C" {
-uint8_t USBSerial_available();
-char USBSerial_read();
-void USBSerial_flush(void);
-uint8_t USBSerial_write( char c);
 }
 
 void loop() {
@@ -152,17 +146,14 @@ void loop() {
 
 
   
-  int incoming = USBSerial_available();
+  int incoming = SerialUSB.available();
   if (incoming>0){
     for (int i = 0; i < incoming; i++) {
-      char c = USBSerial_read();
+      char c = SerialUSB.read();
       tx_on_PA12_main(c);
     }
-    USBSerial_write('O');
-    USBSerial_write('K');
-    USBSerial_write('\n');
-    USBSerial_flush();
-
+    SerialUSB.println("OK!");
+    SerialUSB.flush();
   }
   
   
