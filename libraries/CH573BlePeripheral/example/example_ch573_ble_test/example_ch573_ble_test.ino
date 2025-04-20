@@ -1,3 +1,4 @@
+#include <CH573UsbSerial.h>
 #include <CH573BlePeripheral.h>
 
 #include "config.h"
@@ -59,6 +60,8 @@ static uint16_t loop_task_process_event( uint8_t task_id, uint16_t events )
 
 
 void setup() {
+
+  USBInit();
 
   Serial2.setRx(PA_8);
   Serial2.setTx(PA_9);

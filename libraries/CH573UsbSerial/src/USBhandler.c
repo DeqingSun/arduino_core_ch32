@@ -60,6 +60,8 @@ void USBInitForCdc() {
 
   // enable interrupt
   R8_USB_INT_EN = RB_UIE_SUSPEND | RB_UIE_BUS_RST | RB_UIE_TRANSFER;
+
+  PFIC_EnableIRQ(USB_IRQn);
 }
 
 void USB_EP0_SETUP() {

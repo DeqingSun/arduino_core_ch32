@@ -118,7 +118,6 @@ void setup() {
   delay(1);
 
   USBInit();
-  PFIC_EnableIRQ(USB_IRQn);
 
   GPIOA_ModeCfg(GPIO_Pin_12, GPIO_ModeOut_PP_5mA);
 
