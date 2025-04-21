@@ -136,6 +136,8 @@ bStatus_t ch573BleTmosProfile_WriteAttrCB(uint16_t connHandle, gattAttribute_t *
                     if(status == SUCCESS)
                     {
                         tmos_memcpy(pAttr->pValue, pValue, profileAttrTableFastLut[i].profileAttrValueLen);
+                        //change to BLEDeviceCharacteristicValueChanged!!!!!!!!!!!
+                        //https://github.com/sandeepmistry/arduino-BLEPeripheral/blob/master/src/nRF51822.cpp
                         //notifyApp = SIMPLEPROFILE_CHAR1;
                     }
                     break;
