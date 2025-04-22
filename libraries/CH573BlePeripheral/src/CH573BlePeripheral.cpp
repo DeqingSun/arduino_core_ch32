@@ -33,7 +33,7 @@ CH573BlePeripheral::CH573BlePeripheral():
     // TMOS_TimerInit( NULL );
     asm("nop");
 
-//       memset(this->_eventHandlers, 0x00, sizeof(this->_eventHandlers));
+    memset(this->_eventHandlers, 0x00, sizeof(this->_eventHandlers));
 
 //   this->setDeviceName(DEFAULT_DEVICE_NAME);
 //   this->setAppearance(DEFAULT_APPEARANCE);
@@ -49,10 +49,6 @@ void CH573BlePeripheral::setLocalName(const char *_localName)
     // GAPRole_SetParameter( GAPROLE_ADVERT_DATA, sizeof(localName), (void *)localName );
     // GAPRole_SetParameter( GAPROLE_SCAN_RSP_DATA, sizeof(localName), (void *)localName );
 }
-
-
-
-
 
 void CH573BlePeripheral::begin()
 {
@@ -189,6 +185,12 @@ bool CH573BlePeripheral::connected() {
   return false;
 }
 
+void CH573BlePeripheral::setEventHandler(BLEPeripheralEvent event, BLEPeripheralEventHandler eventHandler) {
+  if (event < sizeof(this->_eventHandlers)) {
+    this->_eventHandlers[event] = eventHandler;
+  }
+}
+
 void CH573BlePeripheral::setAdvertisedServiceUuid(const char* _advertisedServiceUuid) {
   advertisedServiceUuid = _advertisedServiceUuid;
 }
@@ -221,17 +223,17 @@ bool CH573BlePeripheral::characteristicValueChanged(BLECharacteristic& character
 
 
 void CH573BlePeripheral::BLEDeviceConnected(BLEDevice& /*device*/, const unsigned char* address) {
-//   this->_central.setAddress(address);
+  this->_central.setAddress(address);
 
 // #ifdef BLE_PERIPHERAL_DEBUG
 //   Serial.print(F("Peripheral connected to central: "));
 //   Serial.println(this->_central.address());
 // #endif
 
-//   BLEPeripheralEventHandler eventHandler = this->_eventHandlers[BLEConnected];
-//   if (eventHandler) {
-//     eventHandler(this->_central);
-//   }
+  BLEPeripheralEventHandler eventHandler = this->_eventHandlers[BLEConnected];
+  if (eventHandler) {
+    eventHandler(this->_central);
+  }
   asm("nop");
 }
 
@@ -241,12 +243,12 @@ void CH573BlePeripheral::BLEDeviceDisconnected(BLEDevice& /*device*/) {
 //   Serial.println(this->_central.address());
 // #endif
 
-//   BLEPeripheralEventHandler eventHandler = this->_eventHandlers[BLEDisconnected];
-//   if (eventHandler) {
-//     eventHandler(this->_central);
-//   }
+  BLEPeripheralEventHandler eventHandler = this->_eventHandlers[BLEDisconnected];
+  if (eventHandler) {
+    eventHandler(this->_central);
+  }
 
-//   this->_central.clearAddress();
+  this->_central.clearAddress();
 }
 
 void CH573BlePeripheral::initLocalAttributes() {

@@ -885,23 +885,14 @@ bool CH573BleTmos::updateCharacteristicValue(BLECharacteristic& characteristic) 
 
 void CH573BleTmos::bleConnectedCallback(gapEstLinkReqEvent_t *pEvent) {
     if (this->_eventListener) {
-        asm("nop");
-        asm("nop");
-        asm("nop");
-        asm("nop");
-        asm("nop");
-        asm("nop");
-        asm("nop");
-        asm("nop");
-        asm("nop");
         this->_eventListener->BLEDeviceConnected(*this, pEvent->devAddr);
     }
 }
 
 void CH573BleTmos::bleDisconnectedCallback(gapTerminateLinkEvent_t *pEvent) {
-    // if (this->_eventListener) {
-    //     this->_eventListener->BLEDeviceDisconnected(*this);
-    // }
+    if (this->_eventListener) {
+        this->_eventListener->BLEDeviceDisconnected(*this);
+    }
 }
 
 BLEDeviceEventListener* CH573BleTmos::getEventListener() {

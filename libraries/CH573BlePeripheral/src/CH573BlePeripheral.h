@@ -20,6 +20,15 @@
 
 #include "CH573BleTmos.h"
 
+enum BLEPeripheralEvent {
+  BLEConnected = 0,
+  BLEDisconnected = 1,
+  BLEBonded = 2,
+  BLERemoteServicesDiscovered = 3
+};
+
+typedef void (*BLEPeripheralEventHandler)(BLECentral& central);
+
 class CH573BlePeripheral : public BLEDeviceEventListener, public BLECharacteristicValueChangeListener, public BLERemoteCharacteristicValueChangeListener
 {
   public:
@@ -41,6 +50,8 @@ class CH573BlePeripheral : public BLEDeviceEventListener, public BLECharacterist
 
     BLECentral central();
     bool connected();
+
+    void setEventHandler(BLEPeripheralEvent event, BLEPeripheralEventHandler eventHandler);
   
   private:
     void initLocalAttributes();
@@ -76,6 +87,7 @@ class CH573BlePeripheral : public BLEDeviceEventListener, public BLECharacterist
     BLERemoteCharacteristic        remoteServicesChangedCharacteristic;
 
     BLECentral                     _central;
+    BLEPeripheralEventHandler      _eventHandlers[4];
 
 
 };

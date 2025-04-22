@@ -86,6 +86,8 @@ void setup() {
   // set initial value
   //characteristic.setValue(0);
   //simpleProfilechar1.setEventHandler(BLEWritten, char1Written);
+  blePeripheral.setEventHandler(BLEConnected, blePeripheralConnectHandler);
+  blePeripheral.setEventHandler(BLEDisconnected, blePeripheralDisconnectHandler);
 
   pinMode(PA12, OUTPUT);
 
@@ -151,3 +153,17 @@ void loop() {
 
 // void char1Written(BLECentral& central, BLECharacteristic& characteristic) {
 // }
+
+void blePeripheralConnectHandler(BLECentral& central) {
+  // central connected event handler
+  SerialUSB.print(F("Connected event, central: "));
+  SerialUSB.println(central.address());
+  SerialUSB.flush();
+}
+
+void blePeripheralDisconnectHandler(BLECentral& central) {
+  // central disconnected event handler
+  SerialUSB.print(F("Disconnected event, central: "));
+  SerialUSB.println(central.address());
+  SerialUSB.flush();
+}
