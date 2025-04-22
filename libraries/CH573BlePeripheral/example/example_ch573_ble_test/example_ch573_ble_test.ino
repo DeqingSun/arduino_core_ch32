@@ -11,11 +11,14 @@ BLEService simpleService = BLEService("1111");
 
 
 // create one or more characteristics
-BLECharCharacteristic simpleProfilechar1 = BLECharCharacteristic("ffe1", BLERead | BLEWrite);
-BLEDescriptor descriptorChar1 = BLEDescriptor("2901", "characteristic 1");
+BLECharCharacteristic simpleProfilechar1 = BLECharCharacteristic("1111", BLERead | BLEWrite);
+BLEDescriptor descriptorChar1 = BLEDescriptor("2901", "char 1, RW");
 BLECharCharacteristic simpleProfilechar2 = BLECharCharacteristic("2222", BLERead);
+BLEDescriptor descriptorChar2 = BLEDescriptor("2901", "char 2, R");
 BLECharCharacteristic simpleProfilechar3 = BLECharCharacteristic("3333", BLEWrite);
-BLECharCharacteristic simpleProfilechar4 = BLECharCharacteristic("ffe4", BLENotify);
+BLEDescriptor descriptorChar3 = BLEDescriptor("2901", "char 3, W");
+BLECharCharacteristic simpleProfilechar4 = BLECharCharacteristic("4444", BLENotify);
+BLEDescriptor descriptorChar4 = BLEDescriptor("2901", "char 4, N");
 // BLEFixedLengthCharacteristic simpleProfilechar5 = BLEFixedLengthCharacteristic("ffe5", BLERead, SIMPLEPROFILE_CHAR5_LEN);  //do it later
 
 tmosTaskID loop_task_id = INVALID_TASK_ID;
@@ -53,8 +56,6 @@ static uint16_t loop_task_process_event(uint8_t task_id, uint16_t events) {
   return 0;
 }
 
-
-
 void setup() {
 
   SerialUSB.begin();
@@ -74,90 +75,79 @@ void setup() {
   blePeripheral.addAttribute(simpleProfilechar1);
   blePeripheral.addAttribute(descriptorChar1);
   blePeripheral.addAttribute(simpleProfilechar2);
+  blePeripheral.addAttribute(descriptorChar2);
   blePeripheral.addAttribute(simpleProfilechar3);
+  blePeripheral.addAttribute(descriptorChar3);
   blePeripheral.addAttribute(simpleProfilechar4);
+  blePeripheral.addAttribute(descriptorChar4);
   // blePeripheral.addAttribute(simpleProfilechar5);
   //blePeripheral.addAttribute(descriptor);
 
   // set initial value
   //characteristic.setValue(0);
-
   //simpleProfilechar1.setEventHandler(BLEWritten, char1Written);
-
-  GPIOA_ModeCfg(GPIO_Pin_5, GPIO_ModeOut_PP_5mA);
-  GPIOA_ModeCfg(GPIO_Pin_15, GPIO_ModeOut_PP_5mA);
-  GPIOA_ModeCfg(GPIO_Pin_4, GPIO_ModeOut_PP_5mA);
 
   pinMode(PA12, OUTPUT);
 
-  simpleProfilechar2.setValue(0x55);
-
   blePeripheral.begin();
-
-  simpleProfilechar4.setValue(0x55);
 
   loop_task_id = TMOS_ProcessEventRegister(loop_task_process_event);
   tmos_set_event(loop_task_id, LOOP_TASK_TMOS_EVT_TEST_1);
 
-  // CH57X_BLEInit();
-  //   HAL_Init();
-  //   GAPRole_PeripheralInit();
-  //   Peripheral_Init();
   Main_Circulation();
 }
 
-long pastMillis = 0;
-
-int counter = 0;
+int loopCounterChar2 = 0;
+int char2Value = 0;
+int loopCounterChar4 = 0;
+int char4Value = 0;
 
 void loop() {
   // put your main code here, to run repeatedly:
 
-  // long millisNow = millis();
-
-  // if ((millisNow-pastMillis)>=1000){
-  //   pastMillis =  millisNow;
-  //   // R32_PA_OUT^=(1<<4);
-  //   // R32_PA_OUT^=(1<<5);
-  //   simpleProfilechar4.setValue(millisNow/1000);
-  // }
-
-  counter++;
-  if ((counter & 7) == 0) {
-    simpleProfilechar4.setValue(counter);
+  loopCounterChar2++;
+  //the loop() function is called every 100ms, so loopCounter is incremented every 100ms, use this instead of millis (not work yet)
+  if (loopCounterChar2 >= 10){
+    loopCounterChar2 = 0;
+    char2Value++;
+    if (char2Value > 0xFF) {
+      char2Value = 0;
+    }
+    simpleProfilechar2.setValue(char2Value);
+    SerialUSB.print("char2Value: ");
+    SerialUSB.println(char2Value, HEX);
+    SerialUSB.flush();
   }
 
-
-  // GPIOA_ResetBits(GPIO_Pin_4);
-  // DelayMs(100);
-  // GPIOA_SetBits(GPIO_Pin_4);
-
-  //tx_on_PA4(0x55);
-  //tx_on_PA4(0xF5);
-  //tx_on_PA4(millisNow);
-  if (simpleProfilechar1.written()) {
-    SerialUSB.println("simpleProfilechar1 written");
-    SerialUSB.println((int)simpleProfilechar1.value(),HEX);
+  loopCounterChar4++;
+  if (loopCounterChar4 >= 20){
+    loopCounterChar4 = 0;
+    char4Value++;
+    if (char4Value > 0xFF) {
+      char4Value = 0;
+    }
+    simpleProfilechar4.setValue(char4Value);
+    SerialUSB.print("char4Value: ");
+    SerialUSB.println(char4Value, HEX);
     SerialUSB.flush();
-    if (simpleProfilechar1.value() & 1) {
-      R32_PA_OUT |= (1 << 4);
+  }
+
+  if (simpleProfilechar1.written()) {
+    SerialUSB.println("char1 written");
+    SerialUSB.println(((int)simpleProfilechar1.value())&0xFF,HEX);
+    SerialUSB.flush();
+  }
+  if (simpleProfilechar3.written()) {
+    SerialUSB.println("char3 written");
+    SerialUSB.println(((int)simpleProfilechar3.value())&0xFF,HEX);
+    SerialUSB.flush();
+    if (simpleProfilechar3.value() & 1) {
       digitalWrite(PA12, HIGH);
     } else {
-      R32_PA_OUT &= ~(1 << 4);
       digitalWrite(PA12, LOW);
     }
   }
 }
 
 // void char1Written(BLECentral& central, BLECharacteristic& characteristic) {
-//   // central wrote new value to characteristic, update LED
-//   SerialUSB.print("Char1, writen: ");
-//   SerialUSB.println(simpleProfilechar1.value());
-//   if (simpleProfilechar1.value() & 1) {
-//     R32_PA_OUT |= (1 << 4);
-//     digitalWrite(PA12, HIGH);
-//   } else {
-//     R32_PA_OUT &= ~(1 << 4);
-//     digitalWrite(PA12, LOW);
-//   }
 // }
