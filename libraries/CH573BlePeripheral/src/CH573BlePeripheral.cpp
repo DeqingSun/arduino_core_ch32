@@ -179,10 +179,9 @@ BLECentral CH573BlePeripheral::central() {
 }
 
 bool CH573BlePeripheral::connected() {
-  //t//his->poll();
+  //this->poll();
 
-//  r//eturn this->_central;
-  return false;
+  return this->_central;
 }
 
 void CH573BlePeripheral::setEventHandler(BLEPeripheralEvent event, BLEPeripheralEventHandler eventHandler) {

@@ -27,10 +27,6 @@ extern void CH57X_BLEInit(void);
 
 __attribute__((aligned(4))) uint32_t MEM_BUF[BLE_MEMHEAP_SIZE / 4];
 
-#if (defined(BLE_MAC)) && (BLE_MAC == TRUE)
-const uint8_t MacAddr[6] = { 0x84, 0xC2, 0xE4, 0x03, 0x02, 0x02 };
-#endif
-
 __attribute__((section(".highcode")))
 __attribute__((noinline)) void
 Main_Circulation() {
@@ -38,7 +34,6 @@ Main_Circulation() {
     TMOS_SystemProcess();
   }
 }
-
 
 #define LOOP_TASK_TMOS_EVT_TEST_1 (0x0001 << 0)
 
@@ -56,6 +51,8 @@ static uint16_t loop_task_process_event(uint8_t task_id, uint16_t events) {
   return 0;
 }
 
+#define CONVERT_TO_HEX(x) ((x) > 9 ? (x) + 'A' - 10 : (x) + '0')
+
 void setup() {
 
   SerialUSB.begin();
@@ -67,7 +64,19 @@ void setup() {
   //GPIO_AFIODeInit();
   asm("nop");
 
-  blePeripheral.setLocalName("CH573_BLE");
+  uint8_t MacAddr[6];
+  GetMACAddress(MacAddr);
+
+  // setLocalName just copy pointer, so need to be static
+  static char deviceName[11];
+  strcpy(deviceName, "CH573_0000");
+  // set the last 4 digits of the device name to the MAC address
+  deviceName[6] = CONVERT_TO_HEX((MacAddr[1] >> 4) & 0x0F);
+  deviceName[7] = CONVERT_TO_HEX(MacAddr[1] & 0x0F);
+  deviceName[8] = CONVERT_TO_HEX((MacAddr[0] >> 4) & 0x0F);
+  deviceName[9] = CONVERT_TO_HEX(MacAddr[0] & 0x0F);
+
+  blePeripheral.setLocalName(deviceName);
   blePeripheral.setAdvertisedServiceUuid(simpleService.uuid());
 
   // add attributes (services, characteristics, descriptors) to peripheral
