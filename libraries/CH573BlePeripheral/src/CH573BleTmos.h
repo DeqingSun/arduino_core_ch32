@@ -45,6 +45,7 @@
 struct ProfileAttrTableFastLutEntry {
     gattAttribute_t *profileAttrPtr;
     uint8_t profileAttrValueLen;
+    BLECharacteristic* characteristic;
 };
 
 struct NotificationConfigEntry {
@@ -100,6 +101,8 @@ public:
 
     void bleConnectedCallback(gapEstLinkReqEvent_t *pEvent);
     void bleDisconnectedCallback(gapTerminateLinkEvent_t *pEvent);
+
+    BLEDeviceEventListener* getEventListener();
 
 //     virtual void poll();
 

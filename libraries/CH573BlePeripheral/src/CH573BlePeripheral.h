@@ -50,6 +50,8 @@ class CH573BlePeripheral : public BLEDeviceEventListener, public BLECharacterist
     virtual void BLEDeviceConnected(BLEDevice& device, const unsigned char* address);
     virtual void BLEDeviceDisconnected(BLEDevice& device);
 
+    virtual void BLEDeviceCharacteristicValueChanged(BLEDevice& device, BLECharacteristic& characteristic, const unsigned char* value, unsigned char valueLength);
+
   public:
 
     BLEDevice*                     device;

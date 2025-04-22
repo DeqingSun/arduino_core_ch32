@@ -82,7 +82,7 @@ void setup() {
   // set initial value
   //characteristic.setValue(0);
 
-  simpleProfilechar1.setEventHandler(BLEWritten, char1Written);
+  //simpleProfilechar1.setEventHandler(BLEWritten, char1Written);
 
   GPIOA_ModeCfg(GPIO_Pin_5, GPIO_ModeOut_PP_5mA);
   GPIOA_ModeCfg(GPIO_Pin_15, GPIO_ModeOut_PP_5mA);
@@ -136,21 +136,28 @@ void loop() {
   //tx_on_PA4(0xF5);
   //tx_on_PA4(millisNow);
   if (simpleProfilechar1.written()) {
-    // SerialUSB.println("simpleProfilechar1 written");
-    // SerialUSB.println(simpleProfilechar1.value());
-    // SerialUSB.flush();
+    SerialUSB.println("simpleProfilechar1 written");
+    SerialUSB.println((int)simpleProfilechar1.value(),HEX);
+    SerialUSB.flush();
+    if (simpleProfilechar1.value() & 1) {
+      R32_PA_OUT |= (1 << 4);
+      digitalWrite(PA12, HIGH);
+    } else {
+      R32_PA_OUT &= ~(1 << 4);
+      digitalWrite(PA12, LOW);
+    }
   }
 }
 
-void char1Written(BLECentral& central, BLECharacteristic& characteristic) {
-  // central wrote new value to characteristic, update LED
-  SerialUSB.print("Char1, writen: ");
-  SerialUSB.println(simpleProfilechar1.value());
-  if (simpleProfilechar1.value() & 1) {
-    R32_PA_OUT |= (1 << 4);
-    digitalWrite(PA12, HIGH);
-  } else {
-    R32_PA_OUT &= ~(1 << 4);
-    digitalWrite(PA12, LOW);
-  }
-}
+// void char1Written(BLECentral& central, BLECharacteristic& characteristic) {
+//   // central wrote new value to characteristic, update LED
+//   SerialUSB.print("Char1, writen: ");
+//   SerialUSB.println(simpleProfilechar1.value());
+//   if (simpleProfilechar1.value() & 1) {
+//     R32_PA_OUT |= (1 << 4);
+//     digitalWrite(PA12, HIGH);
+//   } else {
+//     R32_PA_OUT &= ~(1 << 4);
+//     digitalWrite(PA12, LOW);
+//   }
+// }

@@ -135,7 +135,14 @@ bStatus_t ch573BleTmosProfile_WriteAttrCB(uint16_t connHandle, gattAttribute_t *
                     //Write the value
                     if(status == SUCCESS)
                     {
-                        tmos_memcpy(pAttr->pValue, pValue, profileAttrTableFastLut[i].profileAttrValueLen);
+                        //tmos_memcpy(pAttr->pValue, pValue, profileAttrTableFastLut[i].profileAttrValueLen);
+                        if (ch573TmosInstance) {
+                            BLEDeviceEventListener* _eventListener = ch573TmosInstance->getEventListener();
+                            if (_eventListener){
+                                _eventListener->BLEDeviceCharacteristicValueChanged(*ch573TmosInstance, *profileAttrTableFastLut[i].characteristic, pValue, len);
+                            }
+                        }
+                        //profileAttrTableFastLut[i].characteristic->setValue(pValue, len);
                         //change to BLEDeviceCharacteristicValueChanged!!!!!!!!!!!
                         //https://github.com/sandeepmistry/arduino-BLEPeripheral/blob/master/src/nRF51822.cpp
                         //notifyApp = SIMPLEPROFILE_CHAR1;
@@ -437,6 +444,7 @@ void CH573BleTmos::begin(unsigned char _advertisementDataSize,
             //get the fast lut for characteristic callback
             profileAttrTableFastLut[profileAttrTableFastLutIndex].profileAttrPtr = profileAttrTblOneEntry;
             profileAttrTableFastLut[profileAttrTableFastLutIndex].profileAttrValueLen = characteristic->valueLength();
+            profileAttrTableFastLut[profileAttrTableFastLutIndex].characteristic = characteristic;
             profileAttrTableFastLutIndex++;
 
             profileAttrTblIndex++;
@@ -894,4 +902,8 @@ void CH573BleTmos::bleDisconnectedCallback(gapTerminateLinkEvent_t *pEvent) {
     // if (this->_eventListener) {
     //     this->_eventListener->BLEDeviceDisconnected(*this);
     // }
+}
+
+BLEDeviceEventListener* CH573BleTmos::getEventListener() {
+    return this->_eventListener;
 }

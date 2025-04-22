@@ -263,3 +263,7 @@ void CH573BlePeripheral::initLocalAttributes() {
     numLocalAttributes = 0;
 }
 
+void CH573BlePeripheral::BLEDeviceCharacteristicValueChanged(BLEDevice& /*device*/, BLECharacteristic& characteristic, const unsigned char* value, unsigned char valueLength) {
+  characteristic.setValue(this->_central, value, valueLength);
+}
+
