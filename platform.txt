@@ -177,7 +177,7 @@ tools.wchisp.path={runtime.tools.wchisp.path}/
 tools.wchisp.cmd=wchisp
 tools.wchisp.upload.params.verbose=
 tools.wchisp.upload.params.quiet=
-tools.wchisp.upload.pattern="{path}{cmd}" {upload.verbose} flash "{build.path}/{build.project_name}.elf"
+tools.wchisp.upload.pattern="{path}{cmd}" {upload.verbose} --retry 2 flash "{build.path}/{build.project_name}.elf"
 
 
 # Debugger configuration (general options)
