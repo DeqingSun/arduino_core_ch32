@@ -107,10 +107,10 @@
                         },
                         {
                             "host": "x86_64-apple-darwin",
-                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/wch_openocd_macos-1.0.0.tar.gz",
-                            "archiveFileName": "wch_openocd_macos-1.0.0.tar.gz",
-                            "checksum": "SHA-256:100DC6A75E302D5E3FF7548FE64351AA545353982BA22C19D43555F3A748BE0E",
-                            "size": "1995618"
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/wch_openocd_macos-1.0.0_20250425.tar.gz",
+                            "archiveFileName": "wch_openocd_macos-1.0.0_20250425.tar.gz",
+                            "checksum": "SHA-256:074aa6f84a57accb095534e7b02956ce2795c378dd016daabc50a368c5efc80a",
+                            "size": "1994509"
                         }
                     ]
                 },
