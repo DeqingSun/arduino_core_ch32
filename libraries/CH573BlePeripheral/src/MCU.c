@@ -148,6 +148,8 @@ void CH57X_BLEInit(void)
         PRINT("LIB init error code: %x ...\n", i);
         while(1);
     }
+    //re-enable SysTick for millis
+    SysTick_Config(60*1000);
 }
 
 /*******************************************************************************
