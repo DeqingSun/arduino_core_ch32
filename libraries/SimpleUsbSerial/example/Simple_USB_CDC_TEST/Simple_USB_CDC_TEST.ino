@@ -1,4 +1,4 @@
-#include <CH573UsbSerial.h>
+#include <SimpleUsbSerial.h>
 
 __attribute__((section(".highcode")))
 void tx_on_PA12_main(char c) {

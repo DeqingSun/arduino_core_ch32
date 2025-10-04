@@ -2,7 +2,7 @@
 // clang-format off
 #include <stdint.h>
 #include <stdbool.h>
-#include "CH573UsbCdc.h"
+#include "SimpleUsbCdc.h"
 #include "USBconstant.h"
 #include "USBhandler.h"
 // clang-format on

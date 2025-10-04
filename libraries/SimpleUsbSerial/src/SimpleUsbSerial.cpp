@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "CH573UsbSerial.h"
+#include "SimpleUsbSerial.h"
 
 extern "C" {
     uint8_t USBSerial_available();

@@ -1,4 +1,4 @@
-#include <CH573UsbSerial.h>
+#include <SimpleUsbSerial.h>
 #include <CH573BlePeripheral.h>
 
 #include "config.h"

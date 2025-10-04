@@ -1,7 +1,7 @@
 #ifndef __CH573_USB_SERIAL_H__
 #define __CH573_USB_SERIAL_H__
 
-#include "CH573UsbCdc.h"
+#include "SimpleUsbCdc.h"
 
 class SerialOverUsbCdc : public Stream {
 public:
