@@ -112,15 +112,12 @@ void tx_on_PA12_main(char c) {
 
 
 void setup() {
-  GPIOA_ModeCfg(GPIO_Pin_12, GPIO_ModeOut_PP_5mA);
-  GPIOA_SetBits(GPIO_Pin_12);
+  pinMode(PA_12, OUTPUT);
+  digitalWrite(PA_12, HIGH);
   asm("nop");
   delay(1);
 
   SerialUSB.begin();
-  
-
-  GPIOA_ModeCfg(GPIO_Pin_12, GPIO_ModeOut_PP_5mA);
 
 }
 

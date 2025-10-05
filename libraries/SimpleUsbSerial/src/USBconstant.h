@@ -28,4 +28,9 @@ extern const uint16_t Prod_DesLen;
 extern const uint16_t CDC_DesLen;
 extern const uint16_t Manuf_DesLen;
 
+#if defined (CH32X035)
+#include "ch32x035_usb_const.h"
+#include "ch32x035.h"
+#endif
+
 #endif

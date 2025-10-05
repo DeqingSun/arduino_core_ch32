@@ -3,8 +3,12 @@
 
 // clang-format off
 #include <stdint.h>
+#if defined (CH57x)
 #include "CH573SFR.h"
 #include "core_riscv.h"
+#elif defined (CH32X035)
+#include "ch32x035_usb_const.h"
+#endif
 #include "USBconstant.h"
 // clang-format on
 
@@ -20,14 +24,14 @@
 // extern const __code uint8_t *__data pDescr;
 
 typedef struct _USB_SETUP_REQ_ {
-    UINT8 bRequestType;
-    UINT8 bRequest;
-    UINT8 wValueL;
-    UINT8 wValueH;
-    UINT8 wIndexL;
-    UINT8 wIndexH;
-    UINT8 wLengthL;
-    UINT8 wLengthH;
+    uint8_t bRequestType;
+    uint8_t bRequest;
+    uint8_t wValueL;
+    uint8_t wValueH;
+    uint8_t wIndexL;
+    uint8_t wIndexH;
+    uint8_t wLengthL;
+    uint8_t wLengthH;
 } USB_SETUP_REQ_t;
 
 #define UsbSetupBuf ((USB_SETUP_REQ_t *)Ep0Buffer)
