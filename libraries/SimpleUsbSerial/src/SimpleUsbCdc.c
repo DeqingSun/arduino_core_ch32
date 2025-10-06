@@ -77,10 +77,19 @@ void USBInit(void){
   GPIO_Init(GPIOC, &GPIO_InitStructure);
 
   //PWR_VDD_SupplyVoltage
-  Delay_Init();
   RCC_APB1PeriphClockCmd( RCC_APB1Periph_PWR, ENABLE);
   PWR_PVDLevelConfig(PWR_PVDLevel_4V0);
-  Delay_Us(10);
+  // Delay_Us(10); // roughly 10us delay
+  asm volatile (
+    "addi  t0, zero, 33    \n\t" // set loop count (must fit 12-bit signed imm: -2048..+2047)
+    "1:                     \n\t"
+    "add   zero,zero,zero   \n\t" // 32-bit nop (preferred on CH57x/CH32V cores)
+    "addi  t0, t0, -1       \n\t" // decrement
+    "bnez  t0, 1b           \n\t" // branch if not zero
+    :
+    :
+    : "t0"
+  );
   if( PWR_GetFlagStatus(PWR_FLAG_PVDO) == (uint32_t)RESET)
   {
     //VDD > 4.0V

@@ -43,13 +43,23 @@ const uint16_t CfgDescLen = sizeof(CfgDesc);
 const uint8_t LangDes[]={0x04,0x03,0x09,0x04};           //Language Descriptor
 const uint16_t LangDesLen = sizeof(LangDes);
 const uint16_t SerDes[]={                                 //Serial String Descriptor
+#if defined(CH57x)
     0x030C,
     'C','H','5','7','x',
+#elif defined(CH32X035)
+    0x0312,
+    'C','H','3','2','X','0','3','5',
+#endif
 };
 const uint16_t SerDesLen = sizeof(SerDes);
 const uint16_t Prod_Des[]={                                //Produce String Descriptor
+#if defined(CH57x)
     0x0316,
     'C','H','5','7','x','d','u','i','n','o',
+#elif defined(CH32X035)
+    0x031C,
+    'C','H','3','2','X','0','3','5','d','u','i','n','o',
+#endif
 };
 const uint16_t Prod_DesLen = sizeof(Prod_Des);
 

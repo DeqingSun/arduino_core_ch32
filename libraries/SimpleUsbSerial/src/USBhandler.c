@@ -119,6 +119,7 @@ void USB_EP0_SETUP() {
   len = 8;    //CH573 USB setup packet does not affect R8_USB_RX_LEN. So just force it to 8
 #elif defined (CH32X035)
   uint8_t len = USBFSD->RX_LEN;
+  len = 8;    //Although not specified in the datasheet, setup packet length seems not correct in CH32X035 either
 #endif
 
   if (len == (sizeof(USB_SETUP_REQ_t))) {
