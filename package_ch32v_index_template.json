@@ -39,7 +39,7 @@
                         {
                             "packager": "WCH",
                             "name": "riscv-none-embed-gcc",
-                            "version": "8.2.0"
+                            "version": "8.2.0_trimmed"
                         },
                         {
                             "packager": "WCH",
@@ -62,28 +62,28 @@
             "tools": [
                 {
                     "name": "riscv-none-embed-gcc",
-                    "version": "8.2.0",
+                    "version": "8.2.0_trimmed",
                     "systems": [
                         {
                             "host": "i686-mingw32",
-                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/risc-none-embed-gcc-8.2.0.zip",
-                            "archiveFileName": "risc-none-embed-gcc-8.2.0.zip",
-                            "checksum": "SHA-256:43DF880A1908C873A8B6AB115568C6BEAEEC41DDADEB5202703B6AA9FDE50626",
-                            "size": "267710516"
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/trimmed_risc-none-embed-gcc-8.2.0.zip",
+                            "archiveFileName": "trimmed_risc-none-embed-gcc-8.2.0.zip",
+                            "checksum": "SHA-256:4bdeb479fa3e3f02752e91c408214496a1ae17a9156500aa68fd897855bbac58",
+                            "size": "109832948"
                         },
                         {
                             "host": "x86_64-linux-gnu",
-                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/wch_gcc_8_linux-8.2.0.tar.gz",
-                            "archiveFileName": "wch_gcc_8_linux-8.2.0.tar.gz",
-                            "checksum": "SHA-256:967FB021E5689FF79A06A71C7E54FB7FACE418D5E9B27EC64F5E56687557A282",
-                            "size": "245443061"
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/trimmed_wch_gcc_8_linux-8.2.0.tar.gz",
+                            "archiveFileName": "trimmed_wch_gcc_8_linux-8.2.0.tar.gz",
+                            "checksum": "SHA-256:742add88f64cd48f893c53ae824846c5b2d1aef8552f4a5259c7b815df5d19af",
+                            "size": "89133455"
                         },
                         {
                             "host": "x86_64-apple-darwin",
-                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/wch_gcc_macos-8.2.0.tar.gz",
-                            "archiveFileName": "wch_gcc_macos-8.2.0.tar.gz",
-                            "checksum": "SHA-256:E14538AE7B621DE798C2466B338A4174CCE22C9CF12E5C1684C0995931738260",
-                            "size": "160591401"
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/trimmed_wch_gcc_macos-8.2.0.tar.gz",
+                            "archiveFileName": "trimmed_wch_gcc_macos-8.2.0.tar.gz",
+                            "checksum": "SHA-256:55e2ce566c7b6857840f1fd7614453af66f4966e7d7a717cd6ca015b93b3ff45",
+                            "size": "70124694"
                         }
                     ]
                 },
