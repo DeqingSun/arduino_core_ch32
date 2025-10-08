@@ -49,7 +49,7 @@
                         {
                             "packager": "WCH",
                             "name": "wchisp",
-                            "version": "0.3.0"
+                            "version": "0.3.0_20251008"
                         },
                         {
                             "packager": "WCH",
@@ -116,28 +116,28 @@
                 },
                 {
                     "name": "wchisp",
-                    "version": "0.3.0",
+                    "version": "0.3.0_20251008",
                     "systems": [
                         {
                             "host": "x86_64-linux-gnu",
-                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/wchisp-linux-x64_20250423.zip",
-                            "archiveFileName": "wchisp-linux-x64_20250423.zip",
-                            "checksum": "SHA-256:f7a95a75156d9480016558be94793cad43d8ca16976674e6bb1ac9f3a631b72f",
-                            "size": "908681"
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/wchisp-linux-x64_20251008.zip",
+                            "archiveFileName": "wchisp-linux-x64_20251008.zip",
+                            "checksum": "SHA-256:fb363be4dd84f9a9bf0d36d1d274feda00ed4e30eff7112e038d2e061d5e0dd5",
+                            "size": "910535"
                         },
                         {
                             "host": "i686-mingw32",
-                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/wchisp-win-x64_20250423.zip",
-                            "archiveFileName": "wchisp-win-x64_20250423.zip",
-                            "checksum": "SHA-256:097b7af643d44ca736636918fd7502b0caaf1ff7459f9c4a24c0925bc2b4f868",
-                            "size": "736260"
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/wchisp-win-x64_20251008.zip",
+                            "archiveFileName": "wchisp-win-x64_20251008.zip",
+                            "checksum": "SHA-256:72f7ecb129a0084c9b59e87e9f9c0bd91174ca5c91ea7ebcab1f4032e0bf96c8",
+                            "size": "728881"
                         },
                         {
                             "host": "x86_64-apple-darwin",
-                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/wchisp-macos-x64_20250423.zip",
-                            "archiveFileName": "wchisp-macos-x64_20250423.zip",
-                            "checksum": "SHA-256:33fcd2c665a7486f5e0134a218dd7eba2267ea96be08bad281d7aba1a1ace61c",
-                            "size": "864778"
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/wchisp-macos-x64_20251008.zip",
+                            "archiveFileName": "wchisp-macos-x64_20251008.zip",
+                            "checksum": "SHA-256:f9da872724def1ed8914b89764dc6b67ce3c577662e2f5335e63a9e173b63136",
+                            "size": "868868"
                         }
                     ]
                 },
