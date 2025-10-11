@@ -6,6 +6,7 @@ extern "C" {
     char USBSerial_read();
     void USBSerial_flush(void);
     uint8_t USBSerial_write( char c);
+    bool USBSerial_bool();
 }
 
 void SerialOverUsbCdc::begin(unsigned long baud, byte config){
@@ -33,6 +34,10 @@ size_t SerialOverUsbCdc::write(uint8_t c)
 void SerialOverUsbCdc::flush(void)
 {
   USBSerial_flush();
+}
+
+SerialOverUsbCdc::operator bool() {
+	return USBSerial_bool();
 }
 
 SerialOverUsbCdc SerialUSB;

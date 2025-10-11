@@ -264,6 +264,14 @@ char USBSerial_read() {
   }
   return data;
 }
+
+bool USBSerial_bool() {
+  bool result = false;
+  if (controlLineState > 0)
+    result = true;
+  // delay(10); not doing it for now
+  return result;
+}
   
 
 void USB_EP2_IN() {

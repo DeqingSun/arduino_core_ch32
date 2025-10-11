@@ -20,7 +20,7 @@ public:
     virtual int read(void);
     virtual size_t write(uint8_t);
     virtual void flush(void);
-
+    virtual operator bool();
 
 };
 
