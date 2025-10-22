@@ -692,7 +692,7 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution)
       operation is ongoing. */
   while(!ADC_GetFlagStatus(padc, ADC_FLAG_EOC ));
 #if defined(CH57x)
-  uhADCxConvertedValue = (R16_ADC_DATA & RB_ADC_DATA);
+  uhADCxConvertedValue = ADC_ConvertPAGValueCH57x();
 #else
   uhADCxConvertedValue = padc->RDATAR;
 #endif

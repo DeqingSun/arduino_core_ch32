@@ -447,3 +447,29 @@ FlagStatus ADC_GetFlagStatus(ADC_TypeDef *ADCx, uint8_t ADC_FLAG){
     }
     return 0;
 }
+
+uint16_t ADC_ConvertPAGValueCH57x(){
+    uint16_t adcValue = R16_ADC_DATA & RB_ADC_DATA;
+    uint8_t pgaSetting = (R8_ADC_CFG & RB_ADC_PGA_GAIN) >> 4;
+    switch(pgaSetting){
+        case ADC_PGA_1_4: 
+            //Voltage = (ADC/512-3)*1.05V
+            //Output = 1024 * Voltage / 3.3V = 1024 * (ADC/512-3) * 1.05 / 3.3 = ADC * 0.6365 - 976 = ADC * 163 / 256 - 977
+            return ((adcValue * 163 / 256) - 977);
+        case ADC_PGA_1_2:
+            //Voltage = (ADC/1024-1)*1.05V
+            //Output = 1024 * Voltage / 3.3V = 1024 * (ADC/1024-1) * 1.05 / 3.3 = ADC * 0.318 - 326 = ADC * 81 / 256 - 326
+            return ((adcValue * 81 / 256) - 326);
+        case ADC_PGA_0:
+            //Voltage = (ADC/2048)*1.05V
+            //Output = 1024 * Voltage / 3.3V = 1024 * (ADC/2048) * 1.05 / 3.3 = ADC * 0.159 = ADC * 41 / 256
+            return (adcValue * 41 / 256);
+        case ADC_PGA_2:
+            //Voltage = (ADC/4096+0.5)*1.05V
+            //Output = 1024 * Voltage / 3.3V = 1024 * (ADC/4096+0.5) * 1.05 / 3.3 = ADC * 0.0795 + 163 = ADC * 20 / 256 + 163
+            return ((adcValue * 20 / 256) + 163);
+        default:
+            return adcValue;
+    }
+    return adcValue;
+}

@@ -603,6 +603,7 @@ void ADC_Init(ADC_TypeDef *ADCx, ADC_InitTypeDef *ADC_InitStruct);
 void ADC_RegularChannelConfig(ADC_TypeDef *ADCx, uint8_t ADC_Channel, uint8_t Rank, uint8_t ADC_SampleTime);
 void ADC_SoftwareStartConvCmd(ADC_TypeDef *ADCx, FunctionalState NewState);
 FlagStatus ADC_GetFlagStatus(ADC_TypeDef *ADCx, uint8_t ADC_FLAG);
+uint16_t ADC_ConvertPAGValueCH57x();
 
 #ifdef __cplusplus
 }   // extern "C"
