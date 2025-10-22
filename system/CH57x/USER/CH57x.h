@@ -511,4 +511,101 @@ ITStatus EXTI_GetITStatus(uint32_t EXTI_Line);
 void EXTI_Init(EXTI_InitTypeDef *EXTI_InitStruct);
 void GPIO_EXTILineConfig(uint8_t GPIO_PortSource, uint8_t GPIO_PinSource);
 
+
+typedef struct
+{
+    __IO uint8_t ADC_CHANNEL;
+    __IO uint8_t ADC_CFG;
+    __IO uint8_t ADC_CONVERT;
+    __IO uint8_t TEM_SENSOR;
+    __IO uint16_t ADC_DATA;
+    __IO uint8_t ADC_INT_FLAG;
+    __IO uint32_t ADC_DMA_CTRL;
+    __IO uint8_t ADC_CTRL_DMA;
+    __IO uint8_t ADC_DMA_IF;
+    __IO uint8_t ADC_AUTO_CYCLE;
+    __IO uint16_t ADC_DMA_NOW;
+    __IO uint16_t ADC_DMA_BEG;
+    __IO uint16_t ADC_DMA_END;
+} ADC_TypeDef;
+
+#define ADC1 ((ADC_TypeDef *)0x40001058)
+
+#define ADC_Channel_0                               ((uint8_t)0x00)
+#define ADC_Channel_1                               ((uint8_t)0x01)
+#define ADC_Channel_2                               ((uint8_t)0x02)
+#define ADC_Channel_3                               ((uint8_t)0x03)
+#define ADC_Channel_4                               ((uint8_t)0x04)
+#define ADC_Channel_5                               ((uint8_t)0x05)
+#define ADC_Channel_6                               ((uint8_t)0x06)
+#define ADC_Channel_7                               ((uint8_t)0x07)
+#define ADC_Channel_8                               ((uint8_t)0x08)
+#define ADC_Channel_9                               ((uint8_t)0x09)
+#define ADC_Channel_10                              ((uint8_t)0x0A)
+#define ADC_Channel_11                              ((uint8_t)0x0B)
+#define ADC_Channel_12                              ((uint8_t)0x0C)
+#define ADC_Channel_13                              ((uint8_t)0x0D)
+#define ADC_Channel_14                              ((uint8_t)0x0E)
+#define ADC_Channel_15                              ((uint8_t)0x0F)
+
+#define ADC_Channel_TempSensor                      ((uint8_t)ADC_Channel_15)
+#define ADC_Channel_VBAT                            ((uint8_t)ADC_Channel_14)
+
+/* ADC Init structure definition */
+typedef struct
+{
+    uint32_t ADC_Mode; /* Configures the ADC to operate in independent or
+                          dual mode.
+                          This parameter can be a value of @ref ADC_mode */
+
+    FunctionalState ADC_ScanConvMode; /* Specifies whether the conversion is performed in
+                                         Scan (multichannels) or Single (one channel) mode.
+                                         This parameter can be set to ENABLE or DISABLE */
+
+    FunctionalState ADC_ContinuousConvMode; /* Specifies whether the conversion is performed in
+                                               Continuous or Single mode.
+                                               This parameter can be set to ENABLE or DISABLE. */
+
+    uint32_t ADC_ExternalTrigConv; /* Defines the external trigger used to start the analog
+                                      to digital conversion of regular channels. This parameter
+                                      can be a value of @ref ADC_external_trigger_sources_for_regular_channels_conversion */
+
+    uint32_t ADC_DataAlign; /* Specifies whether the ADC data alignment is left or right.
+                               This parameter can be a value of @ref ADC_data_align */
+
+    uint8_t ADC_NbrOfChannel; /* Specifies the number of ADC channels that will be converted
+                                   using the sequencer for regular channel group.
+                                   This parameter must range from 1 to 16. */
+
+    uint32_t ADC_OutputBuffer; /* Specifies whether the ADC channel output buffer is enabled or disabled.
+                                    This parameter can be a value of @ref ADC_OutputBuffer */
+
+    uint32_t ADC_Pga; /* Specifies the PGA gain multiple.
+                           This parameter can be a value of @ref ADC_Pga */
+} ADC_InitTypeDef;
+
+//CH57x does not have sampling time setting
+#define ADC_SAMPLINGTIME 0
+#define ADC_SAMPLINGTIME_INTERNAL 0
+
+#define ADC_Mode_Independent                           ((uint32_t)0x00000000)
+#define ADC_ExternalTrigConv_None                      ((uint32_t)0x000E0000)
+
+#define ADC_FLAG_EOC                                   RB_ADC_IF_EOC
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void ADC_Cmd(ADC_TypeDef *ADCx, FunctionalState NewState);
+void ADC_DeInit(ADC_TypeDef *ADCx);
+void ADC_Init(ADC_TypeDef *ADCx, ADC_InitTypeDef *ADC_InitStruct);
+void ADC_RegularChannelConfig(ADC_TypeDef *ADCx, uint8_t ADC_Channel, uint8_t Rank, uint8_t ADC_SampleTime);
+void ADC_SoftwareStartConvCmd(ADC_TypeDef *ADCx, FunctionalState NewState);
+FlagStatus ADC_GetFlagStatus(ADC_TypeDef *ADCx, uint8_t ADC_FLAG);
+
+#ifdef __cplusplus
+}   // extern "C"
+#endif
+
 #endif  // __CH57x_H__

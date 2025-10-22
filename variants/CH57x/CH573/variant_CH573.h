@@ -13,7 +13,7 @@
 #pragma once
 
 /* ENABLE Peripherals */
-// #define                         ADC_MODULE_ENABLED
+#define                         ADC_MODULE_ENABLED
 #define                         UART_MODULE_ENABLED
 // #define                         SPI_MODULE_ENABLED  
 // #define                         I2C_MODULE_ENABLED
@@ -21,19 +21,19 @@
 
 /* CH57x Pins */
 
-#define PA4                     0
-#define PA5                     1
-#define PA8                     2
-#define PA9                     3
+#define PA4                     PIN_A0
+#define PA5                     PIN_A1
+#define PA8                     PIN_A12
+#define PA9                     PIN_A13
 #define PA10                    4
 #define PA11                    5
-#define PA12                    6
-#define PA13                    7
-#define PA14                    8
-#define PA15                    9
-#define PB0                     10
+#define PA12                    PIN_A2
+#define PA13                    PIN_A3
+#define PA14                    PIN_A4
+#define PA15                    PIN_A5
+#define PB0                     PIN_A8
 #define PB4                     11
-#define PB6                     12
+#define PB6                     PIN_A9
 #define PB7                     13
 #define PB10                    14
 #define PB11                    15
@@ -54,7 +54,7 @@
 
 
 #define NUM_DIGITAL_PINS        22
-#define NUM_ANALOG_INPUTS       10
+#define NUM_ANALOG_INPUTS       14
 // #define ADC_CTLR_ADCAL          
 #define ADC_RESOLUTION          12
 

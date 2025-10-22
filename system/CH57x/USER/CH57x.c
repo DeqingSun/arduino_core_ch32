@@ -411,3 +411,39 @@ void RCC_APB1PeriphClockCmd(uint32_t RCC_APB1Periph, FunctionalState NewState)
 //     RCC->APB1PCENR &= ~RCC_APB1Periph;
 //   }
 }
+
+void ADC_Cmd(ADC_TypeDef *ADCx, FunctionalState NewState){
+    if(NewState != DISABLE){
+        R8_ADC_CFG |= RB_ADC_POWER_ON;
+    } else {
+        R8_ADC_CFG &= ~RB_ADC_POWER_ON;
+    }
+}
+
+void ADC_DeInit(ADC_TypeDef *ADCx){
+
+}
+
+void ADC_Init(ADC_TypeDef *ADCx, ADC_InitTypeDef *ADC_InitStruct){
+    //disable touch key
+    R8_TKEY_CFG &= ~RB_TKEY_PWR_ON;
+    //keep power on/off
+    R8_ADC_CFG = R8_ADC_CFG & ~(RB_ADC_BUF_EN | RB_ADC_DIFF_EN | RB_ADC_PGA_GAIN | RB_ADC_CLK_DIV) | (0b10 << 6) | (0b01 << 4) | RB_ADC_BUF_EN;   //div by 6, 533kHz, -6db gain, 0~3.15V
+}
+
+void ADC_RegularChannelConfig(ADC_TypeDef *ADCx, uint8_t ADC_Channel, uint8_t Rank, uint8_t ADC_SampleTime){
+    R8_ADC_CHANNEL = ADC_Channel;
+}
+
+void ADC_SoftwareStartConvCmd(ADC_TypeDef *ADCx, FunctionalState NewState){
+    R8_ADC_CONVERT = RB_ADC_START;
+}
+
+FlagStatus ADC_GetFlagStatus(ADC_TypeDef *ADCx, uint8_t ADC_FLAG){
+    if (ADC_FLAG == ADC_FLAG_EOC){
+        if ((R8_ADC_CONVERT & RB_ADC_START) == 0){
+            return 1;
+        }
+    }
+    return 0;
+}
