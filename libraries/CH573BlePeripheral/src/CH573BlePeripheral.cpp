@@ -268,3 +268,38 @@ void CH573BlePeripheral::BLEDeviceCharacteristicValueChanged(BLEDevice& /*device
   characteristic.setValue(this->_central, value, valueLength);
 }
 
+//run TMOS system process loop
+
+tmosTaskID loop_task_id = INVALID_TASK_ID;
+int loopIntervalMs = 20;
+
+extern void CH57X_BLEInit(void);
+
+__attribute__((aligned(4))) uint32_t MEM_BUF[BLE_MEMHEAP_SIZE / 4];
+
+__attribute__((section(".highcode")))
+__attribute__((noinline)) void
+Main_Circulation() {
+  while (1) {
+    TMOS_SystemProcess();
+  }
+}
+
+#define LOOP_TASK_TMOS_EVT_TEST_1 (0x0001 << 0)
+
+static uint16_t loop_task_process_event(uint8_t task_id, uint16_t events) {
+  if (events & LOOP_TASK_TMOS_EVT_TEST_1) {
+    loop();
+    tmos_start_task(loop_task_id, LOOP_TASK_TMOS_EVT_TEST_1, MS1_TO_SYSTEM_TIME(loopIntervalMs)); //run loop every loopIntervalMs
+    return (events ^ LOOP_TASK_TMOS_EVT_TEST_1);
+  }
+  return 0;
+}
+
+void CH573BlePeripheral::startBle(int _loopIntervalMs) {
+  loop_task_id = TMOS_ProcessEventRegister(loop_task_process_event);
+  tmos_set_event(loop_task_id, LOOP_TASK_TMOS_EVT_TEST_1);
+
+  loopIntervalMs = _loopIntervalMs;
+  Main_Circulation();
+}

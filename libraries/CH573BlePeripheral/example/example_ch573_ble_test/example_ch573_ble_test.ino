@@ -1,68 +1,40 @@
+// This example shows how to use BLE Peripheral library on CH573
+// Underlying stack is TMOS from WCH
+// The loop function is called every 20ms by TMOS task scheduler
+
 #include <SimpleUsbSerial.h>
 #include <CH573BlePeripheral.h>
 
-#include "config.h"
-#include "HAL.h"
-
 CH573BlePeripheral blePeripheral = CH573BlePeripheral();
 
-// create one or more services
+// Create one or more services. In this case we create a simple service with UUID "1111"
 BLEService simpleService = BLEService("1111");
 
 
-// create one or more characteristics
+// Create one or more characteristics
+// Characteristic 1: read and write with UUID "1111"
 BLECharCharacteristic simpleProfilechar1 = BLECharCharacteristic("1111", BLERead | BLEWrite);
 BLEDescriptor descriptorChar1 = BLEDescriptor("2901", "char 1, RW");
+// Characteristic 2: read only with UUID "2222"
 BLECharCharacteristic simpleProfilechar2 = BLECharCharacteristic("2222", BLERead);
 BLEDescriptor descriptorChar2 = BLEDescriptor("2901", "char 2, R");
+// Characteristic 3: write only with UUID "3333"
 BLECharCharacteristic simpleProfilechar3 = BLECharCharacteristic("3333", BLEWrite);
 BLEDescriptor descriptorChar3 = BLEDescriptor("2901", "char 3, W");
+// Characteristic 4: notify only with UUID "4444"
 BLECharCharacteristic simpleProfilechar4 = BLECharCharacteristic("4444", BLENotify);
 BLEDescriptor descriptorChar4 = BLEDescriptor("2901", "char 4, N");
 // BLEFixedLengthCharacteristic simpleProfilechar5 = BLEFixedLengthCharacteristic("ffe5", BLERead, SIMPLEPROFILE_CHAR5_LEN);  //do it later
 
-tmosTaskID loop_task_id = INVALID_TASK_ID;
-
-extern void CH57X_BLEInit(void);
-
-__attribute__((aligned(4))) uint32_t MEM_BUF[BLE_MEMHEAP_SIZE / 4];
-
-__attribute__((section(".highcode")))
-__attribute__((noinline)) void
-Main_Circulation() {
-  while (1) {
-    TMOS_SystemProcess();
-  }
-}
-
-#define LOOP_TASK_TMOS_EVT_TEST_1 (0x0001 << 0)
-
-//task的event处理回调函数,需要在注册task时候,传进去
-static uint16_t loop_task_process_event(uint8_t task_id, uint16_t events) {
-
-  //event 处理
-  if (events & LOOP_TASK_TMOS_EVT_TEST_1) {
-    loop();
-    tmos_start_task(loop_task_id, LOOP_TASK_TMOS_EVT_TEST_1, MS1_TO_SYSTEM_TIME(100));  //100ms
-    return (events ^ LOOP_TASK_TMOS_EVT_TEST_1);                                        //异或的方式清除该事件运行标志，并返回未运行的事件标志
-  }
-
-  // Discard unknown events
-  return 0;
-}
-
 #define CONVERT_TO_HEX(x) ((x) > 9 ? (x) + 'A' - 10 : (x) + '0')
 
 void setup() {
-
   SerialUSB.begin();
 
+  // Setup Serial2 for debug output
   Serial2.setRx(PA_8);
   Serial2.setTx(PA_9);
   Serial2.begin(9600);
-  // put your setup code here, to run once:
-  //GPIO_AFIODeInit();
-  asm("nop");
 
   uint8_t MacAddr[6];
   GetMACAddress(MacAddr);
@@ -76,18 +48,28 @@ void setup() {
   deviceName[8] = CONVERT_TO_HEX((MacAddr[0] >> 4) & 0x0F);
   deviceName[9] = CONVERT_TO_HEX(MacAddr[0] & 0x0F);
 
+  // set device name and advertised service UUID
   blePeripheral.setLocalName(deviceName);
   blePeripheral.setAdvertisedServiceUuid(simpleService.uuid());
 
   // add attributes (services, characteristics, descriptors) to peripheral
+  // Add service (1111)
   blePeripheral.addAttribute(simpleService);
+  // Add characteristic (1111) under service (1111)
   blePeripheral.addAttribute(simpleProfilechar1);
+  // descriptor is optional
   blePeripheral.addAttribute(descriptorChar1);
+  // Add characteristic (2222) under service (1111)
   blePeripheral.addAttribute(simpleProfilechar2);
+  // descriptor is optional
   blePeripheral.addAttribute(descriptorChar2);
+  // Add characteristic (3333) under service (1111)
   blePeripheral.addAttribute(simpleProfilechar3);
+  // descriptor is optional
   blePeripheral.addAttribute(descriptorChar3);
+  // Add characteristic (4444) under service (1111)
   blePeripheral.addAttribute(simpleProfilechar4);
+  // descriptor is optional
   blePeripheral.addAttribute(descriptorChar4);
   // blePeripheral.addAttribute(simpleProfilechar5);
   //blePeripheral.addAttribute(descriptor);
@@ -98,14 +80,13 @@ void setup() {
   blePeripheral.setEventHandler(BLEConnected, blePeripheralConnectHandler);
   blePeripheral.setEventHandler(BLEDisconnected, blePeripheralDisconnectHandler);
 
+  // Supposedly use PA12 as output to drive an LED
   pinMode(PA12, OUTPUT);
 
   blePeripheral.begin();
 
-  loop_task_id = TMOS_ProcessEventRegister(loop_task_process_event);
-  tmos_set_event(loop_task_id, LOOP_TASK_TMOS_EVT_TEST_1);
-
-  Main_Circulation();
+  blePeripheral.startBle();
+  // Do not put any code after startBle()
 }
 
 int loopCounterChar2 = 0;
@@ -114,12 +95,13 @@ int loopCounterChar4 = 0;
 int char4Value = 0;
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  unsigned long currentMillis = millis();
+  static unsigned long previousIncChar2Millis = 0;
+  static unsigned long previousIncChar4Millis = 0;
 
-  loopCounterChar2++;
-  //the loop() function is called every 100ms, so loopCounter is incremented every 100ms, use this instead of millis (not work yet)
-  if (loopCounterChar2 >= 10){
-    loopCounterChar2 = 0;
+  // Increment char2 value every second
+  if (currentMillis - previousIncChar2Millis >= 1000) {
+    previousIncChar2Millis = currentMillis;
     char2Value++;
     if (char2Value > 0xFF) {
       char2Value = 0;
@@ -130,9 +112,9 @@ void loop() {
     SerialUSB.flush();
   }
 
-  loopCounterChar4++;
-  if (loopCounterChar4 >= 20){
-    loopCounterChar4 = 0;
+  // Increment char4 value every 2 seconds
+  if (currentMillis - previousIncChar4Millis >= 2000) {
+    previousIncChar4Millis = currentMillis;
     char4Value++;
     if (char4Value > 0xFF) {
       char4Value = 0;
@@ -143,14 +125,16 @@ void loop() {
     SerialUSB.flush();
   }
 
+  // When characteristic 1, print value
   if (simpleProfilechar1.written()) {
     SerialUSB.println("char1 written");
-    SerialUSB.println(((int)simpleProfilechar1.value())&0xFF,HEX);
+    SerialUSB.println(((int)simpleProfilechar1.value()) & 0xFF, HEX);
     SerialUSB.flush();
   }
+  // When characteristic 3, print value and set LED (if value is odd)
   if (simpleProfilechar3.written()) {
     SerialUSB.println("char3 written");
-    SerialUSB.println(((int)simpleProfilechar3.value())&0xFF,HEX);
+    SerialUSB.println(((int)simpleProfilechar3.value()) & 0xFF, HEX);
     SerialUSB.flush();
     if (simpleProfilechar3.value() & 1) {
       digitalWrite(PA12, HIGH);

@@ -48,6 +48,8 @@ class CH573BlePeripheral : public BLEDeviceEventListener, public BLECharacterist
 
     void disconnect();
 
+    void startBle(int _loopIntervalMs = 20);
+
     BLECentral central();
     bool connected();
 
