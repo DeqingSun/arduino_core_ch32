@@ -5,8 +5,7 @@
 
 #include "BLEUuid.h"
 
-
-
+extern uint8_t attDeviceName[GAP_DEVICE_NAME_LEN];  // declared in CH573BleTmos.cpp
 
 CH573BlePeripheral::CH573BlePeripheral():
     localName(NULL),
@@ -45,6 +44,12 @@ CH573BlePeripheral::CH573BlePeripheral():
 void CH573BlePeripheral::setLocalName(const char *_localName)
 {
     localName = _localName;
+    int localNameLen = strlen(localName);
+    if (localNameLen > (GAP_DEVICE_NAME_LEN - 1)) {
+        localNameLen = (GAP_DEVICE_NAME_LEN - 1);
+    }
+    memcpy(attDeviceName, localName, localNameLen);
+    attDeviceName[localNameLen] = 0; // null terminate
     // // Set the local name
     // GAPRole_SetParameter( GAPROLE_ADVERT_DATA, sizeof(localName), (void *)localName );
     // GAPRole_SetParameter( GAPROLE_SCAN_RSP_DATA, sizeof(localName), (void *)localName );

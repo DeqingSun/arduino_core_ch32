@@ -184,7 +184,7 @@ void ch573BleTmosProfile_HandleConnStatusCB(uint16_t connHandle, uint8_t changeT
     }
 }
 
-static uint8_t attDeviceName[GAP_DEVICE_NAME_LEN] = "Simple Peripheral";
+uint8_t attDeviceName[GAP_DEVICE_NAME_LEN] = "Simple Peripheral";
 
 extern "C" void CH573BleTmosConnectedCallback(gapEstLinkReqEvent_t *pEvent);
 extern "C" void CH573BleTmosDisconnectedCallback(gapTerminateLinkEvent_t *pEvent);
