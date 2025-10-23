@@ -251,7 +251,7 @@ typedef enum
 
 typedef struct
 {
-    uint16_t GPIO_Pin; /* Specifies the GPIO pins to be configured.
+    uint32_t GPIO_Pin; /* Specifies the GPIO pins to be configured.
                           This parameter can be any value of @ref GPIO_pins_define */
 
     GPIOSpeed_TypeDef GPIO_Speed; /* Specifies the speed for the selected pins.

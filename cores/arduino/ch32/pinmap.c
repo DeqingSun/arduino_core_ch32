@@ -82,7 +82,7 @@ const uint32_t pin_map[24] = {
 };
 
 #elif defined(CH57x)
-const uint32_t pin_map[22] = {
+const uint32_t pin_map[24] = {
   GPIO_Pin_0,
   GPIO_Pin_1,
   GPIO_Pin_2,
@@ -104,7 +104,9 @@ const uint32_t pin_map[22] = {
   GPIO_Pin_18,
   GPIO_Pin_19,
   GPIO_Pin_20,
-  GPIO_Pin_21
+  GPIO_Pin_21,
+  GPIO_Pin_22,
+  GPIO_Pin_23
 };
 #endif
 
@@ -192,7 +194,7 @@ void pin_function(PinName pin, int function)
 
   }
 
-#if defined(CH32X035)
+#if defined(CH32X035) || defined(CH57x)
   GPIO_InitStructure.GPIO_Pin = ch_pinx; // fixed by Ngo Hung Cuong: pin_16, 17, ..., 23
 #else
   GPIO_InitStructure.GPIO_Pin = (uint16_t) ch_pinx;
