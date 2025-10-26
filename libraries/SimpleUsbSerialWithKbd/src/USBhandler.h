@@ -54,7 +54,7 @@ typedef struct _USB_SETUP_REQ_ {
 #define EP0_IN_Callback USB_EP0_IN
 #define EP1_IN_Callback USB_EP1_IN
 #define EP2_IN_Callback USB_EP2_IN
-#define EP3_IN_Callback NOP_Process
+#define EP3_IN_Callback USB_EP3_IN
 #define EP4_IN_Callback NOP_Process
 
 // SETUP

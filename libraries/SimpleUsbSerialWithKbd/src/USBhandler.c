@@ -9,17 +9,21 @@ uint16_t getLineCodingHandler();
 void setControlLineStateHandler();
 void USB_EP2_IN();
 void USB_EP2_OUT();
+void USB_EP3_IN();
 
 // clang-format off
 //end point ram
 __attribute__((aligned(4))) uint8_t Ep0Buffer[8];
 __attribute__((aligned(4))) uint8_t Ep1Buffer[8];
 __attribute__((aligned(4))) uint8_t Ep2Buffer[128];
+__attribute__((aligned(4))) uint8_t Ep3Buffer[64];
 // clang-format on
 
 uint16_t SetupLen;
 uint8_t SetupReq;
 volatile uint8_t UsbConfig;
+
+uint8_t keyboardLedStatus = 0;
 
 uint8_t *pDescr;
 
@@ -69,14 +73,30 @@ void USBInitForCdc() {
   USBFSD->UEP2_CTRL_H = USBFS_UEP_T_AUTO_TOG | USBFS_UEP_T_RES_NAK | USBFS_UEP_R_RES_ACK;
 #endif
 
+  // Endpoint 3, single 64 bytes send buffer
+#if defined (CH57x)
+  R8_UEP2_3_MOD |= RB_UEP3_TX_EN;
+#elif defined (CH32X035)
+  USBFSD->UEP2_3_MOD |= USBFS_UEP3_TX_EN;
+#endif
+  // Endpoint 3 automatically flips the sync flag, IN
+  // transaction returns NAK, OUT returns ACK
+#if defined (CH57x)
+  R8_UEP3_CTRL = RB_UEP_AUTO_TOG | UEP_T_RES_NAK | UEP_R_RES_ACK;
+#elif defined (CH32X035)
+  USBFSD->UEP3_CTRL_H = USBFS_UEP_T_AUTO_TOG | USBFS_UEP_T_RES_NAK | USBFS_UEP_R_RES_ACK;
+#endif
+
 #if defined (CH57x)
   R16_UEP0_DMA = (uint16_t)(uint32_t)&Ep0Buffer[0];
   R16_UEP1_DMA = (uint16_t)(uint32_t)&Ep1Buffer[0];
   R16_UEP2_DMA = (uint16_t)(uint32_t)&Ep2Buffer[0];
+  R16_UEP3_DMA = (uint16_t)(uint32_t)&Ep3Buffer[0];
 #elif defined (CH32X035)
   USBFSD->UEP0_DMA = (uint32_t)&Ep0Buffer[0];
   USBFSD->UEP1_DMA = (uint32_t)&Ep1Buffer[0];
   USBFSD->UEP2_DMA = (uint32_t)&Ep2Buffer[0];
+  USBFSD->UEP3_DMA = (uint32_t)&Ep3Buffer[0];
 #endif
 
   // clear interrupt flag
@@ -153,6 +173,10 @@ void USB_EP0_SETUP() {
           break;
         case SET_LINE_CODING: // 0x20  Configure
           break;
+        case HID_SET_REPORT:
+          // LED status for caps lock, num lock, scroll lock, etc
+          // do it in EP0_OUT
+          break;
 
         default:
           len = 0xFF; // command not supported
@@ -198,6 +222,14 @@ void USB_EP0_SETUP() {
           } else {
               pDescr = SerDes;
               len = SerDesLen;
+          }
+          break;
+        case 0x22:
+          if (UsbSetupBuf->wValueL == 0) {
+            pDescr = ReportDescriptor;
+            len = ReportDescriptor_Len;
+          } else {
+            len = 0xff;
           }
           break;
         default:
@@ -521,6 +553,15 @@ void USB_EP0_OUT(){
             USBFSD->UEP0_CTRL_H |= USBFS_UEP_R_RES_ACK | USBFS_UEP_T_RES_ACK;  // send 0-length packet
             #endif
         }
+    } else if (SetupReq == HID_SET_REPORT) {
+      keyboardLedStatus = Ep0Buffer[0];
+      #if defined (CH57x)
+        R8_UEP0_T_LEN = 0;
+        R8_UEP0_CTRL ^= RB_UEP_R_TOG;
+      #elif defined (CH32X035)
+        USBFSD->UEP0_TX_LEN = 0;
+        USBFSD->UEP0_CTRL_H ^= USBFS_UEP_R_TOG;
+      #endif  
     }
     else
     {
@@ -693,6 +734,13 @@ void USBFS_IRQHandler(void) {
           R8_UEP2_CTRL = RB_UEP_AUTO_TOG | UEP_T_RES_NAK | UEP_R_RES_ACK;
         #elif defined (CH32X035)
           USBFSD->UEP2_CTRL_H = USBFS_UEP_T_AUTO_TOG | USBFS_UEP_T_RES_NAK | USBFS_UEP_R_RES_ACK;
+        #endif
+        // Endpoint 3 automatically flips the sync flag, IN
+        // transaction returns NAK, OUT returns ACK
+        #if defined (CH57x)
+          R8_UEP3_CTRL = RB_UEP_AUTO_TOG | UEP_T_RES_NAK | UEP_R_RES_ACK;
+        #elif defined (CH32X035)
+          USBFSD->UEP3_CTRL_H = USBFS_UEP_T_AUTO_TOG | USBFS_UEP_T_RES_NAK | USBFS_UEP_R_RES_ACK;
         #endif
 
         #if defined (CH57x)

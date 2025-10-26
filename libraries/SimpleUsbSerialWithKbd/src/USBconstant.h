@@ -17,7 +17,7 @@ extern const uint16_t SerDes[];
 extern const uint16_t Prod_Des[];
 extern const uint16_t CDC_Des[];
 extern const uint16_t Manuf_Des[];
-
+extern const uint8_t ReportDescriptor[];
 
 
 extern const uint16_t DevDescLen;
@@ -27,6 +27,7 @@ extern const uint16_t SerDesLen;
 extern const uint16_t Prod_DesLen;
 extern const uint16_t CDC_DesLen;
 extern const uint16_t Manuf_DesLen;
+extern const uint16_t ReportDescriptor_Len;
 
 #if defined (CH32X035)
 #include "ch32x035_usb_const.h"
