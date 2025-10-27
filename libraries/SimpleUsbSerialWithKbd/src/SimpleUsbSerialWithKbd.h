@@ -26,4 +26,16 @@ public:
 
 extern SerialOverUsbCdc SerialUSB;
 
+class Keyboard_ : public Print{
+public:
+  Keyboard_(void);
+  void begin(void);
+  void end(void);
+  size_t write(uint8_t k);
+  size_t press(uint8_t k);
+  size_t release(uint8_t k);
+  void releaseAll(void);
+};
+extern Keyboard_ Keyboard;
+
 #endif // __CH573_USB_SERIAL_H__

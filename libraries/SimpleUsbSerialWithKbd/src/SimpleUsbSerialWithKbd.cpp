@@ -7,6 +7,11 @@ extern "C" {
     void USBSerial_flush(void);
     uint8_t USBSerial_write( char c);
     bool USBSerial_bool();
+
+    uint8_t Keyboard_press(uint8_t k);
+    uint8_t Keyboard_release(uint8_t k);
+    void Keyboard_releaseAll(void);
+    uint8_t Keyboard_write(uint8_t c);
 }
 
 void SerialOverUsbCdc::begin(unsigned long baud, byte config){
@@ -41,3 +46,32 @@ SerialOverUsbCdc::operator bool() {
 }
 
 SerialOverUsbCdc SerialUSB;
+
+Keyboard_::Keyboard_(void) {
+}
+
+void Keyboard_::begin(void) {
+  // do nothing
+}
+
+void Keyboard_::end(void) {
+  // do nothing
+}
+
+size_t Keyboard_::write(uint8_t k) {
+  return Keyboard_write(k);
+}
+
+size_t Keyboard_::press(uint8_t k) {
+  return Keyboard_press(k);
+}
+
+size_t Keyboard_::release(uint8_t k) {
+  return Keyboard_release(k);
+}
+
+void Keyboard_::releaseAll(void) {
+  Keyboard_releaseAll();
+}
+
+Keyboard_ Keyboard;
