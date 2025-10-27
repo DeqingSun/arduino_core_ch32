@@ -2,6 +2,7 @@
 #define __CH573_USB_SERIAL_H__
 
 #include "SimpleUsbCdc.h"
+#include "SimpleHidKeyboard.h"
 
 class SerialOverUsbCdc : public Stream {
 public:
