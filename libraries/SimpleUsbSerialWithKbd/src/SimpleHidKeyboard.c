@@ -16,6 +16,7 @@ volatile uint8_t UpPoint3_Busy =
     0; // Flag of whether upload pointer is busy
 
 uint8_t HIDKey[8] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
+uint8_t HIDMouse[4] = {0x0, 0x0, 0x0, 0x0};
 
 #define SHIFT 0x80
 const uint8_t _asciimap[128] = {
@@ -200,7 +201,15 @@ uint8_t USB_EP3_send(uint8_t reportId) {
       Ep3Buffer[1 + i] = HIDKey[i];
     }
     toSendSize = sizeof(HIDKey) + 1;
-  } 
+  } else if (reportId == 2) {
+    Ep3Buffer[0] = 2;
+    for (uint8_t i = 0; i < sizeof(HIDMouse); i++) { // load data for upload
+      Ep3Buffer[1 + i] = HIDMouse[i];
+    }
+    toSendSize = sizeof(HIDMouse) + 1;
+  } else {
+    return 0;
+  }
 
 #if defined(CH57x)
     R8_UEP3_T_LEN = toSendSize; // data length
@@ -316,4 +325,36 @@ void Keyboard_print(char *str) {
 uint8_t Keyboard_getLEDStatus() {
   // keyboardLedStatus is updated from USB_EP0_OUT
   return keyboardLedStatus;
+}
+
+uint8_t Mouse_press(uint8_t k) {
+  HIDMouse[0] |= k;
+  USB_EP3_send(2);
+  return 1;
+}
+
+uint8_t Mouse_release(uint8_t k) {
+  HIDMouse[0] &= ~k;
+  USB_EP3_send(2);
+  return 1;
+}
+
+uint8_t Mouse_click(uint8_t k) {
+  Mouse_press(k);
+  delayMicroseconds(10000);
+  Mouse_release(k);
+  return 1;
+}
+
+uint8_t Mouse_move(int8_t x, int8_t y) {
+  HIDMouse[1] = x;
+  HIDMouse[2] = y;
+  USB_EP3_send(2);
+  return 1;
+}
+
+uint8_t Mouse_scroll(int8_t tilt) {
+  HIDMouse[3] = tilt;
+  USB_EP3_send(2);
+  return 1;
 }

@@ -73,6 +73,12 @@ void Keyboard_print(char *str);
 
 uint8_t Keyboard_getLEDStatus();
 
+uint8_t Mouse_press(uint8_t k);
+uint8_t Mouse_release(uint8_t k);
+uint8_t Mouse_click(uint8_t k);
+uint8_t Mouse_move(int8_t x, int8_t y);
+uint8_t Mouse_scroll(int8_t tilt);
+
 #ifdef __cplusplus
 } // extern "C"
 #endif
