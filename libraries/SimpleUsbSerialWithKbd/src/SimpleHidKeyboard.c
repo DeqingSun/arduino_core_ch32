@@ -206,7 +206,7 @@ uint8_t USB_EP3_send() {
     R8_UEP3_CTRL = R8_UEP3_CTRL & ~MASK_UEP_T_RES |
               UEP_T_RES_ACK; // upload data and respond ACK
 #elif defined(CH32X035)
-    USBFSD->UEP3_CTRL = USBFSD->UEP3_CTRL & ~USBFS_UEP_T_RES_MASK |
+    USBFSD->UEP3_CTRL_H = USBFSD->UEP3_CTRL_H & ~USBFS_UEP_T_RES_MASK |
               USBFS_UEP_T_RES_ACK; // upload data and respond ACK
 #endif
 
