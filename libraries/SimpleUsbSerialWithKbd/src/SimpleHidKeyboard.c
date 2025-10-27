@@ -159,7 +159,7 @@ void USB_EP3_IN() {
     R8_UEP3_T_LEN = 0;
     R8_UEP3_CTRL = R8_UEP3_CTRL & ~MASK_UEP_T_RES | UEP_T_RES_NAK; // Default NAK
 #elif defined(CH32X035)
-    USBFSD->UEP3_T_LEN = 0;
+    USBFSD->UEP3_TX_LEN = 0;
     USBFSD->UEP3_CTRL_H = USBFSD->UEP3_CTRL_H & ~USBFS_UEP_T_RES_MASK | USBFS_UEP_T_RES_NAK; // Default NAK
 #endif
   UpPoint3_Busy = 0;                                       // Clear busy flag
@@ -199,7 +199,7 @@ uint8_t USB_EP3_send() {
 #if defined(CH57x)
     R8_UEP3_T_LEN = sizeof(HIDKey); // data length
 #elif defined(CH32X035)
-    USBFSD->UEP3_T_LEN = sizeof(HIDKey); // data length
+    USBFSD->UEP3_TX_LEN = sizeof(HIDKey); // data length
 #endif
   UpPoint3_Busy = 1;
 #if defined(CH57x)
