@@ -8,10 +8,16 @@ extern "C" {
 #endif
 
 #ifndef CH32V10x
-#ifdef CH573
+#if defined(CH573)
 void systick_init(void)
 {
     SetSysClock(CLK_SOURCE_PLL_60MHz);
+    SysTick_Config(60*1000);
+}
+#elif defined(CH572)
+void systick_init(void)
+{
+    SetSysClock(CLK_SOURCE_HSE_PLL_60MHz);
     SysTick_Config(60*1000);
 }
 #else

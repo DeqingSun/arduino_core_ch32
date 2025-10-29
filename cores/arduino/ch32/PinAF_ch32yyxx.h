@@ -34,4 +34,8 @@
 #include "../../../variants/CH573/PinAF_CH573.h"
 #endif
 
+#if defined(CH572)
+#include "../../../variants/CH572/PinAF_CH572.h"
+#endif
+
 #endif /* _PINAF_CH32YYXX_H */

@@ -108,6 +108,22 @@ const uint32_t pin_map[24] = {
   GPIO_Pin_22,
   GPIO_Pin_23
 };
+
+#elif defined(CH572)
+const uint32_t pin_map[12] = {
+  GPIO_Pin_0,
+  GPIO_Pin_1,
+  GPIO_Pin_2,
+  GPIO_Pin_3,
+  GPIO_Pin_4,
+  GPIO_Pin_5,
+  GPIO_Pin_6,
+  GPIO_Pin_7,
+  GPIO_Pin_8,
+  GPIO_Pin_9,
+  GPIO_Pin_10,
+  GPIO_Pin_11
+};
 #endif
 
 

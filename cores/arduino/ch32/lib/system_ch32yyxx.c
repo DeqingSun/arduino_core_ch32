@@ -30,3 +30,8 @@
 #include "CH573_sys.c"
 #include "CH573.c"
 #endif
+
+#if defined(CH572)
+#include "CH572_sys.c"
+#include "CH572.c"
+#endif

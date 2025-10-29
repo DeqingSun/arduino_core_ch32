@@ -174,8 +174,8 @@ void uart_init(serial_t *obj, uint32_t baudrate, uint32_t databits, uint32_t par
   {
     #if defined(CH32L10x) || defined(CH32VM00X)
     RCC_PB2PeriphClockCmd(RCC_PB2Periph_USART1, ENABLE);
-    #elif defined(CH573)
-    //CH573 does not have clock control
+    #elif defined(CH573) || defined(CH572)
+    //CH573 and CH572 does not have clock control
     #else
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
     #endif
@@ -190,8 +190,8 @@ void uart_init(serial_t *obj, uint32_t baudrate, uint32_t databits, uint32_t par
     RCC_PB1PeriphClockCmd(RCC_PB1Periph_USART2, ENABLE);
     #elif defined(CH32VM00X)
     RCC_PB2PeriphClockCmd(RCC_PB2Periph_USART2, ENABLE);
-    #elif defined(CH573)
-    //CH573 does not have clock control
+    #elif defined(CH573) || defined(CH572)
+    //CH573 and CH572 does not have clock control
     #else
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
     #endif
@@ -204,8 +204,8 @@ void uart_init(serial_t *obj, uint32_t baudrate, uint32_t databits, uint32_t par
   {
     #if defined(CH32L10x)
     RCC_PB1PeriphClockCmd(RCC_PB1Periph_USART3, ENABLE);
-    #elif defined(CH573)
-    //CH573 does not have clock control
+    #elif defined(CH573) || defined(CH572)
+    //CH573 and CH572 does not have clock control
     #else
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
     #endif
@@ -217,8 +217,8 @@ void uart_init(serial_t *obj, uint32_t baudrate, uint32_t databits, uint32_t par
   #if !defined(CH32V10x) && !defined(CH32L10x)
   else if (obj->uart == UART4) 
   {
-    #if defined(CH573)
-    //CH573 does not have clock control
+    #if defined(CH573) || defined(CH572)
+    //CH573 and CH572 does not have clock control
     #else
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_UART4, ENABLE);
     #endif
@@ -313,8 +313,8 @@ void uart_deinit(serial_t *obj)
       #if defined(CH32L10x) || defined(CH32VM00X)
       RCC_PB2PeriphResetCmd(RCC_PB2Periph_USART1, ENABLE);
       RCC_PB2PeriphResetCmd(RCC_PB2Periph_USART1, DISABLE);
-      #elif defined(CH573)
-      //CH573 does not have clock control
+      #elif defined(CH573) || defined(CH572)
+      //CH573 and CH572 does not have clock control
       #else
       RCC_APB2PeriphResetCmd(RCC_APB2Periph_USART1, ENABLE);
       RCC_APB2PeriphResetCmd(RCC_APB2Periph_USART1, DISABLE);
@@ -329,8 +329,8 @@ void uart_deinit(serial_t *obj)
       #elif defined(CH32VM00X)
       RCC_PB2PeriphResetCmd(RCC_PB2Periph_USART2, ENABLE);
       RCC_PB2PeriphResetCmd(RCC_PB2Periph_USART2, DISABLE);
-      #elif defined(CH573)
-      //CH573 does not have clock control
+      #elif defined(CH573) || defined(CH572)
+      //CH573 and CH572 does not have clock control
       #else
       RCC_APB1PeriphResetCmd(RCC_APB1Periph_USART2, ENABLE);
       RCC_APB1PeriphResetCmd(RCC_APB1Periph_USART2, DISABLE);
@@ -342,8 +342,8 @@ void uart_deinit(serial_t *obj)
       #if defined(CH32L10x)
       RCC_PB1PeriphResetCmd(RCC_PB1Periph_USART3, ENABLE);
       RCC_PB1PeriphResetCmd(RCC_PB1Periph_USART3, DISABLE);
-      #elif defined(CH573)
-      //CH573 does not have clock control
+      #elif defined(CH573) || defined(CH572)
+      //CH573 and CH572 does not have clock control
       #else
       RCC_APB1PeriphResetCmd(RCC_APB1Periph_USART3, ENABLE);
       RCC_APB1PeriphResetCmd(RCC_APB1Periph_USART3, DISABLE);    
@@ -355,8 +355,8 @@ void uart_deinit(serial_t *obj)
       #if defined(CH32L10x)
       RCC_PB1PeriphResetCmd(RCC_PB1Periph_UART4, ENABLE);
       RCC_PB1PeriphResetCmd(RCC_PB1Periph_UART4, DISABLE);
-      #elif defined(CH573)
-      //CH573 does not have clock control
+      #elif defined(CH573) || defined(CH572)
+      //CH573 and CH572 does not have clock control
       #else
       RCC_APB1PeriphResetCmd(RCC_APB1Periph_UART4, ENABLE);
       RCC_APB1PeriphResetCmd(RCC_APB1Periph_UART4, DISABLE);
