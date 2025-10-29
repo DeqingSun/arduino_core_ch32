@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : CH57x_adc.h
+ * File Name          : CH573_adc.h
  * Author             : WCH
  * Version            : V1.2
  * Date               : 2021/11/17
@@ -10,8 +10,8 @@
  * microcontroller manufactured by Nanjing Qinheng Microelectronics.
  *******************************************************************************/
 
-#ifndef __CH57x_ADC_H__
-#define __CH57x_ADC_H__
+#ifndef __CH573_ADC_H__
+#define __CH573_ADC_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -258,5 +258,5 @@ int adc_to_temperature_celsius(uint16_t adc_val);
 }
 #endif
 
-#endif  // __CH57x_ADC_H__	
+#endif  // __CH573_ADC_H__	
 

@@ -26,7 +26,7 @@
 #include "system_ch32l103.c"
 #endif
 
-#if defined(CH57x)
-#include "CH57x_sys.c"
-#include "CH57x.c"
+#if defined(CH573)
+#include "CH573_sys.c"
+#include "CH573.c"
 #endif

@@ -1,5 +1,5 @@
-#ifndef _PINAF_CH57X_H
-#define _PINAF_CH57X_H
+#ifndef _PINAF_CH573_H
+#define _PINAF_CH573_H
 
 #ifdef __cplusplus
 extern "C" {

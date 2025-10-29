@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : CH57x_flash.h
+ * File Name          : CH573_flash.h
  * Author             : WCH
  * Version            : V1.2
  * Date               : 2021/11/17
@@ -10,8 +10,8 @@
  * microcontroller manufactured by Nanjing Qinheng Microelectronics.
  *******************************************************************************/
 
-#ifndef __CH57x_FLASH_H__
-#define __CH57x_FLASH_H__
+#ifndef __CH573_FLASH_H__
+#define __CH573_FLASH_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,4 +32,4 @@ void GET_UNIQUE_ID(uint8_t *Buffer);
 }
 #endif
 
-#endif // __CH57x_FLASH_H__
+#endif // __CH573_FLASH_H__

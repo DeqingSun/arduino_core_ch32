@@ -3,7 +3,7 @@
 
 // clang-format off
 #include <stdint.h>
-#if defined (CH57x)
+#if defined (CH573)
 #include "CH573SFR.h"
 #include "core_riscv.h"
 #elif defined (CH32X035)

@@ -63,7 +63,7 @@ static gpio_irq_conf_str gpio_irq_conf[NB_EXTI] = {
   {.irqnb = EXTI25_16_IRQn,  .callback = NULL}, //GPIO_PIN_24
   {.irqnb = EXTI25_16_IRQn,  .callback = NULL}  //GPIO_PIN_25
 
-#elif defined(CH57x)
+#elif defined(CH573)
   //todo
 
 #else

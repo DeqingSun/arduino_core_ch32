@@ -156,7 +156,7 @@ typedef void (*pTaskFn)(void);
 void delayMicroseconds(uint16_t us);
 
 void USB_EP3_IN() {
-#if defined(CH57x)
+#if defined(CH573)
     R8_UEP3_T_LEN = 0;
     R8_UEP3_CTRL = R8_UEP3_CTRL & ~MASK_UEP_T_RES | UEP_T_RES_NAK; // Default NAK
 #elif defined(CH32X035)
@@ -211,13 +211,13 @@ uint8_t USB_EP3_send(uint8_t reportId) {
     return 0;
   }
 
-#if defined(CH57x)
+#if defined(CH573)
     R8_UEP3_T_LEN = toSendSize; // data length
 #elif defined(CH32X035)
     USBFSD->UEP3_TX_LEN = toSendSize; // data length
 #endif
   UpPoint3_Busy = 1;
-#if defined(CH57x)
+#if defined(CH573)
     R8_UEP3_CTRL = R8_UEP3_CTRL & ~MASK_UEP_T_RES |
               UEP_T_RES_ACK; // upload data and respond ACK
 #elif defined(CH32X035)

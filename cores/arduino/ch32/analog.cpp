@@ -663,7 +663,7 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution)
 #endif
   ADC_Init(padc, &ADC_InitStructure);
 
-#if !defined(CH57x)
+#if !defined(CH573)
   padc->STATR = 0;
 #endif
   ADC_Cmd(padc,ENABLE); 
@@ -691,8 +691,8 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution)
       conversion, but application may perform other tasks while conversion
       operation is ongoing. */
   while(!ADC_GetFlagStatus(padc, ADC_FLAG_EOC ));
-#if defined(CH57x)
-  uhADCxConvertedValue = ADC_ConvertPAGValueCH57x();
+#if defined(CH573)
+  uhADCxConvertedValue = ADC_ConvertPAGValueCH573();
 #else
   uhADCxConvertedValue = padc->RDATAR;
 #endif

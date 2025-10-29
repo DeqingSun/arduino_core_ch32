@@ -2,7 +2,7 @@
 #define CH573BLEPERIPHERAL_H
 
 #include <Arduino.h>
-#include "CH57xBLE_LIB.h"
+#include "CH573BLE_LIB.h"
 
 // #include "BLEBondStore.h"
 #include "BLECentral.h"

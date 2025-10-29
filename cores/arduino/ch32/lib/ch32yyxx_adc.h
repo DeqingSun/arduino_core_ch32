@@ -23,8 +23,8 @@
 #elif defined(CH32L10x)
 #include "ch32l103_adc.h"
 
-#elif defined(CH57x)
-#include "ch57x_adc.h"
+#elif defined(CH573)
+#include "ch573_adc.h"
 
 #endif
 

@@ -26,6 +26,6 @@
 #include "ch32l103_gpio.c"
 #endif
 
-#if defined(CH57x)
-#include "CH57x_gpio.c"
+#if defined(CH573)
+#include "CH573_gpio.c"
 #endif

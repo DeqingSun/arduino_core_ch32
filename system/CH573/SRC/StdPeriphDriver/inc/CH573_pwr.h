@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : CH57x_pwr.h
+ * File Name          : CH573_pwr.h
  * Author             : WCH
  * Version            : V1.2
  * Date               : 2021/11/17
@@ -10,8 +10,8 @@
  * microcontroller manufactured by Nanjing Qinheng Microelectronics.
  *******************************************************************************/
 
-#ifndef __CH57x_PWR_H__
-#define __CH57x_PWR_H__
+#ifndef __CH573_PWR_H__
+#define __CH573_PWR_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -168,5 +168,5 @@ void LowPower_Shutdown(uint8_t rm);
 }
 #endif
 
-#endif  // __CH57x_PWR_H__	
+#endif  // __CH573_PWR_H__	
 

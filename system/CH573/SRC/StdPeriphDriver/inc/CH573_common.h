@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : CH57x_common.h
+ * File Name          : CH573_common.h
  * Author             : WCH
  * Version            : V1.2
  * Date               : 2021/11/17
@@ -10,8 +10,8 @@
  * microcontroller manufactured by Nanjing Qinheng Microelectronics.
  *******************************************************************************/
 
-#ifndef __CH57x_COMM_H__
-#define __CH57x_COMM_H__
+#ifndef __CH573_COMM_H__
+#define __CH573_COMM_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,18 +55,18 @@ extern "C" {
 #include <stdint.h>
 #include "CH573SFR.h"
 #include "core_riscv.h"
-#include "CH57x_clk.h"
-#include "CH57x_uart.h"
-#include "CH57x_gpio.h"
-#include "CH57x_flash.h"
-#include "CH57x_pwr.h"
-#include "CH57x_pwm.h"
-#include "CH57x_adc.h"
-#include "CH57x_sys.h"
-#include "CH57x_timer.h"
-#include "CH57x_spi.h"
-#include "CH57x_usbdev.h"
-#include "CH57x_usbhost.h"
+#include "CH573_clk.h"
+#include "CH573_uart.h"
+#include "CH573_gpio.h"
+#include "CH573_flash.h"
+#include "CH573_pwr.h"
+#include "CH573_pwm.h"
+#include "CH573_adc.h"
+#include "CH573_sys.h"
+#include "CH573_timer.h"
+#include "CH573_spi.h"
+#include "CH573_usbdev.h"
+#include "CH573_usbhost.h"
 #include "ISP573.h"
 
 #define DelayMs(x)    mDelaymS(x)
@@ -76,4 +76,4 @@ extern "C" {
 }
 #endif
 
-#endif // __CH57x_COMM_H__
+#endif // __CH573_COMM_H__

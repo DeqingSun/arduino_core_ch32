@@ -18,12 +18,12 @@
 
 #define CHIP_ID                             ID_CH573
 
-#ifdef CH57xBLE_ROM
-#include "CH57xBLE_ROM.H"
+#ifdef CH573BLE_ROM
+#include "CH573BLE_ROM.H"
 #else
-#include "CH57xBLE_LIB.H"
+#include "CH573BLE_LIB.H"
 #endif
-#include "CH57x_common.h"
+#include "CH573_common.h"
 
 #define PRINT(...) //printf(__VA_ARGS__)
 

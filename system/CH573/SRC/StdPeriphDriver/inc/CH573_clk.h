@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : CH57x_clk.h
+ * File Name          : CH573_clk.h
  * Author             : WCH
  * Version            : V1.2
  * Date               : 2021/11/17
@@ -10,8 +10,8 @@
  * microcontroller manufactured by Nanjing Qinheng Microelectronics.
  *******************************************************************************/
 
-#ifndef __CH57x_CLK_H__
-#define __CH57x_CLK_H__
+#ifndef __CH573_CLK_H__
+#define __CH573_CLK_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -301,5 +301,5 @@ void RTC_ClearITFlag(RTC_EVENTTypeDef f);
 }
 #endif
 
-#endif  // __CH57x_CLK_H__	
+#endif  // __CH573_CLK_H__	
 

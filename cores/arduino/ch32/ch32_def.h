@@ -38,8 +38,8 @@
 #include "ch32l103.h"
 #elif defined(CH32VM00X)
 #include "ch32v00X.h"
-#elif defined(CH57x)
-#include "CH57x.h"
+#elif defined(CH573)
+#include "CH573.h"
 #else 
   #error "CH32YYXX chip series is not defined in boards.txt."
 #endif

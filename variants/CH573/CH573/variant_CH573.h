@@ -19,7 +19,7 @@
 // #define                         I2C_MODULE_ENABLED
 // #define                         TIM_MODULE_ENABLED
 
-/* CH57x Pins */
+/* CH573 Pins */
 
 #define PA4                     PIN_A0
 #define PA5                     PIN_A1

@@ -140,7 +140,7 @@ void SysTick_Handler(void)
 
 #endif
 
-#if defined (CH57x)
+#if defined (CH573)
 
 #define SYSTICK_CNTL    (0xE000F004)   
 #define SYSTICK_CNTH    (0xE000F008)

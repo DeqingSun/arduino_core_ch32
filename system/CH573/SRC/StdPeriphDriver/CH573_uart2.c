@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : CH57x_uart2.c
+ * File Name          : CH573_uart2.c
  * Author             : WCH
  * Version            : V1.2
  * Date               : 2021/11/17
@@ -10,7 +10,7 @@
  * microcontroller manufactured by Nanjing Qinheng Microelectronics.
  *******************************************************************************/
 
-#include "CH57x_common.h"
+#include "CH573_common.h"
 
 /*********************************************************************
  * @fn      UART2_DefInit

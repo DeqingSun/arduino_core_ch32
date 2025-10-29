@@ -141,13 +141,13 @@ PinName analogInputToPinName(uint32_t pin);
 
 #define analogInPinToBit(p)         (CH_GPIO_PIN(digitalPinToPinName(p)))
 
-#if !defined(CH57x)
+#if !defined(CH573)
 #define portOutputRegister(P)       (&(P->OUTDR))
 #define portInputRegister(P)        (&(P->INDR))
 
 #define portSetRegister(P)          (&(P->BSHR))
 #define portClearRegister(P)        (&(P->BCR))
-#else /* CH57x */
+#else /* CH573 */
 #define portOutputRegister(P)       (&(P->OUT))
 #define portInputRegister(P)        (&(P->PIN))
 

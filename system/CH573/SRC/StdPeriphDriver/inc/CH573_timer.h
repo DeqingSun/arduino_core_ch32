@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : CH57x_timer.h
+ * File Name          : CH573_timer.h
  * Author             : WCH
  * Version            : V1.2
  * Date               : 2021/11/17
@@ -10,8 +10,8 @@
  * microcontroller manufactured by Nanjing Qinheng Microelectronics.
  *******************************************************************************/
 
-#ifndef __CH57x_TIMER_H__
-#define __CH57x_TIMER_H__
+#ifndef __CH573_TIMER_H__
+#define __CH573_TIMER_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -552,5 +552,5 @@ void TMR3_CapInit(CapModeTypeDef cap);
 }
 #endif
 
-#endif  // __CH57x_TIMER_H__	
+#endif  // __CH573_TIMER_H__	
 

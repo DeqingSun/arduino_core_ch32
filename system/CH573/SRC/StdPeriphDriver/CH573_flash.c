@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : CH57x_flash.c
+ * File Name          : CH573_flash.c
  * Author             : WCH
  * Version            : V1.2
  * Date               : 2021/11/17
@@ -10,7 +10,7 @@
  * microcontroller manufactured by Nanjing Qinheng Microelectronics.
  *******************************************************************************/
 
-#include "CH57x_common.h"
+#include "CH573_common.h"
 
 /*********************************************************************
  * @fn      FLASH_ROM_READ

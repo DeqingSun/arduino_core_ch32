@@ -1,10 +1,10 @@
 // added by deqing for compatibility 
 
-#ifndef __CH57x_H__
-#define __CH57x_H__
+#ifndef __CH573_H__
+#define __CH573_H__
 
 
-#include "CH57x_common.h"
+#include "CH573_common.h"
 
 /* General Purpose I/O */
 typedef struct
@@ -454,11 +454,11 @@ void TIM_DeInit(TIM_TypeDef *TIMx);
 void TIM_CCxCmd(TIM_TypeDef *TIMx, uint16_t TIM_Channel, uint16_t TIM_CCx);
 
 
-//does not exist in CH57x, modify later
+//does not exist in CH573, modify later
 #define TIM_MOE 0
 
 
-//may not exist in CH57x, modify later
+//may not exist in CH573, modify later
 /* TIM_Capture_Compare_state */
 #define TIM_CCx_Enable                     ((uint16_t)0x0001)
 #define TIM_CCx_Disable                    ((uint16_t)0x0000)
@@ -584,7 +584,7 @@ typedef struct
                            This parameter can be a value of @ref ADC_Pga */
 } ADC_InitTypeDef;
 
-//CH57x does not have sampling time setting
+//CH573 does not have sampling time setting
 #define ADC_SAMPLINGTIME 0
 #define ADC_SAMPLINGTIME_INTERNAL 0
 
@@ -603,10 +603,10 @@ void ADC_Init(ADC_TypeDef *ADCx, ADC_InitTypeDef *ADC_InitStruct);
 void ADC_RegularChannelConfig(ADC_TypeDef *ADCx, uint8_t ADC_Channel, uint8_t Rank, uint8_t ADC_SampleTime);
 void ADC_SoftwareStartConvCmd(ADC_TypeDef *ADCx, FunctionalState NewState);
 FlagStatus ADC_GetFlagStatus(ADC_TypeDef *ADCx, uint8_t ADC_FLAG);
-uint16_t ADC_ConvertPAGValueCH57x();
+uint16_t ADC_ConvertPAGValueCH573();
 
 #ifdef __cplusplus
 }   // extern "C"
 #endif
 
-#endif  // __CH57x_H__
+#endif  // __CH573_H__

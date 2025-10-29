@@ -1,4 +1,4 @@
-#include "CH57x.h"
+#include "CH573.h"
 
 // https://www.cnblogs.com/gscw/p/18029303
 // for c++
@@ -448,7 +448,7 @@ FlagStatus ADC_GetFlagStatus(ADC_TypeDef *ADCx, uint8_t ADC_FLAG){
     return 0;
 }
 
-uint16_t ADC_ConvertPAGValueCH57x(){
+uint16_t ADC_ConvertPAGValueCH573(){
     uint16_t adcValue = R16_ADC_DATA & RB_ADC_DATA;
     uint8_t pgaSetting = (R8_ADC_CFG & RB_ADC_PGA_GAIN) >> 4;
     switch(pgaSetting){

@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : CH57x_usbdev.h
+ * File Name          : CH573_usbdev.h
  * Author             : WCH
  * Version            : V1.2
  * Date               : 2021/11/17
@@ -10,8 +10,8 @@
  * microcontroller manufactured by Nanjing Qinheng Microelectronics.
  *******************************************************************************/
 
-#ifndef __CH57x_USBDEV_H__
-#define __CH57x_USBDEV_H__
+#ifndef __CH573_USBDEV_H__
+#define __CH573_USBDEV_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -139,5 +139,5 @@ void DevEP4_IN_Deal(uint8_t l);
 }
 #endif
 
-#endif  // __CH57x_USBDEV_H__	
+#endif  // __CH573_USBDEV_H__	
 

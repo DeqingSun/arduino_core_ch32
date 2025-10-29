@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : startup_ch57x.s
+ * File Name          : startup_ch573.s
  * Author             : WCH
  * Version            : V1.0.0
  * Date               : 2020/04/30

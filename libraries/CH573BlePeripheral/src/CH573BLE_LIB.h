@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT ******************************
- * File Name         : CH57xBLE_LIB.H
+ * File Name         : CH573BLE_LIB.H
  * Author            : WCH
  * Version           : V2.20
  * Date              : 2024/01/02
@@ -11,8 +11,8 @@
 
 
 /******************************************************************************/
-#ifndef __CH57xBLE_LIB_H
-#define __CH57xBLE_LIB_H
+#ifndef __CH573BLE_LIB_H
+#define __CH573BLE_LIB_H
 
 #ifdef __cplusplus
 extern "C"
@@ -220,7 +220,7 @@ extern const uint8_t VER_LIB[];  // LIB version
 #define ABS(n)     (((n) < 0) ? -(n) : (n))
 #endif
 
-/* TxPower define(Accuracy:¡À2dBm) */
+/* TxPower define(Accuracy:ï¿½ï¿½2dBm) */
 #define LL_TX_POWEER_MINUS_20_DBM       0x01
 #define LL_TX_POWEER_MINUS_14_DBM       0x03
 #define LL_TX_POWEER_MINUS_8_DBM        0x07
@@ -2434,7 +2434,7 @@ extern void LLE_IRQLibHandler( void );
  * @return  access address
  * the Access Address meets the following requirements:
  * It shall have no more than six consecutive zeros or ones. 
- * It shall not be t he advertising channel packets¡¯ Access Address.
+ * It shall not be t he advertising channel packetsï¿½ï¿½ Access Address.
  * It shall not be a sequence that differ s from the advertising channel packets' Access Address by only one bit.
  * It shall not have all four octets equal.
  * It shall have no more  than 24 transitions.

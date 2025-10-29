@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : CH57x_usbhost.h
+ * File Name          : CH573_usbhost.h
  * Author             : WCH
  * Version            : V1.2
  * Date               : 2021/11/17
@@ -10,8 +10,8 @@
  * microcontroller manufactured by Nanjing Qinheng Microelectronics.
  *******************************************************************************/
 
-#ifndef __CH57x_USBHOST_H__
-#define __CH57x_USBHOST_H__
+#ifndef __CH573_USBHOST_H__
+#define __CH573_USBHOST_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -291,4 +291,4 @@ uint8_t HubClearPortFeature(uint8_t HubPortIndex, uint8_t FeatureSelt);
 }
 #endif
 
-#endif // __CH57x_USBHOST_H__
+#endif // __CH573_USBHOST_H__

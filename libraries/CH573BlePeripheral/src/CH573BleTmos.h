@@ -6,7 +6,7 @@
 #include "BLEDevice.h"
 #include "BLEDescriptor.h"
 
-#include "CH57xBLE_LIB.h"
+#include "CH573BLE_LIB.h"
 
 #include "config.h"
 

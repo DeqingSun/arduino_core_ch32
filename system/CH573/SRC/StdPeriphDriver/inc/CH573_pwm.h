@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : CH57x_pwm.h
+ * File Name          : CH573_pwm.h
  * Author             : WCH
  * Version            : V1.2
  * Date               : 2021/11/17
@@ -10,8 +10,8 @@
  * microcontroller manufactured by Nanjing Qinheng Microelectronics.
  *******************************************************************************/
 
-#ifndef __CH57x_PWM_H__
-#define __CH57x_PWM_H__
+#ifndef __CH573_PWM_H__
+#define __CH573_PWM_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -149,5 +149,5 @@ void PWMX_AlterOutCfg(uint8_t ch, FunctionalState s);
 }
 #endif
 
-#endif  // __CH57x_PWM_H__	
+#endif  // __CH573_PWM_H__	
 

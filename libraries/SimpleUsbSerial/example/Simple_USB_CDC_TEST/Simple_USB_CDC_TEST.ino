@@ -1,7 +1,7 @@
 #include <SimpleUsbSerial.h>
 
 __attribute__((section(".highcode")))
-#if defined(CH57x)
+#if defined(CH573)
 void tx_on_PA12_main(char c) {
     //R32_PA_OUT located at 0x400010a8
     //high 20 bits are 0x40001, low 12 bits are 0x0a8(offset)
@@ -228,7 +228,7 @@ void tx_on_PA4_main(char c) {
 
 
 void setup() {
-  #if defined(CH57x)
+  #if defined(CH573)
   pinMode(PA12, OUTPUT);
   digitalWrite(PA12, HIGH);
   #elif defined(CH32X035)
@@ -268,7 +268,7 @@ void loop() {
   if (incoming>0){
     for (int i = 0; i < incoming; i++) {
       char c = SerialUSB.read();
-      #if defined(CH57x)
+      #if defined(CH573)
       tx_on_PA12_main(c);
       #elif defined(CH32X035)
       tx_on_PA4_main(c);

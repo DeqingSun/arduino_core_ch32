@@ -8,7 +8,7 @@ extern "C" {
 #endif
 
 #ifndef CH32V10x
-#ifdef CH57x
+#ifdef CH573
 void systick_init(void)
 {
     SetSysClock(CLK_SOURCE_PLL_60MHz);
