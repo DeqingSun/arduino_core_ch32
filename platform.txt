@@ -21,14 +21,14 @@ compiler.warning_flags.all=-Wall -Wextra
 #---compiler.cmd
 compiler.path={runtime.tools.riscv-none-embed-gcc-8.2.0_trimmed.path}/bin/
 
-compiler.S.cmd=riscv-none-embed-gcc
-compiler.c.cmd=riscv-none-embed-gcc
-compiler.cpp.cmd=riscv-none-embed-g++
-compiler.ar.cmd=riscv-none-embed-ar
-compiler.c.elf.cmd=riscv-none-embed-g++
-compiler.objcopy.cmd=riscv-none-embed-objcopy
-compiler.elf2hex.cmd=riscv-none-embed-objcopy
-compiler.objdump.cmd=riscv-none-embed-objdump
+compiler.S.cmd=riscv-wch-elf-gcc
+compiler.c.cmd=riscv-wch-elf-gcc
+compiler.cpp.cmd=riscv-wch-elf-g++
+compiler.ar.cmd=riscv-wch-elf-ar
+compiler.c.elf.cmd=riscv-wch-elf-g++
+compiler.objcopy.cmd=riscv-wch-elf-objcopy
+compiler.elf2hex.cmd=riscv-wch-elf-objcopy
+compiler.objdump.cmd=riscv-wch-elf-objdump
 
 compiler.libraries.ldflags=
 
@@ -54,7 +54,7 @@ compiler.objdump.flags=--all-headers --demangle --disassemble -M xw
 
 
 compiler.ldflags=
-compiler.size.cmd=riscv-none-embed-size
+compiler.size.cmd=riscv-wch-elf-size
 compiler.define=-DARDUINO=
 
 # These can be overridden in boards.txt
@@ -186,7 +186,7 @@ tools.wchisp.upload.pattern="{path}{cmd}" {upload.verbose} --retry 2 flash "{bui
 #  - this is alpha and may be subject to change without notice
 debug.executable={build.path}/{build.project_name}.elf
 debug.toolchain=gcc
-debug.toolchain.prefix=riscv-none-embed
+debug.toolchain.prefix=riscv-wch-elf
 debug.toolchain.path={compiler.path}
 
 debug.server=openocd

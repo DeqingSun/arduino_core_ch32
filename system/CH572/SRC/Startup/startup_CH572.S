@@ -1,5 +1,5 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : startup_CH572.s
+ * File Name          : startup_CH57x.s
  * Author             : WCH
  * Version            : V1.0.0
  * Date               : 2024/12/20
@@ -156,11 +156,11 @@ handle_reset:
 	addi a0, a0, 4
 	bltu a0, a1, 1b
 2:
-	/* �û�ģʽ�ж�ʹ�� */
-	/*Ԥȡʹ��*/
+	/* 用户模式中断使能 */
+	/*预取使能*/
 	li t0, 0x25
 	csrw 0xbc0, t0
-	/* ��Ƕ���жϡ�Ӳ��ѹջ���� */
+	/* 打开嵌套中断、硬件压栈功能 */
 	li t0, 0x3
 	csrw 0x804, t0
 	li t0, 0x1
@@ -170,7 +170,7 @@ handle_reset:
     csrw mstatus, t0
 	la t0, _vector_base
 
-	/* ����������ģʽΪ���Ե�ַģʽ */
+	/* 配置向量表模式为绝对地址模式 */
     ori t0, t0, 3
 	csrw mtvec, t0
 
