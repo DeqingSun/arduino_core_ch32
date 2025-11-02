@@ -115,6 +115,7 @@ CH572_EVT.menu.pnum.CH572.build.math_lib_gcc=-lm
 CH572_EVT.menu.pnum.CH572.build.IQ_math_RV32=
 CH572_EVT.menu.pnum.CH572.build.ch_extra_lib="{build.system.path}/{build.series}/SRC/StdPeriphDriver/libISP572.a"
 CH572_EVT.menu.pnum.CH572.build.flags.ldflags=--specs=nano.specs --specs=nosys.specs
+CH572_EVT.menu.pnum.CH572.build.extra_flags=--param=highcode-gen-section-name=1
 
 # Upload menu
 CH572_EVT.menu.upload_method.swdMethod=WCH-SWD

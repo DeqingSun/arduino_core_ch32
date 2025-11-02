@@ -34,7 +34,7 @@ compiler.libraries.ldflags=
 
 #"@{build.opt.path}" {build.flags.optimize}  {compiler.warning_flags} {build.flags.debug} -MP -MF
 
-compiler.extra_flags=-march={build.march} -mabi={build.mabi} -msmall-data-limit=8 -msave-restore -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common 
+compiler.extra_flags=-march={build.march} -mabi={build.mabi} {build.extra_flags} -msmall-data-limit=8 -msave-restore -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common
 
 compiler.S.flags={compiler.extra_flags} -x assembler-with-cpp {build.flags.clock} "-I{build.system.path}/{build.series}/SRC/Startup/" "-I{build.core.path}/ch32/"
 
