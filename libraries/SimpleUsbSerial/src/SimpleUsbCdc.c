@@ -51,6 +51,27 @@ void APPJumpBoot(void)   //this section of code must run in RAM
 __attribute__((section(".highcode")))
 void APPJumpBoot(void)   //this section of code must run in RAM
 {
+  // R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+  // R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+  // R8_WDOG_COUNT = 128;               // Set watchdog timeout value
+  // R8_RST_WDOG_CTRL |= RB_WDOG_INT_EN;
+  // R8_RESET_STATUS = R8_RESET_STATUS & ~RB_ROM_CODE_WE | 1<<7; // set RB_ROM_CODE_WE to 1
+  // R8_RST_WDOG_CTRL |= RB_SOFTWARE_RESET; // Enable software reset
+  // R8_SAFE_ACCESS_SIG = 0;//run to execute reset, reset type will be power-up reset.
+  while(FLASH_EEPROM_CMD(0x01, 0, NULL, 4096) != 0x00) {
+    ;//ROM erase 4K size at address 0
+  }
+  FLASH_EEPROM_CMD(0x04, 0, NULL, 0);   //reset flash
+  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+  //SAFEOPERATE;
+  asm("nop");
+  asm("nop");
+  R16_INT_LSI_TUNE = 0xFFFF;
+  R8_RST_WDOG_CTRL |= RB_SOFTWARE_RESET;
+  R8_SAFE_ACCESS_SIG = 0;//run to execute reset, reset type will be power-up reset.
+  while(1);//Make bootloader think the chip is empty (first 4 bytes are 0xFF)
+
 }
 #elif defined (CH32X035)
 void APPJumpBoot(void)   //this section of code must run in RAM
