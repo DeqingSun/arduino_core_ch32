@@ -6,6 +6,9 @@
 #if defined (CH573)
 #include "CH573SFR.h"
 #include "core_riscv.h"
+#elif defined (CH572)
+#include "CH572SFR.h"
+#include "core_riscv.h"
 #elif defined (CH32X035)
 #include "ch32x035_rcc.h"
 #endif

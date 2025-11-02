@@ -47,6 +47,11 @@ void APPJumpBoot(void)   //this section of code must run in RAM
   R8_SAFE_ACCESS_SIG = 0;//run to execute reset, reset type will be power-up reset.
   while(1);//Make bootloader think the chip is empty (first 4 bytes are 0xFF)
 }
+#elif defined (CH572)
+__attribute__((section(".highcode")))
+void APPJumpBoot(void)   //this section of code must run in RAM
+{
+}
 #elif defined (CH32X035)
 void APPJumpBoot(void)   //this section of code must run in RAM
 {
@@ -111,7 +116,7 @@ void resetCDCParameters() {
   
 void setLineCodingHandler() {
   uint8_t receiveLen;
-#if defined (CH573)
+#if defined (CH573) || defined (CH572)
   receiveLen = R8_USB_RX_LEN;
 #elif defined (CH32X035)
   receiveLen = USBFSD->RX_LEN;
@@ -182,7 +187,7 @@ bool USBSerial() {
   
 void USBSerial_flush(void) {
   if (!UpPoint2BusyFlag && usbWritePointer > 0) {
-#if defined(CH573)
+#if defined(CH573) || defined(CH572)
       R8_UEP2_T_LEN = usbWritePointer;
       R8_UEP2_CTRL = R8_UEP2_CTRL & ~MASK_UEP_T_RES | UEP_T_RES_ACK; // Respond ACK
 #elif defined(CH32X035)
@@ -195,7 +200,7 @@ void USBSerial_flush(void) {
         MAX_PACKET_SIZE) { // write empty packet for end transmission. Needed
                             // for windows.
       if (USBSerial_wait_UpPoint2BusyFlag_clear()) {
-#if defined(CH573)
+#if defined(CH573) || defined(CH572)
         R8_UEP2_T_LEN = 0;
         R8_UEP2_CTRL = R8_UEP2_CTRL & ~MASK_UEP_T_RES | UEP_T_RES_ACK; // Respond ACK
 #elif defined(CH32X035)
@@ -256,7 +261,7 @@ char USBSerial_read() {
   USBBufOutPointEP2++;
   USBByteCountEP2--;
   if (USBByteCountEP2 == 0) {
-#if defined(CH573)
+#if defined(CH573) || defined(CH572)
     R8_UEP2_CTRL = R8_UEP2_CTRL & ~MASK_UEP_R_RES | UEP_R_RES_ACK;
 #elif defined(CH32X035)
     USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & ~USBFS_UEP_R_RES_MASK | USBFS_UEP_R_RES_ACK;
@@ -275,7 +280,7 @@ bool USBSerial_bool() {
   
 
 void USB_EP2_IN() {
-#if defined(CH573)
+#if defined(CH573) || defined(CH572)
   R8_UEP2_T_LEN = 0; // No data to send anymore
   R8_UEP2_CTRL = R8_UEP2_CTRL & ~MASK_UEP_T_RES | UEP_T_RES_NAK; // Respond NAK by default
 #elif defined(CH32X035)
@@ -286,7 +291,7 @@ void USB_EP2_IN() {
 }
   
 void USB_EP2_OUT() {
-#if defined(CH573)
+#if defined(CH573) || defined(CH572)
   if (R8_USB_INT_FG & RB_U_TOG_OK){ // Discard unsynchronized packets
     USBByteCountEP2 = R8_USB_RX_LEN;
     USBBufOutPointEP2 = 0; // Reset Data pointer for fetching
