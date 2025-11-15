@@ -105,29 +105,53 @@ if doExtract:
     #extract windows OpenOCD
     if not os.path.exists(extractedWindowsOpenOCDPack):
         os.mkdir(extractedWindowsOpenOCDPack)
-    extractCommand = f'"{path7zz}" x -y -o"{extractedWindowsOpenOCDPack}" "{extractedWindowsExe}" "{exeOpenOcdPath}"'
+    oneLayerDeeper = os.path.join(extractedWindowsOpenOCDPack, "OpenOCD")
+    if not os.path.exists(oneLayerDeeper):
+        os.mkdir(oneLayerDeeper)
+    twoLayerDeeper = os.path.join(oneLayerDeeper, "OpenOCD")
+    if not os.path.exists(twoLayerDeeper):
+        os.mkdir(twoLayerDeeper)
+    extractCommand = f'"{path7zz}" x -y -o"{twoLayerDeeper}" "{extractedWindowsExe}" "{exeOpenOcdPath}"'
     extractResult = os.system(extractCommand)
     if extractResult != 0:
         exit("Extraction of Windows OpenOCD failed!")
-    mvCmd = f'mv "{os.path.join(extractedWindowsOpenOCDPack, exeOpenOcdPath)}"/* "{extractedWindowsOpenOCDPack}"'
+    mvCmd = f'mv "{os.path.join(twoLayerDeeper, exeOpenOcdPath)}"/* "{twoLayerDeeper}"'
     os.system(mvCmd)
-    removeCmd = f'rm -rf "{os.path.join(extractedWindowsOpenOCDPack, "resources")}"'
+    removeCmd = f'rm -rf "{os.path.join(twoLayerDeeper, "resources")}"'
     os.system(removeCmd)
 
     #extract macOS OpenOCD
     macOpenOcdPath = "./MounRiver Studio 2.app/Contents/Resources/app/resources/darwin/components/WCH/OpenOCD/OpenOCD/"
     if not os.path.exists(extractedMacosOpenOCDPack):
         os.mkdir(extractedMacosOpenOCDPack)
-    extractCommand = f'tar --strip-components=11 -xzf "{macosfileDownloadedPath}" -C "{extractedMacosOpenOCDPack}" "{macOpenOcdPath}"'
+    #make lib link happy, tried but failed modify binary
+    oneLayerDeeper = os.path.join(extractedMacosOpenOCDPack, "OpenOCD")
+    if not os.path.exists(oneLayerDeeper):
+        os.mkdir(oneLayerDeeper)
+    twoLayerDeeper = os.path.join(oneLayerDeeper, "OpenOCD")
+    if not os.path.exists(twoLayerDeeper):
+        os.mkdir(twoLayerDeeper)
+    extractCommand = f'tar --strip-components=11 -xzf "{macosfileDownloadedPath}" -C "{twoLayerDeeper}" "{macOpenOcdPath}"'
     extractResult = os.system(extractCommand)
     if extractResult != 0:
         exit("Extraction of macOS OpenOCD failed!")
-
+    macOpenOcdLibPath = "./MounRiver Studio 2.app/Contents/Resources/app/resources/darwin/components/WCH/Others/CommunicationLib/default"
+    extractCommand = f'tar --strip-components=9 -xzf "{macosfileDownloadedPath}" -C "{extractedMacosOpenOCDPack}" "{macOpenOcdLibPath}"'
+    extractResult = os.system(extractCommand)
+    if extractResult != 0:
+        exit("Extraction of macOS OpenOCD lib failed!")
+    
     #extract Linux OpenOCD
     linuxOpenOcdPath = "MRS-linux-x64/resources/app/resources/linux/components/WCH/OpenOCD/OpenOCD/"
     if not os.path.exists(extractedLinuxOpenOCDPack):
         os.mkdir(extractedLinuxOpenOCDPack)
-    extractCommand = f'tar --strip-components=9 -xJf "{linuxfileDownloadedPath}" -C "{extractedLinuxOpenOCDPack}" "{linuxOpenOcdPath}"'
+    oneLayerDeeper = os.path.join(extractedLinuxOpenOCDPack, "OpenOCD")
+    if not os.path.exists(oneLayerDeeper):
+        os.mkdir(oneLayerDeeper)
+    twoLayerDeeper = os.path.join(oneLayerDeeper, "OpenOCD")
+    if not os.path.exists(twoLayerDeeper):
+        os.mkdir(twoLayerDeeper)
+    extractCommand = f'tar --strip-components=9 -xJf "{linuxfileDownloadedPath}" -C "{twoLayerDeeper}" "{linuxOpenOcdPath}"'
     extractResult = os.system(extractCommand)
     if extractResult != 0:
         exit("Extraction of Linux OpenOCD failed!")

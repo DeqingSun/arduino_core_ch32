@@ -162,11 +162,11 @@ recipe.size.regex.data=^(?:\.data|\.bss|\.noinit)\s+([0-9]+).*
 
 # Uploader tool
 ## WCH-LinkE
-tools.WCH_linkE.path={runtime.tools.openocd-1.0.0.path}/bin/
+tools.WCH_linkE.path={runtime.tools.openocd-1.0.0.path}/OpenOCD/OpenOCD/bin/
 tools.WCH_linkE.cmd=openocd
 tools.WCH_linkE.upload.params.verbose=
 tools.WCH_linkE.upload.params.quiet=
-tools.WCH_linkE.upload.config={runtime.tools.openocd.path}/bin/wch-riscv.cfg
+tools.WCH_linkE.upload.config={runtime.tools.openocd.path}/OpenOCD/OpenOCD/bin/wch-riscv.cfg
 tools.WCH_linkE.upload.pattern="{path}{cmd}" -f "{upload.config}" -c init -c halt -c "program {{build.path}/{build.project_name}.elf} verify; wlink_reset_resume; exit;"
 
 #tools.WCH_linkE.upload.pattern="{path}{cmd}" -f {upload.config} -c init -c halt -c "program {{build.path}/{build.project_name}.elf}; verify_image {{build.path}/{build.project_name}.elf}; wlink_reset_resume;  exit;"
@@ -190,6 +190,6 @@ debug.toolchain.prefix=riscv-wch-elf
 debug.toolchain.path={compiler.path}
 
 debug.server=openocd
-debug.server.openocd.path={runtime.tools.openocd-1.0.0.path}/bin/openocd
-debug.server.openocd.scripts_dir={debug.toolchain.path}/scripts
-debug.server.openocd.script={runtime.tools.openocd.path}/bin/wch-riscv.cfg
+debug.server.openocd.path={runtime.tools.openocd-1.0.0.path}/OpenOCD/OpenOCD/bin/openocd
+debug.server.openocd.scripts_dir={debug.toolchain.path}/OpenOCD/OpenOCD/scripts
+debug.server.openocd.script={runtime.tools.openocd.path}/OpenOCD/OpenOCD/bin/wch-riscv.cfg
