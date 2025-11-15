@@ -23,6 +23,14 @@ if not os.path.exists(originalIdePath):
 
 extractedWindowsPack = os.path.join(originalIdePath, "expanded/Toolchain.7z")
 path7zz = os.path.join(originalIdePath, "7zz")
+#check macOS IDE tar.gz file
+macosfileDownloadedPath = os.path.join(originalIdePath, macosIdeFile)
+if not os.path.exists(macosfileDownloadedPath):
+    exit(f"File {macosIdeFile} not found in {originalIdePath}, please download it from https://www.mounriver.com/download and place it there.")
+#check Linux IDE tar.xz file
+linuxfileDownloadedPath = os.path.join(originalIdePath, linuxIdeFile)
+if not os.path.exists(linuxfileDownloadedPath):
+    exit(f"File {linuxIdeFile} not found in {originalIdePath}, please download it from https://www.mounriver.com/download and place it there.")
 
 if os.path.exists(extractedWindowsPack):
     print(f"Windows Toolchain.7z already extracted to {extractedWindowsPack}, skip extraction.")
@@ -59,23 +67,16 @@ else:
         if extractResult != 0:
             exit("Extraction of Toolchain.7z failed!")
 
-#check macOS IDE tar.gz file
-macosfileDownloadedPath = os.path.join(originalIdePath, macosIdeFile)
-if not os.path.exists(macosfileDownloadedPath):
-    exit(f"File {macosIdeFile} not found in {originalIdePath}, please download it from https://www.mounriver.com/download and place it there.")
 
 listing = subprocess.check_output(["tar", "-tf", macosfileDownloadedPath], text=True)
 if not "./MounRiver Studio 2.app/Contents/Resources/app/resources/darwin/components/WCH/Toolchain/RISC-V Embedded GCC12/" in listing:
     exit("Toolchain folder not found in the tar.gz file, please check the tar.gz file.")
-#check Linux IDE tar.xz file
-linuxfileDownloadedPath = os.path.join(originalIdePath, linuxIdeFile)
-if not os.path.exists(linuxfileDownloadedPath):
-    exit(f"File {linuxIdeFile} not found in {originalIdePath}, please download it from https://www.mounriver.com/download and place it there.")
 listing = subprocess.check_output(["tar", "-tf", linuxfileDownloadedPath], text=True)
 if not "MRS-linux-x64/resources/app/resources/linux/components/WCH/Toolchain/RISC-V Embedded GCC12/" in listing:
     exit("Toolchain folder not found in the tar.xz file, please check the tar.xz file.")
 
 #remove old extracted toolchain
+extractedWindowsExe = os.path.join(originalIdePath, "expanded/MounRiver_Studio_Setup_V220.exe")
 extractedWindowsPack7z = os.path.join(originalIdePath, "expanded/Toolchain.7z")
 extractedWindowsPack = os.path.join(originalIdePath, "expanded/windows_toolchain")
 if os.path.exists(extractedWindowsPack):
@@ -88,8 +89,50 @@ extractedLinuxPack = os.path.join(originalIdePath, "expanded/linux_toolchain")
 if os.path.exists(extractedLinuxPack):
     os.system(f'rm -rf "{extractedLinuxPack}"')
 
+extractedWindowsOpenOCDPack = os.path.join(originalIdePath, "expanded/windows_openocd")
+if os.path.exists(extractedWindowsOpenOCDPack):
+    os.system(f'rm -rf "{extractedWindowsOpenOCDPack}"')
+extractedMacosOpenOCDPack = os.path.join(originalIdePath, "expanded/macos_openocd")
+if os.path.exists(extractedMacosOpenOCDPack):
+    os.system(f'rm -rf "{extractedMacosOpenOCDPack}"')
+extractedLinuxOpenOCDPack = os.path.join(originalIdePath, "expanded/linux_openocd")
+if os.path.exists(extractedLinuxOpenOCDPack):
+    os.system(f'rm -rf "{extractedLinuxOpenOCDPack}"')
 
+#extract openocd
+if doExtract:
+    exeOpenOcdPath = "resources/app/resources/win32/components/WCH/OpenOCD/OpenOCD/"
+    #extract windows OpenOCD
+    if not os.path.exists(extractedWindowsOpenOCDPack):
+        os.mkdir(extractedWindowsOpenOCDPack)
+    extractCommand = f'"{path7zz}" x -y -o"{extractedWindowsOpenOCDPack}" "{extractedWindowsExe}" "{exeOpenOcdPath}"'
+    extractResult = os.system(extractCommand)
+    if extractResult != 0:
+        exit("Extraction of Windows OpenOCD failed!")
+    mvCmd = f'mv "{os.path.join(extractedWindowsOpenOCDPack, exeOpenOcdPath)}"/* "{extractedWindowsOpenOCDPack}"'
+    os.system(mvCmd)
+    removeCmd = f'rm -rf "{os.path.join(extractedWindowsOpenOCDPack, "resources")}"'
+    os.system(removeCmd)
 
+    #extract macOS OpenOCD
+    macOpenOcdPath = "./MounRiver Studio 2.app/Contents/Resources/app/resources/darwin/components/WCH/OpenOCD/OpenOCD/"
+    if not os.path.exists(extractedMacosOpenOCDPack):
+        os.mkdir(extractedMacosOpenOCDPack)
+    extractCommand = f'tar --strip-components=11 -xzf "{macosfileDownloadedPath}" -C "{extractedMacosOpenOCDPack}" "{macOpenOcdPath}"'
+    extractResult = os.system(extractCommand)
+    if extractResult != 0:
+        exit("Extraction of macOS OpenOCD failed!")
+
+    #extract Linux OpenOCD
+    linuxOpenOcdPath = "MRS-linux-x64/resources/app/resources/linux/components/WCH/OpenOCD/OpenOCD/"
+    if not os.path.exists(extractedLinuxOpenOCDPack):
+        os.mkdir(extractedLinuxOpenOCDPack)
+    extractCommand = f'tar --strip-components=9 -xJf "{linuxfileDownloadedPath}" -C "{extractedLinuxOpenOCDPack}" "{linuxOpenOcdPath}"'
+    extractResult = os.system(extractCommand)
+    if extractResult != 0:
+        exit("Extraction of Linux OpenOCD failed!")
+
+#extract toolchains
 if doExtract:
     #extract macOS Toolchain
     if not os.path.exists(extractedMacosPack):
