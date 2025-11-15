@@ -142,6 +142,33 @@
                     ]
                 },
                 {
+                    "name": "wchisp",
+                    "version": "0.3.0_20251101",
+                    "systems": [
+                        {
+                            "host": "x86_64-linux-gnu",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/wchisp-linux-x64_20251101.zip",
+                            "archiveFileName": "wchisp-linux-x64_20251101.zip",
+                            "checksum": "SHA-256:a3bb78517a85dc55b5135a8f398bb0d71ce7262a1d24b21290ab8885ec2bff85",
+                            "size": "912487"
+                        },
+                        {
+                            "host": "i686-mingw32",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/wchisp-win-x64_20251101.zip",
+                            "archiveFileName": "wchisp-win-x64_20251101.zip",
+                            "checksum": "SHA-256:5cc059c37ed4573a5d728bf29a1cc1f3ef706d7584b54c8c18a94c4affbb0d87",
+                            "size": "733403"
+                        },
+                        {
+                            "host": "x86_64-apple-darwin",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/wchisp-macos-x64_20251101.zip",
+                            "archiveFileName": "wchisp-macos-x64_20251101.zip",
+                            "checksum": "SHA-256:7777f2aa3e9810a2ff8d352346210c77af5fabfeb0be3b85f30f21c4364bec7a",
+                            "size": "868994"
+                        }
+                    ]
+                },
+                {
                     "name": "beforeinstall",
                     "version": "1.0.0",
                     "systems": [

@@ -8,15 +8,30 @@ wchisp_linux_x64_artifacts_path="wchisp-linux-x64.zip"
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 wchisp_path = os.path.abspath(os.path.join(script_dir, "wchisp"))
-os.makedirs(wchisp_path, exist_ok=True)
+
+if not os.path.exists(wchisp_path):
+    print(f"{wchisp_path} does not exist, exit")
+    exit(0)
+
+#list all folders under wchisp_path
+folders = [f.path for f in os.scandir(wchisp_path) if f.is_dir()]
+if not folders:
+    print(f"No folders under {wchisp_path}, exit")
+    exit(0)
+folders.sort()
+largest_folder = folders[-1] if folders else None
+
+wchisp_win_x64_artifacts_path = os.path.join(largest_folder, wchisp_win_x64_artifacts_path)
+wchisp_macos_x64_artifacts_path = os.path.join(largest_folder, wchisp_macos_x64_artifacts_path)
+wchisp_linux_x64_artifacts_path = os.path.join(largest_folder, wchisp_linux_x64_artifacts_path)
 
 artifacts_path = [wchisp_win_x64_artifacts_path, wchisp_macos_x64_artifacts_path, wchisp_linux_x64_artifacts_path]
 printString = "\n"
 for path in artifacts_path:
-    pathFull = os.path.join(wchisp_path, path)
+    pathFull = path
     basename = os.path.basename(path)
     basenameNoExt = os.path.splitext(basename)[0]
-    unpack_dir = os.path.join(wchisp_path, basenameNoExt)
+    unpack_dir = os.path.join(largest_folder, basenameNoExt)
     #delete old unpack dir
     if os.path.exists(unpack_dir):
         os.system(f"rm -rf {unpack_dir}")
@@ -27,9 +42,9 @@ for path in artifacts_path:
         dllPath = "https://github.com/DeqingSun/wchisp/raw/51738cc4aceff9dea20febe586418adc502bb8be/src/CH375DLL64.dll"
         os.system(f"curl -L {dllPath} -o {unpack_dir}/CH375DLL64.dll")
 
-    currentDateInYYYYMMDD = os.popen("date +%Y%m%d").read().strip()
-    newZipName = f"{basename.replace('.zip', '')}_{currentDateInYYYYMMDD}.zip"
-    newZipPath = os.path.join(wchisp_path, newZipName)
+    versionString = os.path.basename(largest_folder)
+    newZipName = f"{basename.replace('.zip', '')}_{versionString}.zip"
+    newZipPath = os.path.join(largest_folder, newZipName)
     print(f"Creating {newZipPath} ...")
     if os.path.exists(newZipPath):
         os.remove(newZipPath)
