@@ -13,8 +13,8 @@ windowsTrimmedPath = os.path.join(expandedPath, "trimmed_windows_toolchain")
 untrimmedPath = [windowsPath, linuxPath, macosPath]
 trimmedPath = [windowsTrimmedPath, linuxTrimmedPath, macosTrimmedPath]
 
-untrimmedPath=[macosPath]
-trimmedPath=[macosTrimmedPath]
+# untrimmedPath=[macosPath]
+# trimmedPath=[macosTrimmedPath]
 
 for i in range(len(untrimmedPath)):
     originalGccPath = untrimmedPath[i]
@@ -32,11 +32,36 @@ for i in range(len(untrimmedPath)):
     #copy all files from originalGccPath to oneLevelPath
     os.system(f"cp -r {originalGccPath}/* {oneLevelPath}/")
 
-    unnecessaryArchs = ["rv32e","rv32i","rv32imafc","rv64iac","rv64imafdc","rv32eac","rv32iac","rv32imafdc","rv64im","rv64imf","rv32em","rv32im","rv32imf","rv64imac","rv32emac","rv32imaf","rv64i","rv64imafc"]
-    deletePaths = ["distro-info","include","share","libexec/gcc/riscv-none-embed/8.2.0/install-tools","lib/gcc/riscv-none-embed/8.2.0/plugin","lib/python3.7","riscv-none-embed/share",]
+    #list all rv* folders in riscv-wch-elf/lib/
+    riscvLibPath = os.path.join(oneLevelPath, "riscv-wch-elf", "lib")
+    if not os.path.exists(riscvLibPath):
+        print(f"riscv-none-embed lib path {riscvLibPath} does not exist, can not determine architectures to delete.")
+        exit(1)
+    archs = []
+    for item in os.listdir(riscvLibPath):
+        itemPath = os.path.join(riscvLibPath, item)
+        if os.path.isdir(itemPath) and item.startswith("rv"):
+            archs.append(item)
+    print(f"Detected architectures: {archs}")
+
+    #rv32ecxw ilp32e
+    #rv32imacxw ilp32
+    #rv32imac ilp32
+    #rv32imafcxw ilp32f
+    #rv32imc_zba_zbb_zbc_zbs_xw ilp32
+
+    usefulArchs = ["rv32ec_xw","rv32imac_xw","rv32imafc_xw","rv32imc_zba_zbb_zbc_zbs_xw"]
+
+    unnecessaryArchs = []
+    for arch in archs:
+        if arch not in usefulArchs:
+            unnecessaryArchs.append(arch)
+
+    deletePaths = ["distro-info","include","share","libexec/gcc/riscv-wch-elf/12.2.0/install-tools","lib/gcc/riscv-wch-elf/12.2.0/plugin","lib/python3.7","riscv-wch-elf/share",]
     for arch in unnecessaryArchs:
-        deletePaths.append(f"lib/gcc/riscv-none-embed/8.2.0/{arch}")
-        deletePaths.append(f"riscv-none-embed/lib/{arch}")
+        deletePaths.append(f"lib/gcc/riscv-wch-elf/12.2.0/{arch}")
+        deletePaths.append(f"riscv-wch-elf/lib/{arch}")
+        deletePaths.append(f"riscv-wch-elf/picolibc/riscv-wch-elf/lib/{arch}")
 
     for deletePath in deletePaths:
         fullDeletePath = os.path.join(oneLevelPath, deletePath)
