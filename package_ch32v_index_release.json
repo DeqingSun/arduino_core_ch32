@@ -1,0 +1,222 @@
+{
+    "packages": [
+        {
+            "name": "WCH",
+            "websiteURL": "https://www.wch.cn/",
+            "maintainer": "WCH",
+            "email": "tech@wch.cn",
+            "help": {
+                "online": "https://www.wch.cn/"
+            },
+            "platforms": [
+                {
+                    "name": "CH32 MCU EVT Boards",
+                    "architecture": "ch32v",
+                    "version": "25.10.27",
+                    "category": "Contributed",
+                    "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/arduino_core_ch32_25.10.27_f9e00a5.zip",
+                    "archiveFileName": "arduino_core_ch32_25.10.27_f9e00a5.zip",
+                    "checksum": "SHA-256:a5c04bfdfdaef9746f2da53e42170b482d5586d88165da64e470ec42b6319a07",
+                    "size": "1998322",
+                    "boards": [
+                        {
+                            "name": "CH32X035 EVT Board"
+                        },
+                        {
+                            "name": "CH32V30x EVT Board"
+                        },
+                        {
+                            "name": "CH32V20x EVT Board"
+                        },
+                        {
+                            "name": "CH32V10x EVT Board"
+                        },
+                        {
+                            "name": "CH32V00x EVT Board"
+                        }
+                    ],
+                    "toolsDependencies": [
+                        {
+                            "packager": "WCH",
+                            "name": "riscv-none-embed-gcc",
+                            "version": "8.2.0_trimmed"
+                        },
+                        {
+                            "packager": "WCH",
+                            "name": "openocd",
+                            "version": "1.0.0"
+                        },
+                        {
+                            "packager": "WCH",
+                            "name": "wchisp",
+                            "version": "0.3.0_20251008"
+                        },
+                        {
+                            "packager": "WCH",
+                            "name": "beforeinstall",
+                            "version": "1.0.0"
+                        }
+                    ]
+                },{
+                    "name": "CH32 MCU EVT Boards",
+                    "architecture": "ch32v",
+                    "version": "25.10.8",
+                    "category": "Contributed",
+                    "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/arduino_core_ch32_25.10.8_3a9d052.zip",
+                    "archiveFileName": "arduino_core_ch32_25.10.8_3a9d052.zip",
+                    "checksum": "SHA-256:a3935c9c091cfec5b71b3890d0d07e6e5c83c54096ae5943be7fd3954a921be8",
+                    "size": "1968086",
+                    "boards": [
+                        {
+                            "name": "CH32X035 EVT Board"
+                        },
+                        {
+                            "name": "CH32V30x EVT Board"
+                        },
+                        {
+                            "name": "CH32V20x EVT Board"
+                        },
+                        {
+                            "name": "CH32V10x EVT Board"
+                        },
+                        {
+                            "name": "CH32V00x EVT Board"
+                        }
+                    ],
+                    "toolsDependencies": [
+                        {
+                            "packager": "WCH",
+                            "name": "riscv-none-embed-gcc",
+                            "version": "8.2.0_trimmed"
+                        },
+                        {
+                            "packager": "WCH",
+                            "name": "openocd",
+                            "version": "1.0.0"
+                        },
+                        {
+                            "packager": "WCH",
+                            "name": "wchisp",
+                            "version": "0.3.0_20251008"
+                        },
+                        {
+                            "packager": "WCH",
+                            "name": "beforeinstall",
+                            "version": "1.0.0"
+                        }
+                    ]
+                }
+            ],
+            "tools": [
+                {
+                    "name": "riscv-none-embed-gcc",
+                    "version": "8.2.0_trimmed",
+                    "systems": [
+                        {
+                            "host": "i686-mingw32",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/trimmed_risc-none-embed-gcc-8.2.0.zip",
+                            "archiveFileName": "trimmed_risc-none-embed-gcc-8.2.0.zip",
+                            "checksum": "SHA-256:4bdeb479fa3e3f02752e91c408214496a1ae17a9156500aa68fd897855bbac58",
+                            "size": "109832948"
+                        },
+                        {
+                            "host": "x86_64-linux-gnu",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/trimmed_wch_gcc_8_linux-8.2.0.tar.gz",
+                            "archiveFileName": "trimmed_wch_gcc_8_linux-8.2.0.tar.gz",
+                            "checksum": "SHA-256:742add88f64cd48f893c53ae824846c5b2d1aef8552f4a5259c7b815df5d19af",
+                            "size": "89133455"
+                        },
+                        {
+                            "host": "x86_64-apple-darwin",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/trimmed_wch_gcc_macos-8.2.0.tar.gz",
+                            "archiveFileName": "trimmed_wch_gcc_macos-8.2.0.tar.gz",
+                            "checksum": "SHA-256:55e2ce566c7b6857840f1fd7614453af66f4966e7d7a717cd6ca015b93b3ff45",
+                            "size": "70124694"
+                        }
+                    ]
+                },
+                {
+                    "name": "openocd",
+                    "version": "1.0.0",
+                    "systems": [
+                        {
+                            "host": "i686-mingw32",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/openocd_wch-1.0.0.zip",
+                            "archiveFileName": "openocd_wch-1.0.0.zip",
+                            "checksum": "SHA-256:F1E54FD7F253CF37E7F4581088FF62DFDFDAB899B9D3182C36426F6146AE0465",
+                            "size": "9604774"
+                        },
+                        {
+                            "host": "x86_64-linux-gnu",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/wch_openocd_linux-1.0.0.tar.gz",
+                            "archiveFileName": "wch_openocd_linux-1.0.0.tar.gz",
+                            "checksum": "SHA-256:10FA9CF5006C3495AEDCAFD1C3903FA8D75D513536432E1D61B59124442EB4C3",
+                            "size": "2097609"
+                        },
+                        {
+                            "host": "x86_64-apple-darwin",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/openocd-mac-x86_64-1.91.zip",
+                            "archiveFileName": "openocd-mac-x86_64-1.91.zip",
+                            "checksum": "SHA-256:2bb3b7b59650a0ae243d4f9481a9a765b19666c36dc3c912540cb87e04c68eb4",
+                            "size": "2380678"
+                        }
+                    ]
+                },
+                {
+                    "name": "wchisp",
+                    "version": "0.3.0_20251008",
+                    "systems": [
+                        {
+                            "host": "x86_64-linux-gnu",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/wchisp-linux-x64_20251008.zip",
+                            "archiveFileName": "wchisp-linux-x64_20251008.zip",
+                            "checksum": "SHA-256:fb363be4dd84f9a9bf0d36d1d274feda00ed4e30eff7112e038d2e061d5e0dd5",
+                            "size": "910535"
+                        },
+                        {
+                            "host": "i686-mingw32",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/wchisp-win-x64_20251008.zip",
+                            "archiveFileName": "wchisp-win-x64_20251008.zip",
+                            "checksum": "SHA-256:72f7ecb129a0084c9b59e87e9f9c0bd91174ca5c91ea7ebcab1f4032e0bf96c8",
+                            "size": "728881"
+                        },
+                        {
+                            "host": "x86_64-apple-darwin",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/wchisp-macos-x64_20251008.zip",
+                            "archiveFileName": "wchisp-macos-x64_20251008.zip",
+                            "checksum": "SHA-256:f9da872724def1ed8914b89764dc6b67ce3c577662e2f5335e63a9e173b63136",
+                            "size": "868868"
+                        }
+                    ]
+                },
+                {
+                    "name": "beforeinstall",
+                    "version": "1.0.0",
+                    "systems": [
+                        {
+                            "host": "x86_64-linux-gnu",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/wch_beforeinstall_linux-1.0.0.tar.gz",
+                            "archiveFileName": "wch_beforeinstall_linux-1.0.0.tar.gz",
+                            "checksum": "SHA-256:17EF3A94BC46B9EB9AB1FDECC48FCD3880EEB8FCC36E6648626320F0BF2864DC",
+                            "size": "507269"
+                        },
+                        {
+                            "host": "i686-mingw32",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/wch_beforeinstall_empty.tar.gz",
+                            "archiveFileName": "wch_beforeinstall_empty.tar.gz",
+                            "checksum": "SHA-256:87f2e600b449220e88b20c5c867eb879b4acad177824fab65a9b3713d53246fd",
+                            "size": "186"
+                        },
+                        {
+                            "host": "x86_64-apple-darwin",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/wch_beforeinstall_empty.tar.gz",
+                            "archiveFileName": "wch_beforeinstall_empty.tar.gz",
+                            "checksum": "SHA-256:87f2e600b449220e88b20c5c867eb879b4acad177824fab65a9b3713d53246fd",
+                            "size": "186"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
