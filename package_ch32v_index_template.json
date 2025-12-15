@@ -44,7 +44,7 @@
                         {
                             "packager": "WCH",
                             "name": "openocd",
-                            "version": "1.0.0"
+                            "version": "ide_2.2.0_trimmed_packed"
                         },
                         {
                             "packager": "WCH",
@@ -111,6 +111,33 @@
                             "archiveFileName": "trimmed_macos_toolchain_ide_220.zip",
                             "checksum": "SHA-256:389fb3e1830792e2f455e45f9e0828243141cf2fce0526296cbd5a2fe633c9a4",
                             "size": "139512819"
+                        }
+                    ]
+                },
+                {
+                    "name": "openocd",
+                    "version": "ide_2.2.0_trimmed_packed",
+                    "systems": [
+                        {
+                            "host": "i686-mingw32",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/oide220_windows_openocd.zip",
+                            "archiveFileName": "ide220_windows_openocd.zip",
+                            "checksum": "SHA-256:2bd1f35d2c3b5fe8c006df760deb3ea44cd0f1fd3728a6a73b2be148c877ae5e",
+                            "size": "11783870"
+                        },
+                        {
+                            "host": "x86_64-linux-gnu",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/ide220_linux_openocd.zip",
+                            "archiveFileName": "ide220_linux_openocd.zip",
+                            "checksum": "SHA-256:902eb87d62094054125842c3ef8c656b44d6da2af4f2f8e7b073e65d310d7f9f",
+                            "size": "2533982"
+                        },
+                        {
+                            "host": "x86_64-apple-darwin",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/ide220_macos_openocd.zip",
+                            "archiveFileName": "ide220_macos_openocd.zip",
+                            "checksum": "SHA-256:553730839fbc59d5dd6c44afa6f5687d36f1b7dedefdf2ea1cc505d4134e08c5",
+                            "size": "4229660"
                         }
                     ]
                 },

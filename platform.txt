@@ -162,7 +162,7 @@ recipe.size.regex.data=^(?:\.data|\.bss|\.noinit)\s+([0-9]+).*
 
 # Uploader tool
 ## WCH-LinkE
-tools.WCH_linkE.path={runtime.tools.openocd-1.0.0.path}/OpenOCD/OpenOCD/bin/
+tools.WCH_linkE.path={runtime.tools.openocd.path}/OpenOCD/OpenOCD/bin/
 tools.WCH_linkE.cmd=openocd
 tools.WCH_linkE.upload.params.verbose=
 tools.WCH_linkE.upload.params.quiet=
@@ -190,6 +190,6 @@ debug.toolchain.prefix=riscv-wch-elf
 debug.toolchain.path={compiler.path}
 
 debug.server=openocd
-debug.server.openocd.path={runtime.tools.openocd-1.0.0.path}/OpenOCD/OpenOCD/bin/openocd
+debug.server.openocd.path={runtime.tools.openocd.path}/OpenOCD/OpenOCD/bin/openocd
 debug.server.openocd.scripts_dir={debug.toolchain.path}/OpenOCD/OpenOCD/scripts
 debug.server.openocd.script={runtime.tools.openocd.path}/OpenOCD/OpenOCD/bin/wch-riscv.cfg
