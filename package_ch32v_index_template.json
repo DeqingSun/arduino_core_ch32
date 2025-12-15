@@ -39,7 +39,7 @@
                         {
                             "packager": "WCH",
                             "name": "riscv-none-embed-gcc",
-                            "version": "8.2.0_trimmed"
+                            "version": "ide_2.2.0_trimmed"
                         },
                         {
                             "packager": "WCH",
@@ -49,7 +49,7 @@
                         {
                             "packager": "WCH",
                             "name": "wchisp",
-                            "version": "0.3.0_20251008"
+                            "version": "0.3.0_20251101"
                         },
                         {
                             "packager": "WCH",
@@ -84,6 +84,33 @@
                             "archiveFileName": "trimmed_wch_gcc_macos-8.2.0.tar.gz",
                             "checksum": "SHA-256:55e2ce566c7b6857840f1fd7614453af66f4966e7d7a717cd6ca015b93b3ff45",
                             "size": "70124694"
+                        }
+                    ]
+                },
+                {
+                    "name": "riscv-none-embed-gcc",
+                    "version": "ide_2.2.0_trimmed",
+                    "systems": [
+                        {
+                            "host": "i686-mingw32",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/trimmed_windows_toolchain_ide_220.zip",
+                            "archiveFileName": "trimmed_windows_toolchain_ide_220.zip",
+                            "checksum": "SHA-256:e31f9ddc9c2201683dd0692ef615d50633620b3e12fc4c9f29a93efb8bc279a0",
+                            "size": "170834328"
+                        },
+                        {
+                            "host": "x86_64-linux-gnu",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/trimmed_linux_toolchain_ide_220.zip",
+                            "archiveFileName": "trimmed_linux_toolchain_ide_220.zip",
+                            "checksum": "SHA-256:396a33d7f1e8a34089bd338b79d1bf6afe534bcb424028347f5ea2cad95c8d08",
+                            "size": "168484005"
+                        },
+                        {
+                            "host": "x86_64-apple-darwin",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/trimmed_macos_toolchain_ide_220.zip",
+                            "archiveFileName": "trimmed_macos_toolchain_ide_220.zip",
+                            "checksum": "SHA-256:389fb3e1830792e2f455e45f9e0828243141cf2fce0526296cbd5a2fe633c9a4",
+                            "size": "139512819"
                         }
                     ]
                 },
