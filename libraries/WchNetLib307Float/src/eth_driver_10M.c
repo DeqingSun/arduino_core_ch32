@@ -582,10 +582,12 @@ void ReInitMACReg(void)
     /* Software reset */
     ETH_SoftwareReset();
     /* Wait for software reset */
-    do{
-        Delay_Us(10);
-        if( !--timeout )  break;
-    }while(ETH->DMABMR & ETH_DMABMR_SR);
+    unsigned long start = millis();
+    while (millis() - start < 100) {
+        if ( !(ETH->DMABMR & ETH_DMABMR_SR) ) {
+            break;
+        }
+    }
 
     /* Configure MAC address */
     ETH->MACA0HR = (uint32_t)((MACAddr[5]<<8) | MACAddr[4]);
@@ -717,10 +719,12 @@ void ETH_Configuration( uint8_t *macAddr )
     ETH_SoftwareReset();
 
     /* Wait for software reset */
-    do{
-        Delay_Us(10);
-        if( !--timeout )  break;
-    }while(ETH->DMABMR & ETH_DMABMR_SR);
+    unsigned long start = millis();
+    while (millis() - start < 100) {
+        if ( !(ETH->DMABMR & ETH_DMABMR_SR) ) {
+            break;
+        }
+    }
 
     /* ETHERNET Configuration */
     /*------------------------   MAC   -----------------------------------*/
@@ -892,7 +896,7 @@ void WCHNET_ETHIsr(void)
  */
 void ETH_Init( uint8_t *macAddr )
 {
-    Delay_Ms(100);
+    delay(100);
     ChipId = DBGMCU_GetCHIPID();
     ETH_LedConfiguration( );
     RandVal = (macAddr[3]^macAddr[4]^macAddr[5]) * 214017 + 2531017;
