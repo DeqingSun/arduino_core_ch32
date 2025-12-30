@@ -98,6 +98,10 @@ void USBInitForCdc() {
 #if defined (CH573) || defined (CH572)
   R8_USB_CTRL = RB_UC_DEV_PU_EN | RB_UC_INT_BUSY | RB_UC_DMA_EN;
   R8_UDEV_CTRL = RB_UD_PD_DIS | RB_UD_PORT_EN;
+#if defined (CH572)
+  // The CH572 will pull up the USB lines if RB_PIN_DEBUG_EN is set,
+  R16_PIN_ALTERNATE &= ~RB_PIN_DEBUG_EN;
+#endif
 #elif defined (CH32X035)
   USBFSD->BASE_CTRL = USBFS_UC_DEV_PU_EN | USBFS_UC_INT_BUSY | USBFS_UC_DMA_EN;
   USBFSD->UDEV_CTRL = USBFS_UD_PD_DIS | USBFS_UD_PORT_EN;
