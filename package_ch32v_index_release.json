@@ -12,6 +12,55 @@
                 {
                     "name": "CH32 MCU EVT Boards",
                     "architecture": "ch32v",
+                    "version": "26.1.1",
+                    "category": "Contributed",
+                    "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/arduino_core_ch32_26.1.1_74923fd.zip",
+                    "archiveFileName": "arduino_core_ch32_26.1.1_74923fd.zip",
+                    "checksum": "SHA-256:fdd689c2617f68bd76b0df9089402e9d7a4ebd72842ab0c15e3b02ddcdd4145e",
+                    "size": "2327220",
+                    "boards": [
+                        {
+                            "name": "CH32X035 EVT Board"
+                        },
+                        {
+                            "name": "CH32V30x EVT Board"
+                        },
+                        {
+                            "name": "CH32V20x EVT Board"
+                        },
+                        {
+                            "name": "CH32V10x EVT Board"
+                        },
+                        {
+                            "name": "CH32V00x EVT Board"
+                        }
+                    ],
+                    "toolsDependencies": [
+                        {
+                            "packager": "WCH",
+                            "name": "riscv-none-embed-gcc",
+                            "version": "ide_2.2.0_trimmed"
+                        },
+                        {
+                            "packager": "WCH",
+                            "name": "openocd",
+                            "version": "ide_2.3.0_trimmed_packed"
+                        },
+                        {
+                            "packager": "WCH",
+                            "name": "wchisp",
+                            "version": "0.3.0_20251101"
+                        },
+                        {
+                            "packager": "WCH",
+                            "name": "beforeinstall",
+                            "version": "1.0.0"
+                        }
+                    ]
+                },
+                {
+                    "name": "CH32 MCU EVT Boards",
+                    "architecture": "ch32v",
                     "version": "25.12.15",
                     "category": "Contributed",
                     "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/arduino_core_ch32_25.12.15_c9f659d.zip",
@@ -213,11 +262,38 @@
                 },
                 {
                     "name": "openocd",
+                    "version": "ide_2.3.0_trimmed_packed",
+                    "systems": [
+                        {
+                            "host": "i686-mingw32",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/ide230_windows_openocd.zip",
+                            "archiveFileName": "ide230_windows_openocd.zip",
+                            "checksum": "SHA-256:6c4303ff3427ff2cc6e33feb29a6e1339361445d8ad93a74de81eba5c401f59f",
+                            "size": "9223954"
+                        },
+                        {
+                            "host": "x86_64-linux-gnu",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/ide230_linux_openocd.zip",
+                            "archiveFileName": "ide230_linux_openocd.zip",
+                            "checksum": "SHA-256:5498a9810b8a4c8eab8eb953f961eb6233c8039b050cfe65eca91037fe5dde28",
+                            "size": "2558069"
+                        },
+                        {
+                            "host": "x86_64-apple-darwin",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/ide230_macos_openocd.zip",
+                            "archiveFileName": "ide230_macos_openocd.zip",
+                            "checksum": "SHA-256:000d815a4cf81dd2ab825879858debc4a47258e18e46a3b29158b609c5af3c67",
+                            "size": "1692973"
+                        }
+                    ]
+                },
+                {
+                    "name": "openocd",
                     "version": "ide_2.2.0_trimmed_packed",
                     "systems": [
                         {
                             "host": "i686-mingw32",
-                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/oide220_windows_openocd.zip",
+                            "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/ide220_windows_openocd.zip",
                             "archiveFileName": "ide220_windows_openocd.zip",
                             "checksum": "SHA-256:2bd1f35d2c3b5fe8c006df760deb3ea44cd0f1fd3728a6a73b2be148c877ae5e",
                             "size": "11783870"
