@@ -1,0 +1,6 @@
+*.zip
+*.tar.gz
+*.tar.xz
+expanded/
+#precompiled 7zip for macos on https://www.7-zip.org/download.html
+7zz 
