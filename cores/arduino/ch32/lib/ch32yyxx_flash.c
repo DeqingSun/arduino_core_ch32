@@ -26,3 +26,11 @@
 #if defined (CH32L10x)
 #include "ch32l103_flash.c"
 #endif
+
+#if defined (CH572)
+#include "CH572_flash.c"
+#endif
+
+#if defined (CH573)
+#include "CH573_flash.c"
+#endif
