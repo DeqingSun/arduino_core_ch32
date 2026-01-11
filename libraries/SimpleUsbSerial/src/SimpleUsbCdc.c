@@ -51,27 +51,50 @@ void APPJumpBoot(void)   //this section of code must run in RAM
 __attribute__((section(".highcode")))
 void APPJumpBoot(void)   //this section of code must run in RAM
 {
-  // R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-  // R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-  // R8_WDOG_COUNT = 128;               // Set watchdog timeout value
-  // R8_RST_WDOG_CTRL |= RB_WDOG_INT_EN;
-  // R8_RESET_STATUS = R8_RESET_STATUS & ~RB_ROM_CODE_WE | 1<<7; // set RB_ROM_CODE_WE to 1
-  // R8_RST_WDOG_CTRL |= RB_SOFTWARE_RESET; // Enable software reset
-  // R8_SAFE_ACCESS_SIG = 0;//run to execute reset, reset type will be power-up reset.
+
+  R32_PA_DIR &= ~(1<<2);
+  R32_PA_PU &= ~(1<<2);
+  R16_PIN_ALTERNATE &= ~(1<<2); //RB_PA_DI_DIS
+  R32_PA_PD_DRV |= (1<<2);
+  //Discharge PA2(RXD) to prevent falling edge in bootloader, and a unexpected 0 in UART
+  //flash erase will take time, maybe no delay is needed
+
   while(FLASH_EEPROM_CMD(0x01, 0, NULL, 4096) != 0x00) {
     ;//ROM erase 4K size at address 0
   }
   FLASH_EEPROM_CMD(0x04, 0, NULL, 0);   //reset flash
-  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-  //SAFEOPERATE;
-  asm("nop");
-  asm("nop");
-  R16_INT_LSI_TUNE = 0xFFFF;
-  R8_RST_WDOG_CTRL |= RB_SOFTWARE_RESET;
-  R8_SAFE_ACCESS_SIG = 0;//run to execute reset, reset type will be power-up reset.
-  while(1);//Make bootloader think the chip is empty (first 4 bytes are 0xFF)
 
+  {
+    volatile uint32_t mpie_mie;
+    mpie_mie=__risc_v_disable_irq();
+    asm volatile("fence.i");
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    asm volatile("fence.i");
+
+    R16_INT_LSI_TUNE = 0xFFFF;
+
+    R8_SAFE_ACCESS_SIG = 0;
+    __risc_v_enable_irq(mpie_mie);
+    asm volatile("fence.i");
+  }
+
+  {
+    volatile uint32_t mpie_mie;
+    mpie_mie=__risc_v_disable_irq();
+    asm volatile("fence.i");
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    asm volatile("fence.i");
+
+    R8_RST_WDOG_CTRL |= RB_SOFTWARE_RESET; //run to execute reset, reset type will be power-up reset.
+    
+    R8_SAFE_ACCESS_SIG = 0;
+    __risc_v_enable_irq(mpie_mie);
+    asm volatile("fence.i");
+  }
+
+  while(1);//Make bootloader think the chip is empty (first 4 bytes are 0xFF)
 }
 #elif defined (CH32X035)
 void APPJumpBoot(void)   //this section of code must run in RAM
