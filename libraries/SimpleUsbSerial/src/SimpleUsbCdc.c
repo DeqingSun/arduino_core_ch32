@@ -231,27 +231,46 @@ bool USBSerial() {
   
 void USBSerial_flush(void) {
   if (!UpPoint2BusyFlag && usbWritePointer > 0) {
+      uint16_t usbIntCopy;
 #if defined(CH573) || defined(CH572)
+      usbIntCopy = R8_USB_INT_EN;
+      R8_USB_INT_EN &= ~RB_UIE_TRANSFER;
       R8_UEP2_T_LEN = usbWritePointer;
       R8_UEP2_CTRL = R8_UEP2_CTRL & ~MASK_UEP_T_RES | UEP_T_RES_ACK; // Respond ACK
 #elif defined(CH32X035)
+      usbIntCopy = USBFSD->INT_EN;
+      USBFSD->INT_EN &= ~USBFS_UIE_TRANSFER;
       USBFSD->UEP2_TX_LEN = usbWritePointer;
       USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & ~USBFS_UEP_T_RES_MASK | USBFS_UEP_T_RES_ACK; // Respond ACK
 #endif
     UpPoint2BusyFlag = 1;
+#if defined(CH573) || defined(CH572)
+      R8_USB_INT_EN = usbIntCopy;
+#elif defined(CH32X035)
+      USBFSD->INT_EN = usbIntCopy;
+#endif
 
     if (usbWritePointer ==
         MAX_PACKET_SIZE) { // write empty packet for end transmission. Needed
                             // for windows.
       if (USBSerial_wait_UpPoint2BusyFlag_clear()) {
 #if defined(CH573) || defined(CH572)
+        usbIntCopy = R8_USB_INT_EN;
+        R8_USB_INT_EN &= ~RB_UIE_TRANSFER;
         R8_UEP2_T_LEN = 0;
         R8_UEP2_CTRL = R8_UEP2_CTRL & ~MASK_UEP_T_RES | UEP_T_RES_ACK; // Respond ACK
 #elif defined(CH32X035)
+        usbIntCopy = USBFSD->INT_EN;
+        USBFSD->INT_EN &= ~USBFS_UIE_TRANSFER;
         USBFSD->UEP2_TX_LEN = 0;
         USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & ~USBFS_UEP_T_RES_MASK | USBFS_UEP_T_RES_ACK; // Respond ACK
 #endif
         UpPoint2BusyFlag = 1;
+#if defined(CH573) || defined(CH572)
+        R8_USB_INT_EN = usbIntCopy;
+#elif defined(CH32X035)
+        USBFSD->INT_EN = usbIntCopy;
+#endif
       }
     }
     usbWritePointer = 0;
