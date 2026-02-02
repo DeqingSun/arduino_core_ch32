@@ -236,17 +236,15 @@ void USBSerial_flush(void) {
       usbIntCopy = R8_USB_INT_EN;
       R8_USB_INT_EN &= ~RB_UIE_TRANSFER;
       R8_UEP2_T_LEN = usbWritePointer;
+      UpPoint2BusyFlag = 1;
       R8_UEP2_CTRL = R8_UEP2_CTRL & ~MASK_UEP_T_RES | UEP_T_RES_ACK; // Respond ACK
+      R8_USB_INT_EN = usbIntCopy;
 #elif defined(CH32X035)
       usbIntCopy = USBFSD->INT_EN;
       USBFSD->INT_EN &= ~USBFS_UIE_TRANSFER;
       USBFSD->UEP2_TX_LEN = usbWritePointer;
+      UpPoint2BusyFlag = 1;
       USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & ~USBFS_UEP_T_RES_MASK | USBFS_UEP_T_RES_ACK; // Respond ACK
-#endif
-    UpPoint2BusyFlag = 1;
-#if defined(CH573) || defined(CH572)
-      R8_USB_INT_EN = usbIntCopy;
-#elif defined(CH32X035)
       USBFSD->INT_EN = usbIntCopy;
 #endif
 
@@ -258,17 +256,15 @@ void USBSerial_flush(void) {
         usbIntCopy = R8_USB_INT_EN;
         R8_USB_INT_EN &= ~RB_UIE_TRANSFER;
         R8_UEP2_T_LEN = 0;
+        UpPoint2BusyFlag = 1;
         R8_UEP2_CTRL = R8_UEP2_CTRL & ~MASK_UEP_T_RES | UEP_T_RES_ACK; // Respond ACK
+        R8_USB_INT_EN = usbIntCopy;
 #elif defined(CH32X035)
         usbIntCopy = USBFSD->INT_EN;
         USBFSD->INT_EN &= ~USBFS_UIE_TRANSFER;
         USBFSD->UEP2_TX_LEN = 0;
-        USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & ~USBFS_UEP_T_RES_MASK | USBFS_UEP_T_RES_ACK; // Respond ACK
-#endif
         UpPoint2BusyFlag = 1;
-#if defined(CH573) || defined(CH572)
-        R8_USB_INT_EN = usbIntCopy;
-#elif defined(CH32X035)
+        USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & ~USBFS_UEP_T_RES_MASK | USBFS_UEP_T_RES_ACK; // Respond ACK
         USBFSD->INT_EN = usbIntCopy;
 #endif
       }
