@@ -44,7 +44,7 @@
                         {
                             "packager": "WCH",
                             "name": "openocd",
-                            "version": "ide_2.2.0_trimmed_packed"
+                            "version": "ide_2.3.0_trimmed_packed"
                         },
                         {
                             "packager": "WCH",
