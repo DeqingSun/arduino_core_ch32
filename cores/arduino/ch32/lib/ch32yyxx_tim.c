@@ -25,3 +25,7 @@
 #if defined (CH32L10x)
 #include "ch32l103_tim.c"
 #endif
+
+#if defined (CH573)
+#include "CH573_clk.c"
+#endif

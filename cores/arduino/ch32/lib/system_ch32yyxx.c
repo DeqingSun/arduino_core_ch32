@@ -25,3 +25,13 @@
 #if defined(CH32L10x)
 #include "system_ch32l103.c"
 #endif
+
+#if defined(CH573)
+#include "CH573_sys.c"
+#include "CH573.c"
+#endif
+
+#if defined(CH572)
+#include "CH572_sys.c"
+#include "CH572.c"
+#endif

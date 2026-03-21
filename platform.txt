@@ -9,7 +9,7 @@ version=1.0.0
 
 # Compile variables
 # ----------------------
-compiler.ch.extra_include="-I{build.source.path}" "-I{build.core.path}" "-I{build.core.path}/avr/" "-I{build.core.path}/ch32/" "-I{build.core.path}/ch32/lib/" "-I{build.system.path}/{build.series}/USER/" "-I{build.system.path}/{build.series}/SRC/Core/" "-I{build.system.path}/{build.series}/SRC/Debug/" "-I{build.system.path}/{build.series}/SRC/Startup/" "-I{build.system.path}/{build.series}/SRC/Peripheral/inc/" "-I{build.system.path}/{build.series}/SRC/Peripheral/src/"
+compiler.ch.extra_include="-I{build.source.path}" "-I{build.core.path}" "-I{build.core.path}/avr/" "-I{build.core.path}/ch32/" "-I{build.core.path}/ch32/lib/" "-I{build.system.path}/{build.series}/USER/" "-I{build.system.path}/{build.series}/SRC/Core/" "-I{build.system.path}/{build.series}/SRC/RVMSIS/" "-I{build.system.path}/{build.series}/SRC/Debug/" "-I{build.system.path}/{build.series}/SRC/Startup/" "-I{build.system.path}/{build.series}/SRC/Peripheral/inc/" "-I{build.system.path}/{build.series}/SRC/StdPeriphDriver/inc/" "-I{build.system.path}/{build.series}/SRC/Peripheral/src/" "-I{build.system.path}/{build.series}/SRC/StdPeriphDriver/"
 
 #---warning flags
 compiler.warning_flags=-Wunused -Wuninitialized
@@ -19,22 +19,22 @@ compiler.warning_flags.more=-Wall
 compiler.warning_flags.all=-Wall -Wextra
 
 #---compiler.cmd
-compiler.path={runtime.tools.riscv-none-embed-gcc-8.2.0.path}/bin/
+compiler.path={runtime.tools.riscv-none-embed-gcc.path}/bin/
 
-compiler.S.cmd=riscv-none-embed-gcc
-compiler.c.cmd=riscv-none-embed-gcc
-compiler.cpp.cmd=riscv-none-embed-g++
-compiler.ar.cmd=riscv-none-embed-ar
-compiler.c.elf.cmd=riscv-none-embed-g++
-compiler.objcopy.cmd=riscv-none-embed-objcopy
-compiler.elf2hex.cmd=riscv-none-embed-objcopy
-compiler.objdump.cmd=riscv-none-embed-objdump
+compiler.S.cmd=riscv-wch-elf-gcc
+compiler.c.cmd=riscv-wch-elf-gcc
+compiler.cpp.cmd=riscv-wch-elf-g++
+compiler.ar.cmd=riscv-wch-elf-ar
+compiler.c.elf.cmd=riscv-wch-elf-g++
+compiler.objcopy.cmd=riscv-wch-elf-objcopy
+compiler.elf2hex.cmd=riscv-wch-elf-objcopy
+compiler.objdump.cmd=riscv-wch-elf-objdump
 
 compiler.libraries.ldflags=
 
 #"@{build.opt.path}" {build.flags.optimize}  {compiler.warning_flags} {build.flags.debug} -MP -MF
 
-compiler.extra_flags=-march={build.march} -mabi={build.mabi} -msmall-data-limit=8 -msave-restore -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common 
+compiler.extra_flags=-march={build.march} -mabi={build.mabi} {build.extra_flags} -msmall-data-limit=8 -msave-restore -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common
 
 compiler.S.flags={compiler.extra_flags} -x assembler-with-cpp {build.flags.clock} "-I{build.system.path}/{build.series}/SRC/Startup/" "-I{build.core.path}/ch32/"
 
@@ -54,7 +54,7 @@ compiler.objdump.flags=--all-headers --demangle --disassemble -M xw
 
 
 compiler.ldflags=
-compiler.size.cmd=riscv-none-embed-size
+compiler.size.cmd=riscv-wch-elf-size
 compiler.define=-DARDUINO=
 
 # These can be overridden in boards.txt
@@ -132,7 +132,7 @@ recipe.S.o.pattern="{compiler.path}{compiler.S.cmd}" {compiler.S.flags} {build.i
 recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} {compiler.ar.extra_flags} "{archive_file_path}" "{object_file}"
 
 ## Combine gc-sections, archives, and objects
-recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" {compiler.extra_flags} -T "{build.system.path}/{build.series}/SRC/Ld/{build.ldscript}" -nostartfiles -Xlinker --gc-sections "-Wl,-Map,{build.path}/{build.project_name}.map" {compiler.c.elf.extra_flags} {build.flags.ldflags} -o "{build.path}/{build.project_name}.elf" "-L{build.path}" -Wl,--start-group {object_files} {build.ch_extra_lib} -Wl,--whole-archive "{archive_file_path}" -Wl,--no-whole-archive -lc -Wl,--end-group 
+recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" {compiler.extra_flags} -T "{build.system.path}/{build.series}/SRC/Ld/{build.ldscript}" -nostartfiles -Xlinker --gc-sections "-Wl,-Map,{build.path}/{build.project_name}.map" {compiler.c.elf.extra_flags} {build.flags.ldflags} -o "{build.path}/{build.project_name}.elf" "-L{build.path}" -Wl,--start-group {object_files} {build.ch_extra_lib} {compiler.libraries.ldflags} -Wl,--whole-archive "{archive_file_path}" -Wl,--no-whole-archive -lc -Wl,--end-group 
 
 ## Create output (.bin file)
 recipe.objcopy.bin.pattern="{compiler.path}{compiler.objcopy.cmd}" {compiler.elf2bin.flags} {compiler.elf2bin.extra_flags} "{build.path}/{build.project_name}.elf" "{build.path}/{build.project_name}.bin"
@@ -162,11 +162,11 @@ recipe.size.regex.data=^(?:\.data|\.bss|\.noinit)\s+([0-9]+).*
 
 # Uploader tool
 ## WCH-LinkE
-tools.WCH_linkE.path={runtime.tools.openocd-1.0.0.path}/bin/
+tools.WCH_linkE.path={runtime.tools.openocd.path}/OpenOCD/OpenOCD/bin/
 tools.WCH_linkE.cmd=openocd
 tools.WCH_linkE.upload.params.verbose=
 tools.WCH_linkE.upload.params.quiet=
-tools.WCH_linkE.upload.config={runtime.tools.openocd.path}/bin/wch-riscv.cfg
+tools.WCH_linkE.upload.config={runtime.tools.openocd.path}/OpenOCD/OpenOCD/bin/wch-riscv.cfg
 tools.WCH_linkE.upload.pattern="{path}{cmd}" -f "{upload.config}" -c init -c halt -c "program {{build.path}/{build.project_name}.elf} verify; wlink_reset_resume; exit;"
 
 #tools.WCH_linkE.upload.pattern="{path}{cmd}" -f {upload.config} -c init -c halt -c "program {{build.path}/{build.project_name}.elf}; verify_image {{build.path}/{build.project_name}.elf}; wlink_reset_resume;  exit;"
@@ -177,7 +177,7 @@ tools.wchisp.path={runtime.tools.wchisp.path}/
 tools.wchisp.cmd=wchisp
 tools.wchisp.upload.params.verbose=
 tools.wchisp.upload.params.quiet=
-tools.wchisp.upload.pattern="{path}{cmd}" {upload.verbose} flash "{build.path}/{build.project_name}.elf"
+tools.wchisp.upload.pattern="{path}{cmd}" {upload.verbose} --retry 2 flash "{build.path}/{build.project_name}.elf"
 
 
 # Debugger configuration (general options)
@@ -186,10 +186,10 @@ tools.wchisp.upload.pattern="{path}{cmd}" {upload.verbose} flash "{build.path}/{
 #  - this is alpha and may be subject to change without notice
 debug.executable={build.path}/{build.project_name}.elf
 debug.toolchain=gcc
-debug.toolchain.prefix=riscv-none-embed
+debug.toolchain.prefix=riscv-wch-elf
 debug.toolchain.path={compiler.path}
 
 debug.server=openocd
-debug.server.openocd.path={runtime.tools.openocd-1.0.0.path}/bin/openocd
-debug.server.openocd.scripts_dir={debug.toolchain.path}/scripts
-debug.server.openocd.script={runtime.tools.openocd.path}/bin/wch-riscv.cfg
+debug.server.openocd.path={runtime.tools.openocd.path}/OpenOCD/OpenOCD/bin/openocd
+debug.server.openocd.scripts_dir={debug.toolchain.path}/OpenOCD/OpenOCD/scripts
+debug.server.openocd.script={runtime.tools.openocd.path}/OpenOCD/OpenOCD/bin/wch-riscv.cfg
