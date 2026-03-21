@@ -4,8 +4,8 @@
 /* Author:   W.ch 2025.05        */
 /* V1.1 FlashROM library for USER/BOOT */
 /* for the target in USER code area on the chip divided into USER code area and BOOT area */
-/* ÓÃÓÚ¾ßÓÐÓÃ»§´úÂëÇøºÍÒýµ¼ÇøµÄÐ¾Æ¬¡¢²Ù×÷Ä¿±êÎªÓÃ»§´úÂëÇøµÄÇé¿ö£¬
-   ¿ÉÒÔÔÚÓÃ»§´úÂëÖÐ±»µ÷ÓÃ£¨IAP£¬²ÁÐ´×ÔÉí£©£¬Ò²¿ÉÒÔÔÚÒýµ¼´úÂëÖÐ±»µ÷ÓÃ£¨¸üÐÂÓÃ»§´úÂë£© */
+/* ï¿½ï¿½ï¿½Ú¾ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¾Æ¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½Îªï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½ï¿½Ã£ï¿½IAPï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ë£© */
 
 /* Flash-ROM feature:
      for store program code, support block erasing, dword and page writing, dword verifying, unit for Length is byte,
@@ -19,8 +19,8 @@
      256 bytes/page for writing, EEPROM_WRITE support one byte or more byte writing, but multiple of 256 is the best,
      0.25KB/4KB (256/4096 bytes) bytes/block for erasing, so multiple of 256 or 4096 is the best */
 
-#ifndef __ISP58x_H__
-#define __ISP58x_H__
+#ifndef __ISP585_H__
+#define __ISP585_H__
 
 #ifndef EEPROM_PAGE_SIZE
 #define EEPROM_PAGE_SIZE    256                       // Flash-ROM & Data-Flash page size for writing
