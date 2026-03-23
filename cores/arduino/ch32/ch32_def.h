@@ -42,6 +42,8 @@
 #include "CH573.h"
 #elif defined(CH572)
 #include "CH572.h"
+#elif defined(CH585)
+#include "CH585.h"
 #else 
   #error "CH32YYXX chip series is not defined in boards.txt."
 #endif

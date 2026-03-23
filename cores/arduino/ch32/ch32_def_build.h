@@ -38,7 +38,9 @@
   #elif defined(CH573)
       #define  COM_STARTUP_FILE  "startup_ch573.S"
   #elif defined(CH572)
-      #define  COM_STARTUP_FILE  "startup_ch572.S"
+      #define  COM_STARTUP_FILE  "startup_ch572.S"  
+  #elif defined(CH585)
+      #define  COM_STARTUP_FILE  "startup_ch585.S"
   #else
     #error "Unknow chip!"
   #endif

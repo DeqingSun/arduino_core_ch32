@@ -663,7 +663,7 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution)
 #endif
   ADC_Init(padc, &ADC_InitStructure);
 
-#if !defined(CH573) && !defined(CH572)
+#if !defined(CH573) && !defined(CH572) && !defined(CH585)
   padc->STATR = 0;
 #endif
   ADC_Cmd(padc,ENABLE); 
@@ -695,6 +695,8 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution)
   uhADCxConvertedValue = ADC_ConvertPAGValueCH573();
 #elif defined(CH572)
   // CH572 does not support adc
+#elif defined(CH585)
+  // do it later
 #else
   uhADCxConvertedValue = padc->RDATAR;
 #endif

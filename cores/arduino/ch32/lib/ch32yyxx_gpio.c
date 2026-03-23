@@ -33,3 +33,7 @@
 #if defined(CH572)
 #include "CH572_gpio.c"
 #endif
+
+#if defined(CH585)
+#include "CH585_gpio.c"
+#endif

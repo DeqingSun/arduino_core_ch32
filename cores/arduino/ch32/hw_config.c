@@ -20,6 +20,12 @@ void systick_init(void)
     SetSysClock(CLK_SOURCE_HSE_PLL_60MHz);
     SysTick_Config(60*1000);
 }
+#elif defined(CH585)
+void systick_init(void)
+{
+    SetSysClock(CLK_SOURCE_HSE_PLL_78MHz);
+    SysTick_Config(78*1000);
+}
 #else
 void systick_init(void)
 {
