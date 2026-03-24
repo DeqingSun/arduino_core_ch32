@@ -19,20 +19,49 @@
 // #define                         I2C_MODULE_ENABLED
 // #define                         TIM_MODULE_ENABLED
 
-/* CH573 Pins */
+/* CH585 Pins */
 
-#define PA0                     0
-#define PA1                     1
-#define PA2                     2
-#define PA3                     3
-#define PA4                     4
-#define PA5                     5
-#define PA6                     6
-#define PA7                     7
-#define PA8                     8
-#define PA9                     9
+#define PA0                     PIN_A9
+#define PA1                     PIN_A8
+#define PA2                     PIN_A7
+#define PA3                     PIN_A6
+#define PA4                     PIN_A0
+#define PA5                     PIN_A1
+#define PA6                     PIN_A10
+#define PA7                     PIN_A11
+#define PA8                     PIN_A12
+#define PA9                     PIN_A13
 #define PA10                    10
-#define PA11                    11                   
+#define PA11                    11
+#define PA12                    PIN_A2
+#define PA13                    PIN_A3
+#define PA14                    PIN_A4
+#define PA15                    PIN_A5
+#define PB0                     16
+#define PB1                     17
+#define PB2                     18
+#define PB3                     19
+#define PB4                     20
+#define PB5                     21
+#define PB6                     22
+#define PB7                     23
+#define PB8                     24
+#define PB9                     25
+#define PB10                    26
+#define PB11                    27
+#define PB12                    28
+#define PB13                    29
+#define PB14                    30
+#define PB15                    31
+#define PB16                    32
+#define PB17                    33
+#define PB18                    34
+#define PB19                    35
+#define PB20                    36
+#define PB21                    37
+#define PB22                    38
+#define PB23                    39
+
 
 // Alternate pins number
 // #define PA0_ALT1                (PA0  | ALT1) 
@@ -43,8 +72,8 @@
 // #define PA5_ALT1                (PA5  | ALT1)
 
 
-#define NUM_DIGITAL_PINS        12
-#define NUM_ANALOG_INPUTS       0
+#define NUM_DIGITAL_PINS        40
+#define NUM_ANALOG_INPUTS       15
 
 
 // On-board LED pin number

@@ -221,5 +221,10 @@ __highcode_init:
 
 	la t0, main
 	csrw mepc, t0
-	
+
+	// needed for c++ global constructors/destructors //https://www.cnblogs.com/gscw/p/18029303
+	la a0, __libc_fini_array
+	call atexit
+	call __libc_init_array
+
 	mret
