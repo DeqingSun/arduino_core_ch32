@@ -9,8 +9,13 @@
 #elif defined (CH572)
 #include "CH572SFR.h"
 #include "core_riscv.h"
+#elif defined (CH585)
+#include "CH585SFR.h"
+#include "core_riscv.h"
 #elif defined (CH32X035)
 #include "ch32x035_rcc.h"
+#else
+#error "Unsupported platform"
 #endif
 // clang-format on
 

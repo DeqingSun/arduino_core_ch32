@@ -96,6 +96,12 @@ void APPJumpBoot(void)   //this section of code must run in RAM
 
   while(1);//Make bootloader think the chip is empty (first 4 bytes are 0xFF)
 }
+#elif defined (CH585)
+__attribute__((section(".highcode")))
+void APPJumpBoot(void)   //this section of code must run in RAM
+{
+  //TODO: implement this for CH585, need to confirm the flash erase command and whether it is needed, and how to reset the chip after erase
+}
 #elif defined (CH32X035)
 void APPJumpBoot(void)   //this section of code must run in RAM
 {

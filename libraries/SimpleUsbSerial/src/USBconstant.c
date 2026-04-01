@@ -46,6 +46,9 @@ const uint16_t SerDes[]={                                 //Serial String Descri
 #if defined(CH573) || defined(CH572)
     0x030C,
     'C','H','5','7','x',
+#elif defined(CH585)
+    0x030C,
+    'C','H','5','8','x',
 #elif defined(CH32X035)
     0x0312,
     'C','H','3','2','X','0','3','5',
@@ -56,6 +59,9 @@ const uint16_t Prod_Des[]={                                //Produce String Desc
 #if defined(CH573) || defined(CH572)
     0x0316,
     'C','H','5','7','x','d','u','i','n','o',
+#elif defined(CH585)
+    0x0316,
+    'C','H','5','8','x','d','u','i','n','o',
 #elif defined(CH32X035)
     0x031C,
     'C','H','3','2','X','0','3','5','d','u','i','n','o',
