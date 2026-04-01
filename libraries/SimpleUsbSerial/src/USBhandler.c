@@ -658,7 +658,7 @@ void USBFS_IRQHandler(void) {
         switch (R8_USB_INT_ST & MASK_UIS_TOKEN) {
 #elif defined (CH585)
         uint8_t callIndex = R8_USB2_INT_ST & USBHS_UDIS_EP_ID_MASK;
-        switch (R8_USB2_INT_ST & USBHS_UDIS_EP_DIR) {
+        switch ((R8_USB2_INT_ST & USBHS_UDIS_EP_DIR) | (R8_USB2_INT_FG & USBHS_UDIF_RX_SOF)) {
 #elif defined (CH32X035)
         uint8_t callIndex = USBFSD->INT_ST & USBFS_UIS_ENDP_MASK;
         switch (USBFSD->INT_ST & USBFS_UIS_TOKEN_MASK) {
@@ -697,7 +697,8 @@ void USBFS_IRQHandler(void) {
 #if defined (CH573) || defined (CH572)
           case UIS_TOKEN_SOF:
 #elif defined (CH585)
-          case 0xFFFF: // There is no SOF token in CH585, just use this case to call SOF callback when needed
+          case USBHS_UDIF_RX_SOF:
+          case USBHS_UDIF_RX_SOF | USBHS_UDIS_EP_DIR:
 #elif defined (CH32X035)
           case USBFS_UIS_TOKEN_SOF:
 #endif
@@ -722,6 +723,7 @@ void USBFS_IRQHandler(void) {
                 default:
                   break;
               }
+              R8_USB2_INT_FG = USBHS_UDIF_RX_SOF;  // Clear SOF interrupt flag
             }
             break;
 #if defined (CH573) || defined (CH572)
