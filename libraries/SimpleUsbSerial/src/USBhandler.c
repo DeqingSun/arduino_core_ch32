@@ -286,20 +286,6 @@ void USBHS_Device_Endp_Init ( void )
 
 void USBInitForCdc() {
 
-
-        R8_USBHS_PLL_CTRL = USBHS_PLL_EN;
-        R16_PIN_CONFIG |= RB_PIN_USB2_EN;
-
-        R8_USB2_CTRL = USBHS_UD_RST_LINK | USBHS_UD_PHY_SUSPENDM;            
-        R8_USB2_INT_EN = USBHS_UDIE_BUS_RST | USBHS_UDIE_SUSPEND | USBHS_UDIE_BUS_SLEEP | USBHS_UDIE_LPM_ACT | USBHS_UDIE_TRANSFER | USBHS_UDIE_LINK_RDY;      
-        USBHS_Device_Endp_Init();
-        R8_USB2_BASE_MODE = USBHS_UD_SPEED_HIGH;
-        R8_USB2_CTRL = USBHS_UD_DEV_EN | USBHS_UD_DMA_EN | USBHS_UD_LPM_EN | USBHS_UD_PHY_SUSPENDM;
-        PFIC_EnableIRQ( USB2_DEVICE_IRQn );
-
-
-  return;
-
 #if defined (CH573) || defined (CH572)
   R8_USB_CTRL = 0x00;
 #elif defined (CH585)
@@ -1406,6 +1392,17 @@ void USB2_DEVICE_IRQHandler( void )
     uint16_t len;
     uint8_t endp_num;
     uint32_t baudrate;
+
+    if ( 1){
+  tx_on_PA5_(R8_USB2_INT_FG);
+  tx_on_PA5_(R8_USB2_INT_ST);
+
+  for (int i = 0; i < 8; i++){
+    tx_on_PA5_(Ep0Buffer[i]);
+  }
+}
+
+tx_on_PA6_('T');
 
     intflag = R8_USB2_INT_FG;
     intst = R8_USB2_INT_ST;
