@@ -781,7 +781,9 @@ void USB_EP0_IN(){
             #endif
             break;
     }
+    #if defined (CH585)
     R8_U2EP0_TX_CTRL &= ~USBHS_UEP_T_DONE;
+    #endif
 }
 
 void USB_EP0_OUT(){
@@ -823,13 +825,19 @@ void USB_EP0_OUT(){
         USBFSD->UEP0_CTRL_H |= USBFS_UEP_R_RES_ACK | USBFS_UEP_T_RES_NAK;  //Respond Nak
       #endif
     }
+    #if defined (CH585)
     R8_U2EP0_RX_CTRL &= ~USBHS_UEP_R_DONE;
+    #endif
 }
 
 void USB_EP1_IN() {
 #if defined (CH573) || defined (CH572)
     R8_UEP1_T_LEN = 0;
     R8_UEP1_CTRL = R8_UEP1_CTRL & ~MASK_UEP_T_RES | UEP_T_RES_NAK; // Default NAK
+#elif defined (CH585)
+    R16_U2EP1_T_LEN = 0;
+    R8_U2EP1_TX_CTRL = USBHS_UEP_T_RES_NAK;     
+    R8_U2EP1_TX_CTRL &= ~USBHS_UEP_T_DONE;                
 #elif defined (CH32X035)
     USBFSD->UEP1_TX_LEN = 0;
     USBFSD->UEP1_CTRL_H = USBFSD->UEP1_CTRL_H & ~USBFS_UEP_T_RES_MASK | USBFS_UEP_T_RES_NAK; // Default NAK
@@ -934,7 +942,6 @@ void USBFS_IRQHandler(void) {
                 default:
                   break;
               }
-              R8_USB2_INT_FG = USBHS_UDIF_RX_SOF;  // Clear SOF interrupt flag
             }
             break;
 #if defined (CH573) || defined (CH572)
