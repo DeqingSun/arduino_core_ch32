@@ -38,10 +38,32 @@ const uint8_t CfgDesc[] ={
     0x09,0x04,0x01,0x00,0x02,0x0a,0x00,0x00,0x04,             //Data Class Interface descriptor
     0x07,0x05,0x02,0x02,0x40,0x00,0x00,                       //endpoint descriptor
     0x07,0x05,0x82,0x02,0x40,0x00,0x00,                       //endpoint descriptor
-
 };
 
 const uint16_t CfgDescLen = sizeof(CfgDesc);
+
+#if defined(CH585)
+const uint8_t CfgHsDesc[] ={
+    0x09,0x02,CfgDesc_SIZE_For_GCC & 0xff,CfgDesc_SIZE_For_GCC >> 8,
+    0x02,0x01,0x00,0x80,0x64,             //Configuration descriptor (2 interfaces)
+    // Interface Association Descriptor, IAD, this packes following 2 interfaces into 1
+    0x08,0x0B,0x00,0x02,0x02,0x02,0x01,0x04,
+    // Interface 1 (CDC) descriptor
+    0x09,0x04,0x00,0x00,0x01,0x02,0x02,0x01,0x04,    // CDC control description, 1 endpoint
+    // Functional Descriptor refer to usbcdc11.pdf
+    0x05,0x24,0x00,0x10,0x01,                                 //Header Functional Descriptor
+    0x05,0x24,0x01,0x00,0x00,                                 //Call Management Functional Descriptor
+    0x04,0x24,0x02,0x02,                                      //Direct Line Management Functional Descriptor, Support: Set_Line_Coding, Set_Control_Line_State, Get_Line_Coding, Serial_State 
+    0x05,0x24,0x06,0x00,0x01,                                 //Union Functional Descriptor, Communication class interface 0, Data Class Interface 1
+    0x07,0x05,0x81,0x03,0x08,0x00,0x40,                       //EndPoint descriptor (CDC Upload, Interrupt)
+    // Interface 2 (Data Interface) descriptor
+    0x09,0x04,0x01,0x00,0x02,0x0a,0x00,0x00,0x04,             //Data Class Interface descriptor
+    0x07,0x05,0x02,0x02,0x00,0x02,0x00,                       //endpoint descriptor, 512 bytes for high speed
+    0x07,0x05,0x82,0x02,0x00,0x02,0x00,                       //endpoint descriptor, 512 bytes for high speed
+};
+
+const uint16_t CfgHsDescLen = sizeof(CfgHsDesc);
+#endif
 
 //String Descriptors
 const uint8_t LangDes[]={0x04,0x03,0x09,0x04};           //Language Descriptor

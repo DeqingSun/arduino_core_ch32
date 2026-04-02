@@ -26,6 +26,9 @@ __attribute__((aligned(16))) uint8_t Ep2Buffer[DEF_USBD_UEP2_SIZE*2];
 uint16_t SetupLen;
 uint8_t SetupReq;
 volatile uint8_t UsbConfig;
+#if defined (CH585)
+volatile uint8_t UsbDevSpeed;
+#endif
 
 uint8_t *pDescr;
 
@@ -228,8 +231,23 @@ void USB_EP0_SETUP() {
           len = DevDescLen;
           break;
         case 2: // Configure Descriptor
+          #if defined (CH585)
+          if( R8_USB2_MIS_ST & USBHS_UDMS_HS_MOD ) {
+            UsbDevSpeed = USBHS_SPEED_HIGH;
+            //USBHS_DevMaxPackLen = DEF_USBD_HS_PACK_SIZE;
+            pDescr = CfgHsDesc;
+            len = CfgHsDescLen;
+          } else {
+            /* Full speed mode */
+            UsbDevSpeed = USBHS_SPEED_FULL;
+            //USBHS_DevMaxPackLen = DEF_USBD_FS_PACK_SIZE;
+            pDescr = DevDesc; // Put Device Descriptor into outgoing buffer
+            len = DevDescLen;
+          }
+          #else
           pDescr = CfgDesc;
           len = CfgDescLen;
+          #endif
           break;
         case 3:
           if (UsbSetupBuf->wValueL == 0) {
