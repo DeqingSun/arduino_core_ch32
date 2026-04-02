@@ -578,6 +578,7 @@ void USB_EP0_IN(){
             #endif
             break;
     }
+    R8_U2EP0_TX_CTRL &= ~USBHS_UEP_T_DONE;
 }
 
 void USB_EP0_OUT(){
@@ -619,6 +620,7 @@ void USB_EP0_OUT(){
         USBFSD->UEP0_CTRL_H |= USBFS_UEP_R_RES_ACK | USBFS_UEP_T_RES_NAK;  //Respond Nak
       #endif
     }
+    R8_U2EP0_RX_CTRL &= ~USBHS_UEP_R_DONE;
 }
 
 void USB_EP1_IN() {
