@@ -249,40 +249,40 @@ void tx_on_PA6_(char c) {
 
 
 
-void USBHS_Device_Endp_Init ( void )
-{
-    uint8_t i = 0;
+// void USBHS_Device_Endp_Init ( void )
+// {
+//     uint8_t i = 0;
 
-    R16_U2EP_TX_EN = RB_EP0_EN | RB_EP2_EN | RB_EP3_EN;
-    R16_U2EP_RX_EN = RB_EP0_EN | RB_EP2_EN;
+//     R16_U2EP_TX_EN = RB_EP0_EN | RB_EP2_EN | RB_EP3_EN;
+//     R16_U2EP_RX_EN = RB_EP0_EN | RB_EP2_EN;
 
-    R32_U2EP0_MAX_LEN  = DEF_USBD_UEP0_SIZE;
-    R32_U2EP2_MAX_LEN  = DEF_USBD_UEP1_SIZE;
-    R32_U2EP3_MAX_LEN  = DEF_USBD_UEP2_SIZE;
+//     R32_U2EP0_MAX_LEN  = DEF_USBD_UEP0_SIZE;
+//     R32_U2EP2_MAX_LEN  = DEF_USBD_UEP1_SIZE;
+//     R32_U2EP3_MAX_LEN  = DEF_USBD_UEP2_SIZE;
 
-    R32_U2EP0_DMA    = (uint32_t)(uint8_t *)Ep0Buffer;
+//     R32_U2EP0_DMA    = (uint32_t)(uint8_t *)Ep0Buffer;
 
-    R32_U2EP2_RX_DMA = (uint32_t)(uint8_t *)&Ep2Buffer[DEF_USBD_UEP2_SIZE];
-    R32_U2EP2_TX_DMA = (uint32_t)(uint8_t *)Ep2Buffer;
-    R32_U2EP3_TX_DMA = (uint32_t)(uint8_t *)Ep1Buffer;
+//     R32_U2EP2_RX_DMA = (uint32_t)(uint8_t *)&Ep2Buffer[DEF_USBD_UEP2_SIZE];
+//     R32_U2EP2_TX_DMA = (uint32_t)(uint8_t *)Ep2Buffer;
+//     R32_U2EP3_TX_DMA = (uint32_t)(uint8_t *)Ep1Buffer;
 
-    R16_U2EP0_T_LEN  = 0;
-    R8_U2EP0_TX_CTRL = USBHS_UEP_T_RES_NAK;
-    R8_U2EP0_RX_CTRL = USBHS_UEP_R_RES_ACK;
+//     R16_U2EP0_T_LEN  = 0;
+//     R8_U2EP0_TX_CTRL = USBHS_UEP_T_RES_NAK;
+//     R8_U2EP0_RX_CTRL = USBHS_UEP_R_RES_ACK;
 
-    R16_U2EP2_T_LEN  = 0;
-    R8_U2EP2_TX_CTRL = USBHS_UEP_T_RES_NAK;
-    R8_U2EP2_RX_CTRL = USBHS_UEP_R_RES_ACK;
+//     R16_U2EP2_T_LEN  = 0;
+//     R8_U2EP2_TX_CTRL = USBHS_UEP_T_RES_NAK;
+//     R8_U2EP2_RX_CTRL = USBHS_UEP_R_RES_ACK;
 
-    R16_U2EP3_T_LEN  = 0;
-    R8_U2EP3_TX_CTRL = USBHS_UEP_T_RES_NAK;
+//     R16_U2EP3_T_LEN  = 0;
+//     R8_U2EP3_TX_CTRL = USBHS_UEP_T_RES_NAK;
 
-    // /* Clear End-points Busy Status */
-    // for( i = 0; i < DEF_UEP_NUM; i++ )
-    // {
-    //     USBHS_Endp_Busy[ i ] = 0;
-    // }
-}
+//     // /* Clear End-points Busy Status */
+//     // for( i = 0; i < DEF_UEP_NUM; i++ )
+//     // {
+//     //     USBHS_Endp_Busy[ i ] = 0;
+//     // }
+// }
 
 void USBInitForCdc() {
 
@@ -1477,6 +1477,7 @@ tx_on_PA6_('T');
                                     {
                                         /* get usb device descriptor */
                                         case USB_DESCR_TYP_DEVICE:
+                                            tx_on_PA6_('D');
                                             pUSBHS_Descr = DevDesc;
                                             len = DevDescLen;
                                             break;
@@ -1597,6 +1598,7 @@ tx_on_PA6_('T');
 
                                 /* Set usb address */
                                 case USB_SET_ADDRESS:
+                                    tx_on_PA6_('A');
                                     USBHS_DevAddr = (uint16_t)(USBHS_SetupReqValue&0xFF);
                                     break;
 
@@ -1925,6 +1927,7 @@ tx_on_PA6_('T');
                         switch( USBHS_SetupReqCode )
                         {
                             case USB_GET_DESCRIPTOR:
+                                tx_on_PA6_('d');
                                 len = USBHS_SetupReqLen >= DEF_USBD_UEP0_SIZE ? DEF_USBD_UEP0_SIZE : USBHS_SetupReqLen;
                                 memcpy(Ep0Buffer, pUSBHS_Descr, len);
                                 USBHS_SetupReqLen -= len;
@@ -1936,6 +1939,8 @@ tx_on_PA6_('T');
 
                             case USB_SET_ADDRESS:
                                 R8_USB2_DEV_AD = USBHS_DevAddr;
+                                tx_on_PA6_('a');
+
                                 break;
 
                             default:
@@ -1994,6 +1999,7 @@ tx_on_PA6_('T');
     else if( intflag & USBHS_UDIF_SUSPEND )
     {
         R8_USB2_INT_FG = USBHS_UDIF_SUSPEND;
+        tx_on_PA6_('S');
         /* usb suspend interrupt processing */
         if ( R8_USB2_MIS_ST & RB_UMS_SUSPEND  )
         {
@@ -2012,13 +2018,20 @@ tx_on_PA6_('T');
     else if( intflag & USBHS_UDIF_BUS_RST )
     {
         /* usb reset interrupt processing */
+
+        tx_on_PA6_('R');
         USBHS_DevConfig = 0;
         USBHS_DevAddr = 0;
         USBHS_DevSleepStatus = 0;
         USBHS_DevEnumStatus = 0;
 
         R8_USB2_DEV_AD = 0;
-        USBHS_Device_Endp_Init( );
+        
+        
+        R16_U2EP0_T_LEN  = 0;
+        R8_U2EP0_TX_CTRL = USBHS_UEP_T_RES_NAK;
+        R8_U2EP0_RX_CTRL = USBHS_UEP_R_RES_ACK;
+
         R8_USB2_INT_FG = USBHS_UDIF_BUS_RST;
     }
     else
