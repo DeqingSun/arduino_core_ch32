@@ -343,9 +343,11 @@ void USB_EP0_SETUP() {
                     USB_REQ_RECIP_ENDP) // endpoint
         {
           switch (UsbSetupBuf->wIndexL) {
-          case 0x84:
+            case 0x84:
               #if defined (CH573) || defined (CH572)
               R8_UEP4_CTRL = R8_UEP4_CTRL & ~(RB_UEP_T_TOG | MASK_UEP_T_RES) | UEP_T_RES_NAK;
+              #elif defined (CH585)
+              R8_U2EP4_TX_CTRL = USBHS_UEP_T_RES_NAK;
               #elif defined (CH32X035)
               USBFSD->UEP4_CTRL_H = USBFSD->UEP4_CTRL_H & ~ (USBFS_UEP_T_TOG | USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
               #endif
@@ -353,6 +355,8 @@ void USB_EP0_SETUP() {
             case 0x04:
               #if defined (CH573) || defined (CH572)
               R8_UEP4_CTRL = R8_UEP4_CTRL & ~(RB_UEP_R_TOG | MASK_UEP_R_RES) | UEP_R_RES_ACK;
+              #elif defined (CH585)
+              R8_U2EP4_RX_CTRL = USBHS_UEP_R_RES_ACK;
               #elif defined (CH32X035)
               USBFSD->UEP4_CTRL_H = USBFSD->UEP4_CTRL_H & ~(USBFS_UEP_R_TOG | USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK;
               #endif
@@ -360,6 +364,8 @@ void USB_EP0_SETUP() {
             case 0x83:
               #if defined (CH573) || defined (CH572)
               R8_UEP3_CTRL = R8_UEP3_CTRL & ~(RB_UEP_T_TOG | MASK_UEP_T_RES) | UEP_T_RES_NAK;
+              #elif defined (CH585)
+              R8_U2EP3_TX_CTRL = USBHS_UEP_T_RES_NAK;
               #elif defined (CH32X035)
               USBFSD->UEP3_CTRL_H = USBFSD->UEP3_CTRL_H & ~(USBFS_UEP_T_TOG | USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
               #endif
@@ -367,6 +373,8 @@ void USB_EP0_SETUP() {
             case 0x03:
               #if defined (CH573) || defined (CH572)
               R8_UEP3_CTRL = R8_UEP3_CTRL & ~(RB_UEP_R_TOG | MASK_UEP_R_RES) | UEP_R_RES_ACK;
+              #elif defined (CH585)
+              R8_U2EP3_RX_CTRL = USBHS_UEP_R_RES_ACK;
               #elif defined (CH32X035)
               USBFSD->UEP3_CTRL_H = USBFSD->UEP3_CTRL_H & ~(USBFS_UEP_R_TOG | USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK;
               #endif
@@ -374,6 +382,8 @@ void USB_EP0_SETUP() {
             case 0x82:
               #if defined (CH573) || defined (CH572)
               R8_UEP2_CTRL = R8_UEP2_CTRL & ~(RB_UEP_T_TOG | MASK_UEP_T_RES) | UEP_T_RES_NAK;
+              #elif defined (CH585)
+              R8_U2EP2_TX_CTRL = USBHS_UEP_T_RES_NAK;
               #elif defined (CH32X035)
               USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & ~(USBFS_UEP_T_TOG | USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
               #endif
@@ -381,6 +391,8 @@ void USB_EP0_SETUP() {
             case 0x02:
               #if defined (CH573) || defined (CH572)
               R8_UEP2_CTRL = R8_UEP2_CTRL & ~(RB_UEP_R_TOG | MASK_UEP_R_RES) | UEP_R_RES_ACK;
+              #elif defined (CH585)
+              R8_U2EP2_RX_CTRL = USBHS_UEP_R_RES_ACK;
               #elif defined (CH32X035)
               USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & ~(USBFS_UEP_R_TOG | USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK;
               #endif
@@ -388,6 +400,8 @@ void USB_EP0_SETUP() {
             case 0x81:
               #if defined (CH573) || defined (CH572)
               R8_UEP1_CTRL = R8_UEP1_CTRL & ~(RB_UEP_T_TOG | MASK_UEP_T_RES) | UEP_T_RES_NAK;
+              #elif defined (CH585)
+              R8_U2EP1_TX_CTRL = USBHS_UEP_T_RES_NAK;
               #elif defined (CH32X035)
               USBFSD->UEP1_CTRL_H = USBFSD->UEP1_CTRL_H & ~(USBFS_UEP_T_TOG | USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
               #endif
@@ -395,6 +409,8 @@ void USB_EP0_SETUP() {
             case 0x01:
               #if defined (CH573) || defined (CH572)
               R8_UEP1_CTRL = R8_UEP1_CTRL & ~(RB_UEP_R_TOG | MASK_UEP_R_RES) | UEP_R_RES_ACK;
+              #elif defined (CH585)
+              R8_U2EP1_RX_CTRL = USBHS_UEP_R_RES_ACK;
               #elif defined (CH32X035)
               USBFSD->UEP1_CTRL_H = USBFSD->UEP1_CTRL_H & ~(USBFS_UEP_R_TOG | USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK;
               #endif
@@ -435,62 +451,80 @@ void USB_EP0_SETUP() {
             switch (((uint16_t)UsbSetupBuf->wIndexH << 8) |
                     UsbSetupBuf->wIndexL) {
             case 0x84:
-            #if defined (CH573) || defined (CH572)
-            R8_UEP4_CTRL = R8_UEP4_CTRL & (~RB_UEP_T_TOG) |
-                          UEP_T_RES_STALL; // Set endpoint4 IN STALL
-            #elif defined (CH32X035)
-            USBFSD->UEP4_CTRL_H = USBFSD->UEP4_CTRL_H & (~USBFS_UEP_T_TOG) |
-                          USBFS_UEP_T_RES_STALL; // Set endpoint4 IN STALL
-            #endif
+              #if defined (CH573) || defined (CH572)
+              R8_UEP4_CTRL = R8_UEP4_CTRL & (~RB_UEP_T_TOG) |
+                            UEP_T_RES_STALL; // Set endpoint4 IN STALL
+              #elif defined (CH585)
+              R8_U2EP4_TX_CTRL = ( R8_U2EP4_TX_CTRL & ~USBHS_UEP_T_RES_MASK ) | USBHS_UEP_T_RES_STALL;
+
+              #elif defined (CH32X035)
+              USBFSD->UEP4_CTRL_H = USBFSD->UEP4_CTRL_H & (~USBFS_UEP_T_TOG) |
+                            USBFS_UEP_T_RES_STALL; // Set endpoint4 IN STALL
+              #endif
               break;
             case 0x04:
-      #if defined (CH573) || defined (CH572)
-            R8_UEP4_CTRL = R8_UEP4_CTRL & (~RB_UEP_R_TOG) | UEP_R_RES_STALL; // Set endpoint4 OUT Stall
-      #elif defined (CH32X035)
-            USBFSD->UEP4_CTRL_H = USBFSD->UEP4_CTRL_H & (~USBFS_UEP_R_TOG) | USBFS_UEP_R_RES_STALL; // Set endpoint4 OUT Stall
-      #endif
+              #if defined (CH573) || defined (CH572)
+              R8_UEP4_CTRL = R8_UEP4_CTRL & (~RB_UEP_R_TOG) | UEP_R_RES_STALL; // Set endpoint4 OUT Stall
+              #elif defined (CH585)
+              R8_U2EP4_RX_CTRL = ( R8_U2EP4_RX_CTRL & ~USBHS_UEP_R_RES_MASK ) | USBHS_UEP_R_RES_STALL;
+              #elif defined (CH32X035)
+              USBFSD->UEP4_CTRL_H = USBFSD->UEP4_CTRL_H & (~USBFS_UEP_R_TOG) | USBFS_UEP_R_RES_STALL; // Set endpoint4 OUT Stall
+              #endif
               break;
             case 0x83:
-      #if defined (CH573) || defined (CH572)
-            R8_UEP3_CTRL = R8_UEP3_CTRL & (~RB_UEP_T_TOG) | UEP_T_RES_STALL; // Set endpoint3 IN STALL
-      #elif defined (CH32X035)
-            USBFSD->UEP3_CTRL_H = USBFSD->UEP3_CTRL_H & (~USBFS_UEP_T_TOG) | USBFS_UEP_T_RES_STALL; // Set endpoint3 IN STALL
-      #endif
+              #if defined (CH573) || defined (CH572)
+              R8_UEP3_CTRL = R8_UEP3_CTRL & (~RB_UEP_T_TOG) | UEP_T_RES_STALL; // Set endpoint3 IN STALL
+              #elif defined (CH585)
+              R8_U2EP3_TX_CTRL = ( R8_U2EP3_TX_CTRL & ~USBHS_UEP_T_RES_MASK ) | USBHS_UEP_T_RES_STALL;
+              #elif defined (CH32X035)
+              USBFSD->UEP3_CTRL_H = USBFSD->UEP3_CTRL_H & (~USBFS_UEP_T_TOG) | USBFS_UEP_T_RES_STALL; // Set endpoint3 IN STALL
+              #endif
               break;
             case 0x03:
-      #if defined (CH573) || defined (CH572)
-            R8_UEP3_CTRL = R8_UEP3_CTRL & (~RB_UEP_R_TOG) | UEP_R_RES_STALL; // Set endpoint3 OUT Stall
-      #elif defined (CH32X035)
-            USBFSD->UEP3_CTRL_H = USBFSD->UEP3_CTRL_H & (~USBFS_UEP_R_TOG) | USBFS_UEP_R_RES_STALL; // Set endpoint3 OUT Stall
-      #endif
+              #if defined (CH573) || defined (CH572)
+              R8_UEP3_CTRL = R8_UEP3_CTRL & (~RB_UEP_R_TOG) | UEP_R_RES_STALL; // Set endpoint3 OUT Stall
+              #elif defined (CH585)
+              R8_U2EP3_RX_CTRL = ( R8_U2EP3_RX_CTRL & ~USBHS_UEP_R_RES_MASK ) | USBHS_UEP_R_RES_STALL;
+              #elif defined (CH32X035)
+              USBFSD->UEP3_CTRL_H = USBFSD->UEP3_CTRL_H & (~USBFS_UEP_R_TOG) | USBFS_UEP_R_RES_STALL; // Set endpoint3 OUT Stall
+              #endif
               break;
             case 0x82:
-      #if defined (CH573) || defined (CH572)
-            R8_UEP2_CTRL = R8_UEP2_CTRL & (~RB_UEP_T_TOG) | UEP_T_RES_STALL; // Set endpoint2 IN STALL
-      #elif defined (CH32X035)
-            USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & (~USBFS_UEP_T_TOG) | USBFS_UEP_T_RES_STALL; // Set endpoint2 IN STALL
-      #endif
+              #if defined (CH573) || defined (CH572)
+              R8_UEP2_CTRL = R8_UEP2_CTRL & (~RB_UEP_T_TOG) | UEP_T_RES_STALL; // Set endpoint2 IN STALL
+              #elif defined (CH585)
+              R8_U2EP2_TX_CTRL = ( R8_U2EP2_TX_CTRL & ~USBHS_UEP_T_RES_MASK ) | USBHS_UEP_T_RES_STALL;
+              #elif defined (CH32X035)
+              USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & (~USBFS_UEP_T_TOG) | USBFS_UEP_T_RES_STALL; // Set endpoint2 IN STALL
+              #endif
               break;
             case 0x02:
-      #if defined (CH573) || defined (CH572)
-            R8_UEP2_CTRL = R8_UEP2_CTRL & (~RB_UEP_R_TOG) | UEP_R_RES_STALL; // Set endpoint2 OUT Stall
-      #elif defined (CH32X035)
-            USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & (~USBFS_UEP_R_TOG) | USBFS_UEP_R_RES_STALL; // Set endpoint2 OUT Stall
-      #endif
+              #if defined (CH573) || defined (CH572)
+              R8_UEP2_CTRL = R8_UEP2_CTRL & (~RB_UEP_R_TOG) | UEP_R_RES_STALL; // Set endpoint2 OUT Stall
+              #elif defined (CH585)
+              R8_U2EP2_RX_CTRL = ( R8_U2EP2_RX_CTRL & ~USBHS_UEP_R_RES_MASK ) | USBHS_UEP_R_RES_STALL;
+              #elif defined (CH32X035)
+              USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & (~USBFS_UEP_R_TOG) | USBFS_UEP_R_RES_STALL; // Set endpoint2 OUT Stall
+              #endif
               break;
             case 0x81:
-      #if defined (CH573) || defined (CH572)
-            R8_UEP1_CTRL = R8_UEP1_CTRL & (~RB_UEP_T_TOG) | UEP_T_RES_STALL; // Set endpoint1 IN STALL
-      #elif defined (CH32X035)
-            USBFSD->UEP1_CTRL_H = USBFSD->UEP1_CTRL_H & (~USBFS_UEP_T_TOG) | USBFS_UEP_T_RES_STALL; // Set endpoint1 IN STALL
-      #endif
+              #if defined (CH573) || defined (CH572)
+              R8_UEP1_CTRL = R8_UEP1_CTRL & (~RB_UEP_T_TOG) | UEP_T_RES_STALL; // Set endpoint1 IN STALL
+              #elif defined (CH585)
+              R8_U2EP1_TX_CTRL = ( R8_U2EP1_TX_CTRL & ~USBHS_UEP_T_RES_MASK ) | USBHS_UEP_T_RES_STALL;
+              #elif defined (CH32X035)
+              USBFSD->UEP1_CTRL_H = USBFSD->UEP1_CTRL_H & (~USBFS_UEP_T_TOG) | USBFS_UEP_T_RES_STALL; // Set endpoint1 IN STALL
+              #endif
               break;
             case 0x01:
-      #if defined (CH573) || defined (CH572)
-            R8_UEP1_CTRL = R8_UEP1_CTRL & (~RB_UEP_R_TOG) | UEP_R_RES_STALL; // Set endpoint1 OUT Stall
-      #elif defined (CH32X035)
-            USBFSD->UEP1_CTRL_H = USBFSD->UEP1_CTRL_H & (~USBFS_UEP_R_TOG) | USBFS_UEP_R_RES_STALL; // Set endpoint1 OUT Stall
-      #endif
+              #if defined (CH573) || defined (CH572)
+              R8_UEP1_CTRL = R8_UEP1_CTRL & (~RB_UEP_R_TOG) | UEP_R_RES_STALL; // Set endpoint1 OUT Stall
+              #elif defined (CH585)
+              R8_U2EP1_RX_CTRL = ( R8_U2EP1_RX_CTRL & ~USBHS_UEP_R_RES_MASK ) | USBHS_UEP_R_RES_STALL;
+              #elif defined (CH32X035)
+              USBFSD->UEP1_CTRL_H = USBFSD->UEP1_CTRL_H & (~USBFS_UEP_R_TOG) | USBFS_UEP_R_RES_STALL; // Set endpoint1 OUT Stall
+              #endif
+              break;
             default:
               len = 0xFF; // Failed
               break;
