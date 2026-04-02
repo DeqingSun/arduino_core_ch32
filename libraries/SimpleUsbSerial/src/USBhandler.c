@@ -249,7 +249,7 @@ void USB_EP0_SETUP() {
           len = CfgDescLen;
           #endif
           break;
-        case 3:
+        case 3: //get usb string descriptor
           if (UsbSetupBuf->wValueL == 0) {
             pDescr = LangDes;
             len = LangDesLen;
@@ -270,6 +270,27 @@ void USB_EP0_SETUP() {
               len = SerDesLen;
           }
           break;
+        #if defined (CH585)
+        case 6: //get usb device qualify descriptor
+          pDescr = QualDesc;
+          len = QualDescLen;
+          break;
+        case 7: //get usb other speed config descriptor
+          if( UsbDevSpeed == USBHS_SPEED_HIGH ) {
+              /* High speed mode */
+              memcpy( &CfgOtherDesc[2], &CfgDesc[2], CfgDescLen - 2 );
+              pDescr = CfgOtherDesc;
+              len = CfgDescLen;
+          } else if( UsbDevSpeed == USBHS_SPEED_FULL ) {
+              /* Full speed mode */
+              memcpy( &CfgOtherDesc[2], &CfgHsDesc[2], CfgHsDescLen - 2 );
+              pDescr = CfgOtherDesc;
+              len = CfgHsDescLen;
+          } else {
+              len = 0xFF;
+          }
+          break;
+        #endif
         default:
           len = 0xff; // Unsupported descriptors or error
           break;

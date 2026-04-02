@@ -24,6 +24,8 @@ extern const uint8_t DevDesc[];
 extern const uint8_t CfgDesc[];
 #if defined(CH585)
 extern const uint8_t CfgHsDesc[];
+extern const uint8_t QualDesc[];
+extern uint8_t CfgOtherDesc[];
 #endif
 extern const uint8_t LangDes[];
 extern const uint16_t SerDes[];
@@ -37,6 +39,7 @@ extern const uint16_t DevDescLen;
 extern const uint16_t CfgDescLen;
 #if defined(CH585)
 extern const uint16_t CfgHsDescLen;
+extern const uint16_t QualDescLen;
 #endif
 extern const uint16_t LangDesLen;
 extern const uint16_t SerDesLen;

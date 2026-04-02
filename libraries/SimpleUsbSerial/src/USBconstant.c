@@ -63,6 +63,13 @@ const uint8_t CfgHsDesc[] ={
 };
 
 const uint16_t CfgHsDescLen = sizeof(CfgHsDesc);
+
+const uint8_t QualDesc[] = {
+    0x0A,0x06,0x00,0x02,0xEF,0x02,0x01,0x40,0x01,0x00
+};
+const uint16_t QualDescLen = sizeof(QualDesc);
+
+uint8_t CfgOtherDesc[sizeof(CfgHsDesc)] = {0x09, 0x07};
 #endif
 
 //String Descriptors
