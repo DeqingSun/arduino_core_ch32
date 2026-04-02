@@ -539,6 +539,136 @@ void USB_EP0_SETUP() {
       case USB_GET_STATUS:
         Ep0Buffer[0] = 0x00;
         Ep0Buffer[1] = 0x00;
+        if ((UsbSetupBuf->bRequestType & USB_REQ_RECIP_MASK) == USB_REQ_RECIP_DEVICE) {
+          //set Ep0Buffer[0] to 2 if sleep.
+        }else if ((UsbSetupBuf->bRequestType & USB_REQ_RECIP_MASK) == USB_REQ_RECIP_ENDP) {
+          switch (((uint16_t)UsbSetupBuf->wIndexH << 8) |
+                    UsbSetupBuf->wIndexL) {
+            case 0x84:
+              #if defined (CH573) || defined (CH572)
+              if ((R8_UEP4_CTRL & MASK_UEP_T_RES) == UEP_T_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #elif defined (CH585)
+              if (( R8_U2EP4_TX_CTRL & USBHS_UEP_T_RES_MASK ) == USBHS_UEP_T_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #elif defined (CH32X035)
+              if (( USBFSD->UEP4_CTRL_H & USBFS_UEP_T_TOG ) == USBFS_UEP_T_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #endif
+              break;
+            case 0x04:
+              #if defined (CH573) || defined (CH572)
+              if ((R8_UEP4_CTRL & MASK_UEP_R_RES) == UEP_R_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #elif defined (CH585)
+              if (( R8_U2EP4_RX_CTRL & USBHS_UEP_R_RES_MASK ) == USBHS_UEP_R_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #elif defined (CH32X035)
+              if (( USBFSD->UEP4_CTRL_H & USBFS_UEP_R_TOG ) == USBFS_UEP_R_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #endif
+              break;
+            case 0x83:
+              #if defined (CH573) || defined (CH572)
+              if ((R8_UEP3_CTRL & MASK_UEP_T_RES) == UEP_T_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #elif defined (CH585)
+              if (( R8_U2EP3_TX_CTRL & USBHS_UEP_T_RES_MASK ) == USBHS_UEP_T_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #elif defined (CH32X035)
+              if (( USBFSD->UEP3_CTRL_H & USBFS_UEP_T_TOG ) == USBFS_UEP_T_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #endif
+              break;
+            case 0x03:
+              #if defined (CH573) || defined (CH572)
+              if ((R8_UEP3_CTRL & MASK_UEP_R_RES) == UEP_R_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #elif defined (CH585)
+              if (( R8_U2EP3_RX_CTRL & USBHS_UEP_R_RES_MASK ) == USBHS_UEP_R_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #elif defined (CH32X035)
+              if (( USBFSD->UEP3_CTRL_H & USBFS_UEP_R_TOG ) == USBFS_UEP_R_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #endif
+              break;
+            case 0x82:
+              #if defined (CH573) || defined (CH572)
+              if ((R8_UEP2_CTRL & MASK_UEP_T_RES) == UEP_T_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #elif defined (CH585)
+              if (( R8_U2EP2_TX_CTRL & USBHS_UEP_T_RES_MASK ) == USBHS_UEP_T_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #elif defined (CH32X035)
+              if (( USBFSD->UEP2_CTRL_H & USBFS_UEP_T_TOG ) == USBFS_UEP_T_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #endif
+              break;
+            case 0x02:
+              #if defined (CH573) || defined (CH572)
+              if ((R8_UEP2_CTRL & MASK_UEP_R_RES) == UEP_R_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #elif defined (CH585)
+              if (( R8_U2EP2_RX_CTRL & USBHS_UEP_R_RES_MASK ) == USBHS_UEP_R_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #elif defined (CH32X035)
+              if (( USBFSD->UEP2_CTRL_H & USBFS_UEP_R_TOG ) == USBFS_UEP_R_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #endif
+              break;
+            case 0x81:
+              #if defined (CH573) || defined (CH572)
+              if ((R8_UEP1_CTRL & MASK_UEP_T_RES) == UEP_T_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #elif defined (CH585)
+              if (( R8_U2EP1_TX_CTRL & USBHS_UEP_T_RES_MASK ) == USBHS_UEP_T_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #elif defined (CH32X035)
+              if (( USBFSD->UEP1_CTRL_H & USBFS_UEP_T_TOG ) == USBFS_UEP_T_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #endif
+              break;
+            case 0x01:
+              #if defined (CH573) || defined (CH572)
+              if ((R8_UEP1_CTRL & MASK_UEP_R_RES) == UEP_R_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #elif defined (CH585)
+              if (( R8_U2EP1_RX_CTRL & USBHS_UEP_R_RES_MASK ) == USBHS_UEP_R_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #elif defined (CH32X035)
+              if (( USBFSD->UEP1_CTRL_H & USBFS_UEP_R_TOG ) == USBFS_UEP_R_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #endif
+              break;
+            default:
+              len = 0xFF; // Unsupported endpoint
+              break;
+          }
+        }
         if (SetupLen >= 2) {
           len = 2;
         } else {
