@@ -4,9 +4,13 @@
 //Device descriptor
 const uint8_t DevDesc[] = {
     0x12,0x01,
+#if defined(CH585)
+    0x00,0x02,  //USB spec release number in BCD
+#else
     0x10,0x01,  //USB spec release number in BCD format, USB1.1 (0x10, 0x01).
+#endif
     0xEF,0x02,0x01, //bDeviceClass, bDeviceSubClass, bDeviceProtocol 
-    DEFAULT_ENDP0_SIZE, //bNumConfigurations
+    DEFAULT_ENDP0_SIZE, //bMaxPacketSize0
     0x09,0x12,0x50,0xC5, // VID PID 
     0x01,0x01,  //version
     0x01,0x02,0x03, //bString

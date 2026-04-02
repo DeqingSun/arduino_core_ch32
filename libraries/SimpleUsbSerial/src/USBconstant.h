@@ -3,7 +3,11 @@
 
 #include <stdint.h>
 
-#define DEFAULT_ENDP0_SIZE 8 
+#if defined (CH585)
+#define DEFAULT_ENDP0_SIZE 64
+#else
+#define DEFAULT_ENDP0_SIZE 8
+#endif
 
 #define  SET_LINE_CODING                0X20            // Configures DTE rate, stop-bits, parity, and number-of-character
 #define  GET_LINE_CODING                0X21            // This request allows the host to find out the currently configured line coding.
