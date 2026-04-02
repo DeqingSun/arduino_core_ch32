@@ -1383,12 +1383,439 @@ volatile uint8_t  USBHS_DevAddr;
 
  volatile uint8_t  USBHS_DevSpeed;
 
+void ep0setup_test(){
+uint16_t len;
+uint8_t  intst, errflag;
+/* Store All Setup Values */
+  USBHS_SetupReqType  = pUSBHS_SetupReqPak->bRequestType;
+  USBHS_SetupReqCode  = pUSBHS_SetupReqPak->bRequest;
+  USBHS_SetupReqLen   = pUSBHS_SetupReqPak->wLength;
+  USBHS_SetupReqValue = pUSBHS_SetupReqPak->wValue;
+  USBHS_SetupReqIndex = pUSBHS_SetupReqPak->wIndex;
+
+  len = 0;
+  errflag = 0;
+  if ( ( USBHS_SetupReqType & USB_REQ_TYP_MASK ) != USB_REQ_TYP_STANDARD )
+  {
+      /* usb non-standard request processing */
+      if( USBHS_SetupReqType & USB_REQ_TYP_CLASS )
+      {
+          /* Class requests */
+          switch( USBHS_SetupReqCode )
+          {
+              // case CDC_GET_LINE_CODING:
+              //     pUSBHS_Descr = (uint8_t *)&CDC.Com_Cfg[ 0 ];
+              //     len = 7;
+              //     break;
+
+              case CDC_SET_LINE_CODING:
+                  break;
+
+              case CDC_SET_LINE_CTLSTE:
+                  break;
+
+              case CDC_SEND_BREAK:
+                  break;
+
+              default:
+                  errflag = 0xff;
+                  break;
+          }
+      }
+      else if( USBHS_SetupReqType & USB_REQ_TYP_VENDOR )
+      {
+          /* Manufacturer request */
+      }
+      else
+      {
+          errflag = 0xFF;
+      }
+      /* Copy Descriptors to Endp0 DMA buffer */
+      len = (USBHS_SetupReqLen >= DEF_USBD_UEP0_SIZE) ? DEF_USBD_UEP0_SIZE : USBHS_SetupReqLen;
+      memcpy( Ep0Buffer, pUSBHS_Descr, len );
+      pUSBHS_Descr += len;
+  }
+  else
+  {
+      /* usb standard request processing */
+      switch( USBHS_SetupReqCode )
+      {
+          /* get device/configuration/string/report/... descriptors */
+          case USB_GET_DESCRIPTOR:
+              switch( (uint8_t)(USBHS_SetupReqValue>>8) )
+              {
+                  /* get usb device descriptor */
+                  case USB_DESCR_TYP_DEVICE:
+                      tx_on_PA6_('D');
+                      pUSBHS_Descr = DevDesc;
+                      len = DevDescLen;
+                      break;
+
+                  /* get usb configuration descriptor */
+                  case USB_DESCR_TYP_CONFIG:
+                      /* Query current usb speed */
+                      if( R8_USB2_MIS_ST & USBHS_UDMS_HS_MOD )   
+                      {
+                          /* High speed mode */
+                          USBHS_DevSpeed = USBHS_SPEED_HIGH;
+                          USBHS_DevMaxPackLen = DEF_USBD_HS_PACK_SIZE;
+                      }
+                      else
+                      {
+                          /* Full speed mode */
+                          USBHS_DevSpeed = USBHS_SPEED_FULL;
+                          USBHS_DevMaxPackLen = DEF_USBD_FS_PACK_SIZE;
+                      }
+
+                      /* Load usb configuration descriptor by speed */
+                      if( USBHS_DevSpeed == USBHS_SPEED_HIGH )
+                      {
+                          /* High speed mode */
+                          pUSBHS_Descr = MyCfgDescr_HS;
+                          len = DEF_USBD_CONFIG_HS_DESC_LEN;
+                      }
+                      else
+                      {
+                          /* Full speed mode */
+                          pUSBHS_Descr = MyCfgDescr_FS;
+                          len = DEF_USBD_CONFIG_FS_DESC_LEN;
+                      }
+                      break;
+
+                  /* get usb string descriptor */
+                  case USB_DESCR_TYP_STRING:
+                      switch( (uint8_t)(USBHS_SetupReqValue&0xFF) )
+                      {
+                          /* Descriptor 0, Language descriptor */
+                          case DEF_STRING_DESC_LANG:
+                              pUSBHS_Descr = MyLangDescr;
+                              len = DEF_USBD_LANG_DESC_LEN;
+                              break;
+
+                          /* Descriptor 1, Manufacturers String descriptor */
+                          case DEF_STRING_DESC_MANU:
+                              pUSBHS_Descr = MyManuInfo;
+                              len = DEF_USBD_MANU_DESC_LEN;
+                              break;
+
+                          /* Descriptor 2, Product String descriptor */
+                          case DEF_STRING_DESC_PROD:
+                              pUSBHS_Descr = MyProdInfo;
+                              len = DEF_USBD_PROD_DESC_LEN;
+                              break;
+
+                          /* Descriptor 3, Serial-number String descriptor */
+                          case DEF_STRING_DESC_SERN:
+                              pUSBHS_Descr = MySerNumInfo;
+                              len = DEF_USBD_SN_DESC_LEN;
+                              break;
+
+                          default:
+                              errflag = 0xFF;
+                              break;
+                      }
+                      break;
+
+                  /* get usb device qualify descriptor */
+                  case USB_DESCR_TYP_QUALIF:
+                      pUSBHS_Descr = MyQuaDesc;
+                      len = DEF_USBD_QUALFY_DESC_LEN;
+                      break;
+
+                  /* get usb BOS descriptor */
+                  case USB_DESCR_TYP_BOS:
+                      /* USB 2.00 DO NOT support BOS descriptor */
+                      errflag = 0xFF;
+                      break;
+
+                  /* get usb other-speed descriptor */
+                  case USB_DESCR_TYP_SPEED:
+                      if( USBHS_DevSpeed == USBHS_SPEED_HIGH )
+                      {
+                          /* High speed mode */
+                          memcpy( &TAB_USB_HS_OSC_DESC[ 2 ], &MyCfgDescr_FS[ 2 ], DEF_USBD_CONFIG_FS_DESC_LEN - 2 );
+                          pUSBHS_Descr = ( uint8_t * )&TAB_USB_HS_OSC_DESC[ 0 ];
+                          len = DEF_USBD_CONFIG_FS_DESC_LEN;
+                      }
+                      else if( USBHS_DevSpeed == USBHS_SPEED_FULL )
+                      {
+                          /* Full speed mode */
+                          memcpy( &TAB_USB_FS_OSC_DESC[ 2 ], &MyCfgDescr_HS[ 2 ], DEF_USBD_CONFIG_HS_DESC_LEN - 2 );
+                          pUSBHS_Descr = ( uint8_t * )&TAB_USB_FS_OSC_DESC[ 0 ];
+                          len = DEF_USBD_CONFIG_HS_DESC_LEN;
+                      }
+                      else
+                      {
+                          errflag = 0xFF;
+                      }
+                      break;
+
+                  default :
+                      errflag = 0xFF;
+                      break;
+              }
+
+              /* Copy Descriptors to Endp0 DMA buffer */
+              if( USBHS_SetupReqLen>len )
+              {
+                  USBHS_SetupReqLen = len;
+              }
+              len = (USBHS_SetupReqLen >= DEF_USBD_UEP0_SIZE) ? DEF_USBD_UEP0_SIZE : USBHS_SetupReqLen;
+              memcpy( Ep0Buffer, pUSBHS_Descr, len );
+              pUSBHS_Descr += len;
+              break;
+
+          /* Set usb address */
+          case USB_SET_ADDRESS:
+              tx_on_PA6_('A');
+              USBHS_DevAddr = (uint16_t)(USBHS_SetupReqValue&0xFF);
+              break;
+
+          /* Get usb configuration now set */
+          case USB_GET_CONFIGURATION:
+              Ep0Buffer[0] = USBHS_DevConfig;
+              if ( USBHS_SetupReqLen > 1 )
+              {
+                  USBHS_SetupReqLen = 1;
+              }
+              break;
+
+          /* Set usb configuration to use */
+          case USB_SET_CONFIGURATION:
+              USBHS_DevConfig = (uint8_t)(USBHS_SetupReqValue&0xFF);
+              USBHS_DevEnumStatus = 0x01;
+              break;
+
+          /* Clear or disable one usb feature */
+          case USB_CLEAR_FEATURE:
+              if( ( USBHS_SetupReqType & USB_REQ_RECIP_MASK ) == USB_REQ_RECIP_DEVICE )
+              {
+                  /* clear one device feature */
+                  if((uint8_t)(USBHS_SetupReqValue&0xFF) == 0x01)
+                  {
+                      /* clear usb sleep status, device not prepare to sleep */
+                      USBHS_DevSleepStatus &= ~0x01;
+                  }
+                  else
+                  {
+                      errflag = 0xFF;
+                  }
+              }
+              else if ( ( USBHS_SetupReqType & USB_REQ_RECIP_MASK ) == USB_REQ_RECIP_ENDP )
+              {
+                  /* Set End-point Feature */
+                  if( (uint8_t)(USBHS_SetupReqValue&0xFF) == USB_REQ_FEAT_ENDP_HALT )
+                  {
+                      /* Clear End-point Feature */
+                      switch( (uint8_t)(USBHS_SetupReqIndex&0xFF) )
+                      {
+                          // case (DEF_UEP2 | DEF_UEP_IN):
+                          //     /* Set End-point 2 IN NAK */
+                          //     R8_U2EP2_TX_CTRL = USBHS_UEP_T_RES_NAK;
+                          //     break;
+
+                          // case (DEF_UEP2 | DEF_UEP_OUT):
+                          //     /* Set End-point 2 OUT ACK */
+                          //     R8_U2EP2_RX_CTRL = USBHS_UEP_R_RES_ACK;
+                          //     break;
+
+                          // case (DEF_UEP3 | DEF_UEP_IN):
+                          //     /* Set End-point 3 IN NAK */
+                          //     R8_U2EP3_TX_CTRL = USBHS_UEP_T_RES_NAK;
+                          //     break;
+
+                          default:
+                              errflag = 0xFF;
+                              break;
+                      }
+                  }
+                  else
+                  {
+                      errflag = 0xFF;
+                  }
+
+              }
+              else
+              {
+                  errflag = 0xFF;
+              }
+              break;
+
+          /* set or enable one usb feature */
+          case USB_SET_FEATURE:
+              if( ( USBHS_SetupReqType & USB_REQ_RECIP_MASK ) == USB_REQ_RECIP_DEVICE )
+              {
+                  /* Set Device Feature */
+                  if( (uint8_t)(USBHS_SetupReqValue&0xFF) == USB_REQ_FEAT_REMOTE_WAKEUP )
+                  {
+                      if (((USBHS_DevSpeed == USBHS_SPEED_HIGH) && (MyCfgDescr_HS[7] & 0x20)) ||
+                          ((USBHS_DevSpeed == USBHS_SPEED_FULL) && (MyCfgDescr_FS[7] & 0x20)))
+                      {
+                          /* Set Wake-up flag, device prepare to sleep */
+                          USBHS_DevSleepStatus |= 0x01;
+                      }
+                      else
+                      {
+                          errflag = 0xFF;
+                      }
+                  }
+                  // else if( (uint8_t)(USBHS_SetupReqValue&0xFF) == 0x02 )
+                  // {
+                  //     /* test mode deal */
+                  //     if( ( USBHS_SetupReqIndex == 0x0100 ) ||
+                  //         ( USBHS_SetupReqIndex == 0x0200 ) ||
+                  //         ( USBHS_SetupReqIndex == 0x0300 ) ||
+                  //         ( USBHS_SetupReqIndex == 0x0400 ) )
+                  //     {
+                  //         /* Set the flag and wait for the status to be uploaded before proceeding with the actual operation */
+                  //         //USBHS_Test_Flag |= 0x80;
+                  //     }
+                  // }
+                  else
+                  {
+                      errflag = 0xFF;
+                  }
+              }
+              else if( ( USBHS_SetupReqType & USB_REQ_RECIP_MASK ) == USB_REQ_RECIP_ENDP )
+              {
+                  /* Set End-point Feature */
+                  if( (uint8_t)(USBHS_SetupReqValue&0xFF) == USB_REQ_FEAT_ENDP_HALT )
+                  {
+                      /* Set end-points status stall */
+                      switch((uint8_t)(USBHS_SetupReqIndex&0xFF) )
+                      {
+                          // case (DEF_UEP2 | DEF_UEP_IN):
+                          //     /* Set End-point 2 IN STALL */
+                          //     R8_U2EP2_TX_CTRL = ( R8_U2EP2_TX_CTRL & ~USBHS_UEP_T_RES_MASK ) | USBHS_UEP_T_RES_STALL;
+                          //     break;
+
+                          // case (DEF_UEP2 | DEF_UEP_OUT):
+                          //     /* Set End-point 2 OUT STALL */
+                          //     R8_U2EP2_RX_CTRL = ( R8_U2EP2_RX_CTRL & ~USBHS_UEP_R_RES_MASK ) | USBHS_UEP_R_RES_STALL;
+                          //     break;
+
+                          // case (DEF_UEP3 | DEF_UEP_IN):
+                          //     /* Set End-point 3 IN STALL */
+                          //     R8_U2EP3_TX_CTRL = ( R8_U2EP3_TX_CTRL & ~USBHS_UEP_T_RES_MASK ) | USBHS_UEP_T_RES_STALL;
+                          //     break;
+
+                          default:
+                              errflag = 0xFF;
+                              break;
+                      }
+                  }
+              }
+              break;
+
+          /* This request allows the host to select another setting for the specified interface  */
+          case USB_GET_INTERFACE:
+              Ep0Buffer[0] = 0x00;
+              if ( USBHS_SetupReqLen > 1 )
+              {
+                  USBHS_SetupReqLen = 1;
+              }
+              break;
+
+          case USB_SET_INTERFACE:
+              break;
+
+          /* host get status of specified device/interface/end-points */
+          case USB_GET_STATUS:
+              Ep0Buffer[0] = 0x00;
+              Ep0Buffer[1] = 0x00;
+              if( ( USBHS_SetupReqType & USB_REQ_RECIP_MASK ) == USB_REQ_RECIP_ENDP )
+              {
+                  switch( (uint8_t)( USBHS_SetupReqIndex & 0xFF ) )
+                  {
+                      // case (DEF_UEP2 | DEF_UEP_IN):
+                      //     if( ( (R8_U2EP2_TX_CTRL) & USBHS_UEP_T_RES_MASK ) == USBHS_UEP_T_RES_STALL )
+                      //     {
+                      //         Ep0Buffer[ 0 ] = 0x01;
+                      //     }
+                      //     break;
+
+                      // case (DEF_UEP2 | DEF_UEP_OUT):
+                      //     if( ( (R8_U2EP2_RX_CTRL) & USBHS_UEP_R_RES_MASK ) == USBHS_UEP_R_RES_STALL )
+                      //     {
+                      //         Ep0Buffer[ 0 ] = 0x01;
+                      //     }
+                      //     break;
+
+                      // case (DEF_UEP3 | DEF_UEP_IN):
+                      //     if( ( (R8_U2EP3_TX_CTRL) & USBHS_UEP_T_RES_MASK ) == USBHS_UEP_T_RES_STALL )
+                      //     {
+                      //         Ep0Buffer[ 0 ] = 0x01;
+                      //     }
+                      //     break;
+
+                      default:
+                            errflag = 0xFF;
+                            break;
+                  }
+              }
+              else if( ( USBHS_SetupReqType & USB_REQ_RECIP_MASK ) == USB_REQ_RECIP_DEVICE )
+              {
+                    if( USBHS_DevSleepStatus & 0x01 )
+                    {
+                        Ep0Buffer[ 0 ] = 0x02;
+                    }
+              }
+
+              if ( USBHS_SetupReqLen > 2 )
+              {
+                  USBHS_SetupReqLen = 2;
+              }
+              break;
+
+          default:
+              errflag = 0xFF;
+              break;
+      }
+  }
+
+  /* errflag = 0xFF means a request not support or some errors occurred, else correct */
+  if( errflag == 0xFF )
+  {
+      /* if one request not support, return stall */
+      R8_U2EP0_TX_CTRL = USBHS_UEP_T_TOG_DATA1 | USBHS_UEP_T_RES_STALL;
+      R8_U2EP0_RX_CTRL = USBHS_UEP_R_TOG_DATA1 | USBHS_UEP_R_RES_STALL;
+  }
+  else
+  {
+      /* end-point 0 data Tx/Rx */
+      if( USBHS_SetupReqType & DEF_UEP_IN )
+      {
+          /* tx */
+          len = (USBHS_SetupReqLen>DEF_USBD_UEP0_SIZE) ? DEF_USBD_UEP0_SIZE : USBHS_SetupReqLen;
+          USBHS_SetupReqLen -= len;
+          R16_U2EP0_T_LEN = len;
+          R8_U2EP0_TX_CTRL = USBHS_UEP_T_TOG_DATA1 | USBHS_UEP_T_RES_ACK;
+      }
+      else
+      {
+          /* rx */
+          if( USBHS_SetupReqLen == 0 )
+          {
+              R16_U2EP0_T_LEN = 0;
+              R8_U2EP0_TX_CTRL = USBHS_UEP_T_TOG_DATA1 | USBHS_UEP_T_RES_ACK;
+          }
+          else
+          {
+              R8_U2EP0_RX_CTRL = USBHS_UEP_R_TOG_DATA1 | USBHS_UEP_R_RES_ACK;
+          }
+      }
+  }
+}
+
+void ep0in_test(){
+
+}
 
 __attribute__((interrupt("WCH-Interrupt-fast")))
 __attribute__((section(".highcode")))
 void USB2_DEVICE_IRQHandler( void )
 {
-    uint8_t  intflag, intst, errflag;
+    uint8_t  intst, errflag;
     uint16_t len;
     uint8_t endp_num;
     uint32_t baudrate;
@@ -1404,10 +1831,10 @@ void USB2_DEVICE_IRQHandler( void )
 
 tx_on_PA6_('T');
 
-    intflag = R8_USB2_INT_FG;
+    
     intst = R8_USB2_INT_ST;
 
-    if( intflag & USBHS_UDIF_TRANSFER )
+    if( R8_USB2_INT_FG & USBHS_UDIF_TRANSFER )
     {
         endp_num = intst & USBHS_UDIS_EP_ID_MASK;
         if( !(intst & USBHS_UDIS_EP_DIR )) // SETUP/OUT Transaction
@@ -1417,425 +1844,7 @@ tx_on_PA6_('T');
                 case   0:
                     if( R8_U2EP0_RX_CTRL & USBHS_UEP_R_SETUP_IS )
                     {
-                        /* Store All Setup Values */
-                        USBHS_SetupReqType  = pUSBHS_SetupReqPak->bRequestType;
-                        USBHS_SetupReqCode  = pUSBHS_SetupReqPak->bRequest;
-                        USBHS_SetupReqLen   = pUSBHS_SetupReqPak->wLength;
-                        USBHS_SetupReqValue = pUSBHS_SetupReqPak->wValue;
-                        USBHS_SetupReqIndex = pUSBHS_SetupReqPak->wIndex;
-
-                        len = 0;
-                        errflag = 0;
-                        if ( ( USBHS_SetupReqType & USB_REQ_TYP_MASK ) != USB_REQ_TYP_STANDARD )
-                        {
-                            /* usb non-standard request processing */
-                            if( USBHS_SetupReqType & USB_REQ_TYP_CLASS )
-                            {
-                                /* Class requests */
-                                switch( USBHS_SetupReqCode )
-                                {
-                                    // case CDC_GET_LINE_CODING:
-                                    //     pUSBHS_Descr = (uint8_t *)&CDC.Com_Cfg[ 0 ];
-                                    //     len = 7;
-                                    //     break;
-
-                                    case CDC_SET_LINE_CODING:
-                                        break;
-
-                                    case CDC_SET_LINE_CTLSTE:
-                                        break;
-
-                                    case CDC_SEND_BREAK:
-                                        break;
-
-                                    default:
-                                        errflag = 0xff;
-                                        break;
-                                }
-                            }
-                            else if( USBHS_SetupReqType & USB_REQ_TYP_VENDOR )
-                            {
-                                /* Manufacturer request */
-                            }
-                            else
-                            {
-                                errflag = 0xFF;
-                            }
-                            /* Copy Descriptors to Endp0 DMA buffer */
-                            len = (USBHS_SetupReqLen >= DEF_USBD_UEP0_SIZE) ? DEF_USBD_UEP0_SIZE : USBHS_SetupReqLen;
-                            memcpy( Ep0Buffer, pUSBHS_Descr, len );
-                            pUSBHS_Descr += len;
-                        }
-                        else
-                        {
-                            /* usb standard request processing */
-                            switch( USBHS_SetupReqCode )
-                            {
-                                /* get device/configuration/string/report/... descriptors */
-                                case USB_GET_DESCRIPTOR:
-                                    switch( (uint8_t)(USBHS_SetupReqValue>>8) )
-                                    {
-                                        /* get usb device descriptor */
-                                        case USB_DESCR_TYP_DEVICE:
-                                            tx_on_PA6_('D');
-                                            pUSBHS_Descr = DevDesc;
-                                            len = DevDescLen;
-                                            break;
-
-                                        /* get usb configuration descriptor */
-                                        case USB_DESCR_TYP_CONFIG:
-                                            /* Query current usb speed */
-                                            if( R8_USB2_MIS_ST & USBHS_UDMS_HS_MOD )   
-                                            {
-                                                /* High speed mode */
-                                                USBHS_DevSpeed = USBHS_SPEED_HIGH;
-                                                USBHS_DevMaxPackLen = DEF_USBD_HS_PACK_SIZE;
-                                            }
-                                            else
-                                            {
-                                                /* Full speed mode */
-                                                USBHS_DevSpeed = USBHS_SPEED_FULL;
-                                                USBHS_DevMaxPackLen = DEF_USBD_FS_PACK_SIZE;
-                                            }
-
-                                            /* Load usb configuration descriptor by speed */
-                                            if( USBHS_DevSpeed == USBHS_SPEED_HIGH )
-                                            {
-                                                /* High speed mode */
-                                                pUSBHS_Descr = MyCfgDescr_HS;
-                                                len = DEF_USBD_CONFIG_HS_DESC_LEN;
-                                            }
-                                            else
-                                            {
-                                                /* Full speed mode */
-                                                pUSBHS_Descr = MyCfgDescr_FS;
-                                                len = DEF_USBD_CONFIG_FS_DESC_LEN;
-                                            }
-                                            break;
-
-                                        /* get usb string descriptor */
-                                        case USB_DESCR_TYP_STRING:
-                                            switch( (uint8_t)(USBHS_SetupReqValue&0xFF) )
-                                            {
-                                                /* Descriptor 0, Language descriptor */
-                                                case DEF_STRING_DESC_LANG:
-                                                    pUSBHS_Descr = MyLangDescr;
-                                                    len = DEF_USBD_LANG_DESC_LEN;
-                                                    break;
-
-                                                /* Descriptor 1, Manufacturers String descriptor */
-                                                case DEF_STRING_DESC_MANU:
-                                                    pUSBHS_Descr = MyManuInfo;
-                                                    len = DEF_USBD_MANU_DESC_LEN;
-                                                    break;
-
-                                                /* Descriptor 2, Product String descriptor */
-                                                case DEF_STRING_DESC_PROD:
-                                                    pUSBHS_Descr = MyProdInfo;
-                                                    len = DEF_USBD_PROD_DESC_LEN;
-                                                    break;
-
-                                                /* Descriptor 3, Serial-number String descriptor */
-                                                case DEF_STRING_DESC_SERN:
-                                                    pUSBHS_Descr = MySerNumInfo;
-                                                    len = DEF_USBD_SN_DESC_LEN;
-                                                    break;
-
-                                                default:
-                                                    errflag = 0xFF;
-                                                    break;
-                                            }
-                                            break;
-
-                                        /* get usb device qualify descriptor */
-                                        case USB_DESCR_TYP_QUALIF:
-                                            pUSBHS_Descr = MyQuaDesc;
-                                            len = DEF_USBD_QUALFY_DESC_LEN;
-                                            break;
-
-                                        /* get usb BOS descriptor */
-                                        case USB_DESCR_TYP_BOS:
-                                            /* USB 2.00 DO NOT support BOS descriptor */
-                                            errflag = 0xFF;
-                                            break;
-
-                                        /* get usb other-speed descriptor */
-                                        case USB_DESCR_TYP_SPEED:
-                                            if( USBHS_DevSpeed == USBHS_SPEED_HIGH )
-                                            {
-                                                /* High speed mode */
-                                                memcpy( &TAB_USB_HS_OSC_DESC[ 2 ], &MyCfgDescr_FS[ 2 ], DEF_USBD_CONFIG_FS_DESC_LEN - 2 );
-                                                pUSBHS_Descr = ( uint8_t * )&TAB_USB_HS_OSC_DESC[ 0 ];
-                                                len = DEF_USBD_CONFIG_FS_DESC_LEN;
-                                            }
-                                            else if( USBHS_DevSpeed == USBHS_SPEED_FULL )
-                                            {
-                                                /* Full speed mode */
-                                                memcpy( &TAB_USB_FS_OSC_DESC[ 2 ], &MyCfgDescr_HS[ 2 ], DEF_USBD_CONFIG_HS_DESC_LEN - 2 );
-                                                pUSBHS_Descr = ( uint8_t * )&TAB_USB_FS_OSC_DESC[ 0 ];
-                                                len = DEF_USBD_CONFIG_HS_DESC_LEN;
-                                            }
-                                            else
-                                            {
-                                                errflag = 0xFF;
-                                            }
-                                            break;
-
-                                        default :
-                                            errflag = 0xFF;
-                                            break;
-                                    }
-
-                                    /* Copy Descriptors to Endp0 DMA buffer */
-                                    if( USBHS_SetupReqLen>len )
-                                    {
-                                        USBHS_SetupReqLen = len;
-                                    }
-                                    len = (USBHS_SetupReqLen >= DEF_USBD_UEP0_SIZE) ? DEF_USBD_UEP0_SIZE : USBHS_SetupReqLen;
-                                    memcpy( Ep0Buffer, pUSBHS_Descr, len );
-                                    pUSBHS_Descr += len;
-                                    break;
-
-                                /* Set usb address */
-                                case USB_SET_ADDRESS:
-                                    tx_on_PA6_('A');
-                                    USBHS_DevAddr = (uint16_t)(USBHS_SetupReqValue&0xFF);
-                                    break;
-
-                                /* Get usb configuration now set */
-                                case USB_GET_CONFIGURATION:
-                                    Ep0Buffer[0] = USBHS_DevConfig;
-                                    if ( USBHS_SetupReqLen > 1 )
-                                    {
-                                        USBHS_SetupReqLen = 1;
-                                    }
-                                    break;
-
-                                /* Set usb configuration to use */
-                                case USB_SET_CONFIGURATION:
-                                    USBHS_DevConfig = (uint8_t)(USBHS_SetupReqValue&0xFF);
-                                    USBHS_DevEnumStatus = 0x01;
-                                    break;
-
-                                /* Clear or disable one usb feature */
-                                case USB_CLEAR_FEATURE:
-                                    if( ( USBHS_SetupReqType & USB_REQ_RECIP_MASK ) == USB_REQ_RECIP_DEVICE )
-                                    {
-                                        /* clear one device feature */
-                                        if((uint8_t)(USBHS_SetupReqValue&0xFF) == 0x01)
-                                        {
-                                            /* clear usb sleep status, device not prepare to sleep */
-                                            USBHS_DevSleepStatus &= ~0x01;
-                                        }
-                                        else
-                                        {
-                                            errflag = 0xFF;
-                                        }
-                                    }
-                                    else if ( ( USBHS_SetupReqType & USB_REQ_RECIP_MASK ) == USB_REQ_RECIP_ENDP )
-                                    {
-                                        /* Set End-point Feature */
-                                        if( (uint8_t)(USBHS_SetupReqValue&0xFF) == USB_REQ_FEAT_ENDP_HALT )
-                                        {
-                                            /* Clear End-point Feature */
-                                            switch( (uint8_t)(USBHS_SetupReqIndex&0xFF) )
-                                            {
-                                                // case (DEF_UEP2 | DEF_UEP_IN):
-                                                //     /* Set End-point 2 IN NAK */
-                                                //     R8_U2EP2_TX_CTRL = USBHS_UEP_T_RES_NAK;
-                                                //     break;
-
-                                                // case (DEF_UEP2 | DEF_UEP_OUT):
-                                                //     /* Set End-point 2 OUT ACK */
-                                                //     R8_U2EP2_RX_CTRL = USBHS_UEP_R_RES_ACK;
-                                                //     break;
-
-                                                // case (DEF_UEP3 | DEF_UEP_IN):
-                                                //     /* Set End-point 3 IN NAK */
-                                                //     R8_U2EP3_TX_CTRL = USBHS_UEP_T_RES_NAK;
-                                                //     break;
-
-                                                default:
-                                                    errflag = 0xFF;
-                                                    break;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            errflag = 0xFF;
-                                        }
-
-                                    }
-                                    else
-                                    {
-                                        errflag = 0xFF;
-                                    }
-                                    break;
-
-                                /* set or enable one usb feature */
-                                case USB_SET_FEATURE:
-                                    if( ( USBHS_SetupReqType & USB_REQ_RECIP_MASK ) == USB_REQ_RECIP_DEVICE )
-                                    {
-                                        /* Set Device Feature */
-                                        if( (uint8_t)(USBHS_SetupReqValue&0xFF) == USB_REQ_FEAT_REMOTE_WAKEUP )
-                                        {
-                                            if (((USBHS_DevSpeed == USBHS_SPEED_HIGH) && (MyCfgDescr_HS[7] & 0x20)) ||
-                                                ((USBHS_DevSpeed == USBHS_SPEED_FULL) && (MyCfgDescr_FS[7] & 0x20)))
-                                            {
-                                                /* Set Wake-up flag, device prepare to sleep */
-                                                USBHS_DevSleepStatus |= 0x01;
-                                            }
-                                            else
-                                            {
-                                                errflag = 0xFF;
-                                            }
-                                        }
-                                        // else if( (uint8_t)(USBHS_SetupReqValue&0xFF) == 0x02 )
-                                        // {
-                                        //     /* test mode deal */
-                                        //     if( ( USBHS_SetupReqIndex == 0x0100 ) ||
-                                        //         ( USBHS_SetupReqIndex == 0x0200 ) ||
-                                        //         ( USBHS_SetupReqIndex == 0x0300 ) ||
-                                        //         ( USBHS_SetupReqIndex == 0x0400 ) )
-                                        //     {
-                                        //         /* Set the flag and wait for the status to be uploaded before proceeding with the actual operation */
-                                        //         //USBHS_Test_Flag |= 0x80;
-                                        //     }
-                                        // }
-                                        else
-                                        {
-                                            errflag = 0xFF;
-                                        }
-                                    }
-                                    else if( ( USBHS_SetupReqType & USB_REQ_RECIP_MASK ) == USB_REQ_RECIP_ENDP )
-                                    {
-                                        /* Set End-point Feature */
-                                        if( (uint8_t)(USBHS_SetupReqValue&0xFF) == USB_REQ_FEAT_ENDP_HALT )
-                                        {
-                                            /* Set end-points status stall */
-                                            switch((uint8_t)(USBHS_SetupReqIndex&0xFF) )
-                                            {
-                                                // case (DEF_UEP2 | DEF_UEP_IN):
-                                                //     /* Set End-point 2 IN STALL */
-                                                //     R8_U2EP2_TX_CTRL = ( R8_U2EP2_TX_CTRL & ~USBHS_UEP_T_RES_MASK ) | USBHS_UEP_T_RES_STALL;
-                                                //     break;
-
-                                                // case (DEF_UEP2 | DEF_UEP_OUT):
-                                                //     /* Set End-point 2 OUT STALL */
-                                                //     R8_U2EP2_RX_CTRL = ( R8_U2EP2_RX_CTRL & ~USBHS_UEP_R_RES_MASK ) | USBHS_UEP_R_RES_STALL;
-                                                //     break;
-
-                                                // case (DEF_UEP3 | DEF_UEP_IN):
-                                                //     /* Set End-point 3 IN STALL */
-                                                //     R8_U2EP3_TX_CTRL = ( R8_U2EP3_TX_CTRL & ~USBHS_UEP_T_RES_MASK ) | USBHS_UEP_T_RES_STALL;
-                                                //     break;
-
-                                                default:
-                                                    errflag = 0xFF;
-                                                    break;
-                                            }
-                                        }
-                                    }
-                                    break;
-
-                                /* This request allows the host to select another setting for the specified interface  */
-                                case USB_GET_INTERFACE:
-                                    Ep0Buffer[0] = 0x00;
-                                    if ( USBHS_SetupReqLen > 1 )
-                                    {
-                                        USBHS_SetupReqLen = 1;
-                                    }
-                                    break;
-
-                                case USB_SET_INTERFACE:
-                                    break;
-
-                                /* host get status of specified device/interface/end-points */
-                                case USB_GET_STATUS:
-                                    Ep0Buffer[0] = 0x00;
-                                    Ep0Buffer[1] = 0x00;
-                                    if( ( USBHS_SetupReqType & USB_REQ_RECIP_MASK ) == USB_REQ_RECIP_ENDP )
-                                    {
-                                        switch( (uint8_t)( USBHS_SetupReqIndex & 0xFF ) )
-                                        {
-                                            // case (DEF_UEP2 | DEF_UEP_IN):
-                                            //     if( ( (R8_U2EP2_TX_CTRL) & USBHS_UEP_T_RES_MASK ) == USBHS_UEP_T_RES_STALL )
-                                            //     {
-                                            //         Ep0Buffer[ 0 ] = 0x01;
-                                            //     }
-                                            //     break;
-
-                                            // case (DEF_UEP2 | DEF_UEP_OUT):
-                                            //     if( ( (R8_U2EP2_RX_CTRL) & USBHS_UEP_R_RES_MASK ) == USBHS_UEP_R_RES_STALL )
-                                            //     {
-                                            //         Ep0Buffer[ 0 ] = 0x01;
-                                            //     }
-                                            //     break;
-
-                                            // case (DEF_UEP3 | DEF_UEP_IN):
-                                            //     if( ( (R8_U2EP3_TX_CTRL) & USBHS_UEP_T_RES_MASK ) == USBHS_UEP_T_RES_STALL )
-                                            //     {
-                                            //         Ep0Buffer[ 0 ] = 0x01;
-                                            //     }
-                                            //     break;
-
-                                            default:
-                                                 errflag = 0xFF;
-                                                 break;
-                                        }
-                                    }
-                                    else if( ( USBHS_SetupReqType & USB_REQ_RECIP_MASK ) == USB_REQ_RECIP_DEVICE )
-                                    {
-                                          if( USBHS_DevSleepStatus & 0x01 )
-                                          {
-                                              Ep0Buffer[ 0 ] = 0x02;
-                                          }
-                                    }
-
-                                    if ( USBHS_SetupReqLen > 2 )
-                                    {
-                                        USBHS_SetupReqLen = 2;
-                                    }
-                                    break;
-
-                                default:
-                                    errflag = 0xFF;
-                                    break;
-                            }
-                        }
-
-                        /* errflag = 0xFF means a request not support or some errors occurred, else correct */
-                        if( errflag == 0xFF )
-                        {
-                            /* if one request not support, return stall */
-                            R8_U2EP0_TX_CTRL = USBHS_UEP_T_TOG_DATA1 | USBHS_UEP_T_RES_STALL;
-                            R8_U2EP0_RX_CTRL = USBHS_UEP_R_TOG_DATA1 | USBHS_UEP_R_RES_STALL;
-                        }
-                        else
-                        {
-                            /* end-point 0 data Tx/Rx */
-                            if( USBHS_SetupReqType & DEF_UEP_IN )
-                            {
-                                /* tx */
-                                len = (USBHS_SetupReqLen>DEF_USBD_UEP0_SIZE) ? DEF_USBD_UEP0_SIZE : USBHS_SetupReqLen;
-                                USBHS_SetupReqLen -= len;
-                                R16_U2EP0_T_LEN = len;
-                                R8_U2EP0_TX_CTRL = USBHS_UEP_T_TOG_DATA1 | USBHS_UEP_T_RES_ACK;
-                            }
-                            else
-                            {
-                                /* rx */
-                                if( USBHS_SetupReqLen == 0 )
-                                {
-                                    R16_U2EP0_T_LEN = 0;
-                                    R8_U2EP0_TX_CTRL = USBHS_UEP_T_TOG_DATA1 | USBHS_UEP_T_RES_ACK;
-                                }
-                                else
-                                {
-                                    R8_U2EP0_RX_CTRL = USBHS_UEP_R_TOG_DATA1 | USBHS_UEP_R_RES_ACK;
-                                }
-                            }
-                        }
+                        ep0setup_test();
                     }
                     /* end-point 0 data out interrupt */
                     else
@@ -1984,7 +1993,7 @@ tx_on_PA6_('T');
         }
     }
 
-    else if( intflag & USBHS_UDIF_LINK_RDY )
+   if( R8_USB2_INT_FG & USBHS_UDIF_LINK_RDY )
     {
 
 #ifdef  SUPPORT_USB_HSI
@@ -1996,7 +2005,7 @@ tx_on_PA6_('T');
             R8_USB2_INT_FG = USBHS_UDIF_LINK_RDY;
 
     }
-    else if( intflag & USBHS_UDIF_SUSPEND )
+   if( R8_USB2_INT_FG & USBHS_UDIF_SUSPEND )
     {
         R8_USB2_INT_FG = USBHS_UDIF_SUSPEND;
         tx_on_PA6_('S');
@@ -2015,7 +2024,7 @@ tx_on_PA6_('T');
         }
 
     }
-    else if( intflag & USBHS_UDIF_BUS_RST )
+   if( R8_USB2_INT_FG & USBHS_UDIF_BUS_RST )
     {
         /* usb reset interrupt processing */
 
@@ -2037,7 +2046,7 @@ tx_on_PA6_('T');
     else
     {
         /* other interrupts */
-        R8_USB2_INT_FG = intflag;
+        R8_USB2_INT_FG = R8_USB2_INT_FG;
     }
 }
 
