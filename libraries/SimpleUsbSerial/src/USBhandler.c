@@ -499,13 +499,13 @@ void USB_EP0_SETUP() {
     #elif defined (CH585)
     R16_U2EP0_T_LEN = len;
     R8_U2EP0_TX_CTRL = USBHS_UEP_T_TOG_DATA1 | USBHS_UEP_T_RES_ACK;
-    R8_U2EP0_RX_CTRL = USBHS_UEP_T_TOG_DATA1 | USBHS_UEP_R_RES_ACK;
+    R8_U2EP0_RX_CTRL = USBHS_UEP_R_TOG_DATA1 | USBHS_UEP_R_RES_ACK;
     #elif defined (CH32X035)
     USBFSD->UEP0_TX_LEN = len;
     USBFSD->UEP0_CTRL_H = USBFS_UEP_R_TOG | USBFS_UEP_T_TOG | USBFS_UEP_R_RES_ACK |
                 USBFS_UEP_T_RES_ACK; // Expect DATA1, Answer ACK
     #endif
-  } else {
+  } else {  //More data needs to be sent, wait for next transaction
     #if defined (CH573) || defined (CH572)
     R8_UEP0_T_LEN = 0; // Tx data to host or send 0-length packet
     R8_UEP0_CTRL = RB_UEP_R_TOG | RB_UEP_T_TOG | UEP_R_RES_ACK |
@@ -538,6 +538,13 @@ void USB_EP0_IN(){
             #if defined (CH573) || defined (CH572)
             R8_UEP0_T_LEN = len;
             R8_UEP0_CTRL ^= RB_UEP_T_TOG;                    //Switch between DATA0 and DATA1
+            #elif defined (CH585)
+            R16_U2EP0_T_LEN = len;
+            R8_U2EP0_TX_CTRL ^= USBHS_UEP_T_TOG_DATA1;                    //Switch between DATA0 and DATA1
+            R8_U2EP0_TX_CTRL = ( R8_U2EP0_TX_CTRL & ~USBHS_UEP_T_RES_MASK) | USBHS_UEP_T_RES_ACK;
+            // if( USBHS_SetupReqLen == 0 ){
+            //    R8_U2EP0_RX_CTRL = USBHS_UEP_R_TOG_DATA1 | USBHS_UEP_R_RES_ACK;
+            // }
             #elif defined (CH32X035)
             USBFSD->UEP0_TX_LEN = len;
             USBFSD->UEP0_CTRL_H ^= USBFS_UEP_T_TOG;                    //Switch between DATA0 and DATA1
@@ -768,10 +775,6 @@ void USBFS_IRQHandler(void) {
 
 #if defined (CH585)
   if( R8_USB2_INT_FG & USBHS_UDIF_LINK_RDY ){
-#ifdef  SUPPORT_USB_HSI
-    USB_HSI->CAL_CR |= HSI_CAL_EN | HSI_CAL_VLD;
-    USB_HSI->CAL_CR &= ~HSI_CAL_RST;
-#endif
     R8_USB2_INT_FG = USBHS_UDIF_LINK_RDY;
   }
 #endif
@@ -790,6 +793,10 @@ void USBFS_IRQHandler(void) {
         // ACK, IN transaction returns NAK
         #if defined (CH573) || defined (CH572)
           R8_UEP0_CTRL = UEP_R_RES_ACK | UEP_T_RES_NAK;
+        #elif defined (CH585)
+          R16_U2EP0_T_LEN  = 0;
+          R8_U2EP0_TX_CTRL = USBHS_UEP_T_RES_NAK;
+          R8_U2EP0_RX_CTRL = USBHS_UEP_R_RES_ACK;
         #elif defined (CH32X035)
           USBFSD->UEP0_CTRL_H = USBFS_UEP_R_RES_ACK | USBFS_UEP_T_RES_NAK;
         #endif
@@ -797,6 +804,8 @@ void USBFS_IRQHandler(void) {
         // IN transaction returns NAK
         #if defined (CH573) || defined (CH572)
           R8_UEP1_CTRL = RB_UEP_AUTO_TOG | UEP_T_RES_NAK;
+        #elif defined (CH585)
+          R8_U2EP1_TX_CTRL = USBHS_UEP_T_RES_NAK;
         #elif defined (CH32X035)
           USBFSD->UEP1_CTRL_H = USBFS_UEP_T_AUTO_TOG | USBFS_UEP_T_RES_NAK;
         #endif
@@ -804,6 +813,9 @@ void USBFS_IRQHandler(void) {
         // transaction returns NAK, OUT transaction returns ACK
         #if defined (CH573) || defined (CH572)
           R8_UEP2_CTRL = RB_UEP_AUTO_TOG | UEP_T_RES_NAK | UEP_R_RES_ACK;
+        #elif defined (CH585)
+          R8_U2EP2_TX_CTRL = USBHS_UEP_T_RES_NAK;
+          R8_U2EP2_RX_CTRL = USBHS_UEP_R_RES_ACK;
         #elif defined (CH32X035)
           USBFSD->UEP2_CTRL_H = USBFS_UEP_T_AUTO_TOG | USBFS_UEP_T_RES_NAK | USBFS_UEP_R_RES_ACK;
         #endif
