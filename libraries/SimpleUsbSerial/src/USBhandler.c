@@ -344,60 +344,60 @@ void USB_EP0_SETUP() {
         {
           switch (UsbSetupBuf->wIndexL) {
           case 0x84:
-#if defined (CH573) || defined (CH572)
-            R8_UEP4_CTRL = R8_UEP4_CTRL & ~(RB_UEP_T_TOG | MASK_UEP_T_RES) | UEP_T_RES_NAK;
-#elif defined (CH32X035)
-            USBFSD->UEP4_CTRL_H = USBFSD->UEP4_CTRL_H & ~ (USBFS_UEP_T_TOG | USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
-#endif
+              #if defined (CH573) || defined (CH572)
+              R8_UEP4_CTRL = R8_UEP4_CTRL & ~(RB_UEP_T_TOG | MASK_UEP_T_RES) | UEP_T_RES_NAK;
+              #elif defined (CH32X035)
+              USBFSD->UEP4_CTRL_H = USBFSD->UEP4_CTRL_H & ~ (USBFS_UEP_T_TOG | USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
+              #endif
             break;
             case 0x04:
-#if defined (CH573) || defined (CH572)
-            R8_UEP4_CTRL = R8_UEP4_CTRL & ~(RB_UEP_R_TOG | MASK_UEP_R_RES) | UEP_R_RES_ACK;
-      #elif defined (CH32X035)
-            USBFSD->UEP4_CTRL_H = USBFSD->UEP4_CTRL_H & ~(USBFS_UEP_R_TOG | USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK;
-      #endif
+              #if defined (CH573) || defined (CH572)
+              R8_UEP4_CTRL = R8_UEP4_CTRL & ~(RB_UEP_R_TOG | MASK_UEP_R_RES) | UEP_R_RES_ACK;
+              #elif defined (CH32X035)
+              USBFSD->UEP4_CTRL_H = USBFSD->UEP4_CTRL_H & ~(USBFS_UEP_R_TOG | USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK;
+              #endif
             break;
             case 0x83:
-      #if defined (CH573) || defined (CH572)
-            R8_UEP3_CTRL = R8_UEP3_CTRL & ~(RB_UEP_T_TOG | MASK_UEP_T_RES) | UEP_T_RES_NAK;
-      #elif defined (CH32X035)
-            USBFSD->UEP3_CTRL_H = USBFSD->UEP3_CTRL_H & ~(USBFS_UEP_T_TOG | USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
-      #endif
+              #if defined (CH573) || defined (CH572)
+              R8_UEP3_CTRL = R8_UEP3_CTRL & ~(RB_UEP_T_TOG | MASK_UEP_T_RES) | UEP_T_RES_NAK;
+              #elif defined (CH32X035)
+              USBFSD->UEP3_CTRL_H = USBFSD->UEP3_CTRL_H & ~(USBFS_UEP_T_TOG | USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
+              #endif
             break;
             case 0x03:
-      #if defined (CH573) || defined (CH572)
-            R8_UEP3_CTRL = R8_UEP3_CTRL & ~(RB_UEP_R_TOG | MASK_UEP_R_RES) | UEP_R_RES_ACK;
-      #elif defined (CH32X035)
-            USBFSD->UEP3_CTRL_H = USBFSD->UEP3_CTRL_H & ~(USBFS_UEP_R_TOG | USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK;
-      #endif
+              #if defined (CH573) || defined (CH572)
+              R8_UEP3_CTRL = R8_UEP3_CTRL & ~(RB_UEP_R_TOG | MASK_UEP_R_RES) | UEP_R_RES_ACK;
+              #elif defined (CH32X035)
+              USBFSD->UEP3_CTRL_H = USBFSD->UEP3_CTRL_H & ~(USBFS_UEP_R_TOG | USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK;
+              #endif
             break;
             case 0x82:
-      #if defined (CH573) || defined (CH572)
-            R8_UEP2_CTRL = R8_UEP2_CTRL & ~(RB_UEP_T_TOG | MASK_UEP_T_RES) | UEP_T_RES_NAK;
-      #elif defined (CH32X035)
-            USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & ~(USBFS_UEP_T_TOG | USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
-      #endif
+              #if defined (CH573) || defined (CH572)
+              R8_UEP2_CTRL = R8_UEP2_CTRL & ~(RB_UEP_T_TOG | MASK_UEP_T_RES) | UEP_T_RES_NAK;
+              #elif defined (CH32X035)
+              USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & ~(USBFS_UEP_T_TOG | USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
+              #endif
             break;
             case 0x02:
-      #if defined (CH573) || defined (CH572)
-            R8_UEP2_CTRL = R8_UEP2_CTRL & ~(RB_UEP_R_TOG | MASK_UEP_R_RES) | UEP_R_RES_ACK;
-      #elif defined (CH32X035)
-            USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & ~(USBFS_UEP_R_TOG | USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK;
-      #endif
+              #if defined (CH573) || defined (CH572)
+              R8_UEP2_CTRL = R8_UEP2_CTRL & ~(RB_UEP_R_TOG | MASK_UEP_R_RES) | UEP_R_RES_ACK;
+              #elif defined (CH32X035)
+              USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & ~(USBFS_UEP_R_TOG | USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK;
+              #endif
             break;
             case 0x81:
-      #if defined (CH573) || defined (CH572)
-            R8_UEP1_CTRL = R8_UEP1_CTRL & ~(RB_UEP_T_TOG | MASK_UEP_T_RES) | UEP_T_RES_NAK;
-      #elif defined (CH32X035)
-            USBFSD->UEP1_CTRL_H = USBFSD->UEP1_CTRL_H & ~(USBFS_UEP_T_TOG | USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
-      #endif
+              #if defined (CH573) || defined (CH572)
+              R8_UEP1_CTRL = R8_UEP1_CTRL & ~(RB_UEP_T_TOG | MASK_UEP_T_RES) | UEP_T_RES_NAK;
+              #elif defined (CH32X035)
+              USBFSD->UEP1_CTRL_H = USBFSD->UEP1_CTRL_H & ~(USBFS_UEP_T_TOG | USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
+              #endif
             break;
             case 0x01:
-      #if defined (CH573) || defined (CH572)
-            R8_UEP1_CTRL = R8_UEP1_CTRL & ~(RB_UEP_R_TOG | MASK_UEP_R_RES) | UEP_R_RES_ACK;
-      #elif defined (CH32X035)
-            USBFSD->UEP1_CTRL_H = USBFSD->UEP1_CTRL_H & ~(USBFS_UEP_R_TOG | USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK;
-      #endif
+              #if defined (CH573) || defined (CH572)
+              R8_UEP1_CTRL = R8_UEP1_CTRL & ~(RB_UEP_R_TOG | MASK_UEP_R_RES) | UEP_R_RES_ACK;
+              #elif defined (CH32X035)
+              USBFSD->UEP1_CTRL_H = USBFSD->UEP1_CTRL_H & ~(USBFS_UEP_R_TOG | USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK;
+              #endif
             break;
           default:
             len = 0xFF; // Unsupported endpoint
