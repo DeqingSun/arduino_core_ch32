@@ -999,8 +999,6 @@ void USBFS_IRQHandler(void) {
 #elif defined (CH32X035)
     if (USBFSD->INT_FG & USBFS_UIF_BUS_RST){
 #endif
-
-        //!!!!!!!!!!!! add CH585 reset bus here, need to confirm if it is same as CH573/572!!!!!!!!!!!
         // Manual flip, OUT transaction returns
         // ACK, IN transaction returns NAK
         #if defined (CH573) || defined (CH572)
