@@ -9,6 +9,13 @@
 #elif defined (CH572)
 #include "CH572SFR.h"
 #include "core_riscv.h"
+#elif defined (CH585)
+#include "CH585SFR.h"
+#include "core_riscv.h"
+#define DEF_USBD_UEP0_SIZE           64     /* usb hs/fs device end-point 0 size */
+#define DEF_USBD_UEP1_SIZE           512     /* usb hs/fs device end-point 1 size */
+#define DEF_USBD_UEP2_SIZE           512     /* usb hs/fs device end-point 2 size */
+
 #elif defined (CH32X035)
 #include "ch32x035_usb_const.h"
 #endif
