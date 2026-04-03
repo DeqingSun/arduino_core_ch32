@@ -5,8 +5,10 @@
 
 #if defined (CH585)
 #define DEFAULT_ENDP0_SIZE 64
+#define EP2_MAX_PACKET_SIZE 512
 #else
 #define DEFAULT_ENDP0_SIZE 8
+#define EP2_MAX_PACKET_SIZE 64
 #endif
 
 #define  SET_LINE_CODING                0X20            // Configures DTE rate, stop-bits, parity, and number-of-character

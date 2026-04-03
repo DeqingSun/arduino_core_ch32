@@ -18,9 +18,15 @@ uint8_t LineCoding[LINE_CODEING_SIZE] = {
     0x00, 0x00, 0x08}; // Initialize for baudrate 57600, 1 stopbit, No parity,
                        // eight data bits
 
+#if defined(CH585)
+volatile uint16_t USBByteCountEP2 =
+    0; // Bytes of received data on USB endpoint
+volatile uint16_t USBBufOutPointEP2 = 0; // Data pointer for fetching
+#else
 volatile uint8_t USBByteCountEP2 =
     0; // Bytes of received data on USB endpoint
 volatile uint8_t USBBufOutPointEP2 = 0; // Data pointer for fetching
+#endif
 
 volatile uint8_t UpPoint2BusyFlag = 0; // Flag of whether upload pointer is busy
 volatile uint8_t controlLineState = 0;
@@ -168,6 +174,8 @@ void setLineCodingHandler() {
   uint8_t receiveLen;
 #if defined (CH573) || defined (CH572)
   receiveLen = R8_USB_RX_LEN;
+#elif defined (CH585)
+  receiveLen = R16_U2EP0_RX_LEN;
 #elif defined (CH32X035)
   receiveLen = USBFSD->RX_LEN;
 #endif
@@ -245,6 +253,15 @@ void USBSerial_flush(void) {
       UpPoint2BusyFlag = 1;
       R8_UEP2_CTRL = R8_UEP2_CTRL & ~MASK_UEP_T_RES | UEP_T_RES_ACK; // Respond ACK
       R8_USB_INT_EN = usbIntCopy;
+#elif defined(CH585)
+      usbIntCopy = R8_USB2_INT_EN;
+      R8_USB2_INT_EN &= ~USBHS_UDIE_TRANSFER;
+      R16_U2EP2_T_LEN = usbWritePointer;
+      UpPoint2BusyFlag = 1;
+      R8_U2EP2_TX_CTRL ^= USBHS_UEP_T_TOG_DATA1;
+      R8_U2EP2_TX_CTRL = (R8_U2EP2_TX_CTRL & ~USBHS_UEP_T_RES_MASK) | USBHS_UEP_T_RES_ACK;
+      R8_U2EP2_TX_CTRL &= ~USBHS_UEP_T_DONE;
+      R8_USB2_INT_EN = usbIntCopy;
 #elif defined(CH32X035)
       usbIntCopy = USBFSD->INT_EN;
       USBFSD->INT_EN &= ~USBFS_UIE_TRANSFER;
@@ -255,7 +272,7 @@ void USBSerial_flush(void) {
 #endif
 
     if (usbWritePointer ==
-        MAX_PACKET_SIZE) { // write empty packet for end transmission. Needed
+        EP2_MAX_PACKET_SIZE) { // write empty packet for end transmission. Needed
                             // for windows.
       if (USBSerial_wait_UpPoint2BusyFlag_clear()) {
 #if defined(CH573) || defined(CH572)
@@ -265,6 +282,15 @@ void USBSerial_flush(void) {
         UpPoint2BusyFlag = 1;
         R8_UEP2_CTRL = R8_UEP2_CTRL & ~MASK_UEP_T_RES | UEP_T_RES_ACK; // Respond ACK
         R8_USB_INT_EN = usbIntCopy;
+#elif defined(CH585)
+        usbIntCopy = R8_USB2_INT_EN;
+        R8_USB2_INT_EN &= ~USBHS_UDIE_TRANSFER;
+        R16_U2EP2_T_LEN = 0;
+        UpPoint2BusyFlag = 1;
+        R8_U2EP2_TX_CTRL ^= USBHS_UEP_T_TOG_DATA1;
+        R8_U2EP2_TX_CTRL = (R8_U2EP2_TX_CTRL & ~USBHS_UEP_T_RES_MASK) | USBHS_UEP_T_RES_ACK;
+        R8_U2EP2_TX_CTRL &= ~USBHS_UEP_T_DONE;
+        R8_USB2_INT_EN = usbIntCopy;
 #elif defined(CH32X035)
         usbIntCopy = USBFSD->INT_EN;
         USBFSD->INT_EN &= ~USBFS_UIE_TRANSFER;
@@ -284,8 +310,8 @@ uint8_t USBSerial_write( char c) { // 3 bytes generic pointer
     while (true) {
       if (USBSerial_wait_UpPoint2BusyFlag_clear() == 0)
         return 0;
-      if (usbWritePointer < MAX_PACKET_SIZE) {
-        Ep2Buffer[MAX_PACKET_SIZE + usbWritePointer] = c;
+      if (usbWritePointer < EP2_MAX_PACKET_SIZE) {
+        Ep2Buffer[EP2_MAX_PACKET_SIZE + usbWritePointer] = c;
         usbWritePointer++;
         return 1;
       } else {
@@ -303,8 +329,8 @@ uint8_t USBSerial_print_n(uint8_t *buf,int len) { // 3 bytes generic pointer, no
       if (USBSerial_wait_UpPoint2BusyFlag_clear() == 0)
         return 0;
       while (len > 0) {
-        if (usbWritePointer < MAX_PACKET_SIZE) {
-          Ep2Buffer[MAX_PACKET_SIZE + usbWritePointer] = *buf++;
+        if (usbWritePointer < EP2_MAX_PACKET_SIZE) {
+          Ep2Buffer[EP2_MAX_PACKET_SIZE + usbWritePointer] = *buf++;
           usbWritePointer++;
           len--;
         } else {
@@ -328,6 +354,10 @@ char USBSerial_read() {
   if (USBByteCountEP2 == 0) {
 #if defined(CH573) || defined(CH572)
     R8_UEP2_CTRL = R8_UEP2_CTRL & ~MASK_UEP_R_RES | UEP_R_RES_ACK;
+#elif defined(CH585)
+    R8_U2EP2_RX_CTRL ^= USBHS_UEP_R_TOG_DATA1;
+    R8_U2EP2_RX_CTRL = (R8_U2EP2_RX_CTRL & ~USBHS_UEP_R_RES_MASK) | USBHS_UEP_R_RES_ACK;
+    R8_U2EP2_RX_CTRL &= ~USBHS_UEP_R_DONE;
 #elif defined(CH32X035)
     USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & ~USBFS_UEP_R_RES_MASK | USBFS_UEP_R_RES_ACK;
 #endif
@@ -348,6 +378,11 @@ void USB_EP2_IN() {
 #if defined(CH573) || defined(CH572)
   R8_UEP2_T_LEN = 0; // No data to send anymore
   R8_UEP2_CTRL = R8_UEP2_CTRL & ~MASK_UEP_T_RES | UEP_T_RES_NAK; // Respond NAK by default
+#elif defined(CH585)
+  R16_U2EP2_T_LEN = 0;
+  R8_U2EP2_TX_CTRL ^= USBHS_UEP_T_TOG_DATA1;
+  R8_U2EP2_TX_CTRL = (R8_U2EP2_TX_CTRL & ~USBHS_UEP_T_RES_MASK) | USBHS_UEP_T_RES_NAK;
+  R8_U2EP2_TX_CTRL &= ~USBHS_UEP_T_DONE;
 #elif defined(CH32X035)
   USBFSD->UEP2_TX_LEN = 0; // No data to send anymore
   USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & ~USBFS_UEP_T_RES_MASK | USBFS_UEP_T_RES_NAK; // Respond NAK by default
@@ -364,6 +399,16 @@ void USB_EP2_OUT() {
     R8_UEP2_CTRL = R8_UEP2_CTRL & ~MASK_UEP_R_RES |
                   UEP_R_RES_NAK; // Respond NAK after a packet. Let main code
                                  // change response after handling.
+  }
+#elif defined(CH585)
+  { // CH585 does not have RB_U_TOG_OK
+    USBByteCountEP2 = R16_U2EP2_RX_LEN;
+    USBBufOutPointEP2 = 0; // Reset Data pointer for fetching
+    if (USBByteCountEP2){
+      R8_U2EP2_RX_CTRL ^= USBHS_UEP_R_TOG_DATA1;
+      R8_U2EP2_RX_CTRL = (R8_U2EP2_RX_CTRL & ~USBHS_UEP_R_RES_MASK) | USBHS_UEP_R_RES_NAK;
+      R8_U2EP2_RX_CTRL &= ~USBHS_UEP_R_DONE;
+    }
   }
 #elif defined(CH32X035)
   if (USBFSD->INT_FG & USBFS_U_TOG_OK){ // Discard unsynchronized packets
