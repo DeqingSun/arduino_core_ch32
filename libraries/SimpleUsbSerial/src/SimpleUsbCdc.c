@@ -258,9 +258,7 @@ void USBSerial_flush(void) {
       R8_USB2_INT_EN &= ~USBHS_UDIE_TRANSFER;
       R16_U2EP2_T_LEN = usbWritePointer;
       UpPoint2BusyFlag = 1;
-      R8_U2EP2_TX_CTRL ^= USBHS_UEP_T_TOG_DATA1;
       R8_U2EP2_TX_CTRL = (R8_U2EP2_TX_CTRL & ~USBHS_UEP_T_RES_MASK) | USBHS_UEP_T_RES_ACK;
-      R8_U2EP2_TX_CTRL &= ~USBHS_UEP_T_DONE;
       R8_USB2_INT_EN = usbIntCopy;
 #elif defined(CH32X035)
       usbIntCopy = USBFSD->INT_EN;
