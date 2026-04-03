@@ -106,7 +106,44 @@ void APPJumpBoot(void)   //this section of code must run in RAM
 __attribute__((section(".highcode")))
 void APPJumpBoot(void)   //this section of code must run in RAM
 {
-  //TODO: implement this for CH585, need to confirm the flash erase command and whether it is needed, and how to reset the chip after erase
+  //disable tick interrupt and usb interrupt
+  PFIC_DisableIRQ(SysTick_IRQn);
+  PFIC_DisableIRQ(USB2_DEVICE_IRQn);
+
+  while(FLASH_EEPROM_CMD( 0x01, 0, NULL, 4096 ) != 0x00); //ROM erase 4K size at address 0
+  FLASH_EEPROM_CMD( 0x04, 0, NULL, 0 );   //reset flash
+
+  {
+    volatile uint32_t mpie_mie;
+    mpie_mie=__risc_v_disable_irq();
+    asm volatile("fence.i");
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    asm volatile("fence.i");
+
+    R16_INT32K_TUNE = 0xFFFF;
+
+    R8_SAFE_ACCESS_SIG = 0;
+    __risc_v_enable_irq(mpie_mie);
+    asm volatile("fence.i");
+  }
+
+  {
+    volatile uint32_t mpie_mie;
+    mpie_mie=__risc_v_disable_irq();
+    asm volatile("fence.i");
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    asm volatile("fence.i");
+
+    R8_RST_WDOG_CTRL |= RB_SOFTWARE_RESET; //run to execute reset, reset type will be power-up reset.
+    
+    R8_SAFE_ACCESS_SIG = 0;
+    __risc_v_enable_irq(mpie_mie);
+    asm volatile("fence.i");
+  }
+
+  while(1);//Make bootloader think the chip is empty (first 4 bytes are 0xFF)
 }
 #elif defined (CH32X035)
 void APPJumpBoot(void)   //this section of code must run in RAM
