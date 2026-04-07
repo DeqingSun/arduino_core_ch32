@@ -53,6 +53,11 @@
                         },
                         {
                             "packager": "WCH",
+                            "name": "wlink",
+                            "version": "0.1.1"
+                        },
+                        {
+                            "packager": "WCH",
                             "name": "beforeinstall",
                             "version": "1.0.0"
                         }
@@ -219,6 +224,33 @@
                             "archiveFileName": "wchisp-macos-x64_20251101.zip",
                             "checksum": "SHA-256:7777f2aa3e9810a2ff8d352346210c77af5fabfeb0be3b85f30f21c4364bec7a",
                             "size": "868994"
+                        }
+                    ]
+                },
+                {
+                    "name": "wlink",
+                    "version": "0.1.1",
+                    "systems": [
+                        {
+                            "host": "x86_64-linux-gnu",
+                            "url": "https://github.com/ch32-rs/wlink/releases/download/v0.1.1/wlink-v0.1.1-linux-x64.tar.gz",
+                            "archiveFileName": "wlink-v0.1.1-linux-x64.tar.gz",
+                            "checksum": "SHA-256:5bdef80440832f696578c0eb43f79c3819fc3fba19d37fd51374144bb86f3c6a",
+                            "size": "846537"
+                        },
+                        {
+                            "host": "i686-mingw32",
+                            "url": "https://github.com/ch32-rs/wlink/releases/download/v0.1.1/wlink-v0.1.1-win-x86.zip",
+                            "archiveFileName": "wlink-v0.1.1-win-x86.zip",
+                            "checksum": "SHA-256:263c0fe47ed12a784cab96bed1f0805b450bf77b174c1fe2dc2319ea2992341e",
+                            "size": "586947"
+                        },
+                        {
+                            "host": "x86_64-apple-darwin",
+                            "url": "https://github.com/ch32-rs/wlink/releases/download/v0.1.1/wlink-v0.1.1-macos-x64.tar.gz",
+                            "archiveFileName": "wlink-v0.1.1-macos-x64.tar.gz",
+                            "checksum": "SHA-256:fe5e4c3a38f367fcd56a8b77ec8f7ffcca67e50315d8e69e6ce50d9e9862fa3b",
+                            "size": "747481"
                         }
                     ]
                 },
