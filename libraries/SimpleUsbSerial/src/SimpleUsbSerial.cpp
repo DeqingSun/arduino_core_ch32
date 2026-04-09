@@ -2,7 +2,11 @@
 #include "SimpleUsbSerial.h"
 
 extern "C" {
+#if defined(CH585)
+    uint16_t USBSerial_available();
+#else
     uint8_t USBSerial_available();
+#endif
     char USBSerial_read();
     void USBSerial_flush(void);
     uint8_t USBSerial_write( char c);

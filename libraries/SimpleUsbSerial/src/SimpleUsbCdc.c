@@ -31,7 +31,11 @@ volatile uint8_t USBBufOutPointEP2 = 0; // Data pointer for fetching
 volatile uint8_t UpPoint2BusyFlag = 0; // Flag of whether upload pointer is busy
 volatile uint8_t controlLineState = 0;
 
+#if defined(CH585)
+uint16_t usbWritePointer = 0;
+#else
 uint8_t usbWritePointer = 0;
+#endif
 
 void delayMicroseconds(uint32_t us);
 
@@ -377,8 +381,12 @@ uint8_t USBSerial_print_n(uint8_t *buf,int len) { // 3 bytes generic pointer, no
   }
   return 0;
 }
-  
+
+#if defined(CH585)
+uint16_t USBSerial_available() { return USBByteCountEP2; }
+#else
 uint8_t USBSerial_available() { return USBByteCountEP2; }
+#endif
   
 char USBSerial_read() {
   if (USBByteCountEP2 == 0)
