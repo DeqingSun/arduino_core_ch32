@@ -34,3 +34,7 @@
 #if defined (CH573)
 #include "CH573_flash.c"
 #endif
+
+#if defined (CH585)
+#include "CH585_flash.c"
+#endif
