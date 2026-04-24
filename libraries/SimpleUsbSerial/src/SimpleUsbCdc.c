@@ -154,6 +154,50 @@ void APPJumpBoot(void)   //this section of code must run in RAM
   while(1);//Make bootloader think the chip is empty (first 4 bytes are 0xFF)
 }
 #elif defined (CH585)
+
+// This function can not be in RAM, as we are copying bootloader code to RAM.
+__attribute__((noinline, used)) static void jump_isprom_strip()
+{
+
+  R8_USB2_CTRL = USBHS_UD_RST_SIE | USBHS_UD_CLR_ALL;            
+  for (volatile uint32_t i = 0; i < 1000; ++i) {
+    __nop();
+  }
+  R8_USB2_INT_EN = 0x00;
+  R8_USB2_CTRL   = 0x00;
+  PFIC_DisableIRQ(USB2_DEVICE_IRQn);
+
+  PFIC_DisableIRQ(SysTick_IRQn);
+  SysTick->CTLR = 0;
+
+  for (volatile uint32_t i = 0; i < 10000; ++i) {
+    __nop();
+  }
+
+  volatile uint32_t *dst = (volatile uint32_t *)0x20000000;
+  const uint32_t *src = (const uint32_t *)(0x00078000 + 0x88);
+  const uint32_t words = 0x2500u >> 2;
+  for (uint32_t i = 0; i < words; ++i) {
+    dst[i] = src[i];
+  }
+
+  //0x78192 is ReadPB11. 0007819c: 0589 c.andi a0,0x1
+  *(int16_t*)(0x2000010a + 0xa) = 0x4505; //li a0,1, patch PB11 (option byte is not read correctly) detection
+  
+  volatile uint32_t *clr = (volatile uint32_t *)0x200024f0;
+  for (uint32_t i = 0; i < (0x0560u >> 2); ++i) {
+    clr[i] = 0;
+  }
+
+  //0x200018c2 -> 0x7994A, main of bootloader 
+  asm( "la gp, 0x20002ce8\n"
+      ".option arch, +zicsr\n"
+      "li t0, 0x200018c2\n"
+      "jr t0\n");
+  //   "csrw mepc, t0\n" // __set_MEPC is not available here
+  //   "mret\n");
+}
+
 __attribute__((section(".highcode")))
 void APPJumpBoot(void)   //this section of code must run in RAM
 {
@@ -161,37 +205,42 @@ void APPJumpBoot(void)   //this section of code must run in RAM
   PFIC_DisableIRQ(SysTick_IRQn);
   PFIC_DisableIRQ(USB2_DEVICE_IRQn);
 
-  while(FLASH_EEPROM_CMD( 0x01, 0, NULL, 4096 ) != 0x00); //ROM erase 4K size at address 0
-  FLASH_EEPROM_CMD( 0x04, 0, NULL, 0 );   //reset flash
+  if (*((const uint16_t *)(0x00078000 + 0x88 + 0x10a + 0xa)) == 0x8905) { //    0007819c: 0589 c.andi a0,0x1
+    jump_isprom_strip();
+  }else{
 
-  {
-    volatile uint32_t mpie_mie;
-    mpie_mie=__risc_v_disable_irq();
-    asm volatile("fence.i");
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-    asm volatile("fence.i");
+    while(FLASH_EEPROM_CMD( 0x01, 0, NULL, 4096 ) != 0x00); //ROM erase 4K size at address 0
+    FLASH_EEPROM_CMD( 0x04, 0, NULL, 0 );   //reset flash
 
-    R16_INT32K_TUNE = 0xFFFF;
+    {
+      volatile uint32_t mpie_mie;
+      mpie_mie=__risc_v_disable_irq();
+      asm volatile("fence.i");
+      R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+      R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+      asm volatile("fence.i");
 
-    R8_SAFE_ACCESS_SIG = 0;
-    __risc_v_enable_irq(mpie_mie);
-    asm volatile("fence.i");
-  }
+      R16_INT32K_TUNE = 0xFFFF;
 
-  {
-    volatile uint32_t mpie_mie;
-    mpie_mie=__risc_v_disable_irq();
-    asm volatile("fence.i");
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-    asm volatile("fence.i");
+      R8_SAFE_ACCESS_SIG = 0;
+      __risc_v_enable_irq(mpie_mie);
+      asm volatile("fence.i");
+    }
 
-    R8_RST_WDOG_CTRL |= RB_SOFTWARE_RESET; //run to execute reset, reset type will be power-up reset.
-    
-    R8_SAFE_ACCESS_SIG = 0;
-    __risc_v_enable_irq(mpie_mie);
-    asm volatile("fence.i");
+    {
+      volatile uint32_t mpie_mie;
+      mpie_mie=__risc_v_disable_irq();
+      asm volatile("fence.i");
+      R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+      R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+      asm volatile("fence.i");
+
+      R8_RST_WDOG_CTRL |= RB_SOFTWARE_RESET; //run to execute reset, reset type will be power-up reset.
+      
+      R8_SAFE_ACCESS_SIG = 0;
+      __risc_v_enable_irq(mpie_mie);
+      asm volatile("fence.i");
+    }
   }
 
   while(1);//Make bootloader think the chip is empty (first 4 bytes are 0xFF)
