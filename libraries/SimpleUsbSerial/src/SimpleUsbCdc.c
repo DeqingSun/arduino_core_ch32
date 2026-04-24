@@ -77,6 +77,7 @@ __attribute__((noinline, used)) static void jump_isprom_strip()
   }
 
   /* Word copy like WCH FLASH_ROM_READ: flash ROM reads are naturally 32-bit. */
+  // RAM 0x20000000 is from 0x0003c0c0 in flash
   volatile uint32_t *dst = (volatile uint32_t *)0x20000000;
   const uint32_t *src = (const uint32_t *)(0x0003c000 + 0xc0);
   const uint32_t words = 0x2000u >> 2;
@@ -91,6 +92,7 @@ __attribute__((noinline, used)) static void jump_isprom_strip()
       clr[i] = 0;
   }
 
+  //0x20001196 should be 0x3D256, it is the bootloader_main
   asm( "la gp, 0x20002398\n"
       ".option arch, +zicsr\n"
       "li t0, 0x20001196\n"
