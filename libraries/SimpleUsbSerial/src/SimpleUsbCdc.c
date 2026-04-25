@@ -39,20 +39,74 @@ uint8_t usbWritePointer = 0;
 
 #if defined (CH573)
 __attribute__((section(".highcode")))
+
+// This function can not be in RAM, as we are copying bootloader code to RAM.
+__attribute__((noinline, used)) static void jump_isprom_strip()
+{
+  R8_USB_CTRL = RB_UC_RESET_SIE | RB_UC_CLR_ALL;
+  for (volatile uint32_t i = 0; i < 1000; ++i) {
+    __nop();
+  }
+  R8_USB_INT_EN = 0x00;
+  R8_USB_CTRL   = 0x00;
+  R8_UDEV_CTRL  = RB_UD_PD_DIS;
+  PFIC_DisableIRQ(USB_IRQn);
+
+  PFIC_DisableIRQ(SysTick_IRQn);
+  SysTick->CTLR = 0;
+
+  for (volatile uint32_t i = 0; i < 10000; ++i) {
+    __nop();
+  }
+
+  // after rebase dumped bootloader to 0x0, Ghidra shows:
+  // gp = 0x20005e10;
+  // puVar1 = &DAT_ram_000000a8;
+  // puVar2 = (undefined4 *)&DAT_ram_20003800;
+  volatile uint32_t *dst = (volatile uint32_t *)0x20003800;
+  const uint32_t *src = (const uint32_t *)(0x00078000 + 0xa8);
+  const uint32_t words = (0x1EC0-0xA8) >> 2;
+  for (uint32_t i = 0; i < words; ++i) {
+      dst[i] = src[i];
+  }
+
+  //function reading PB22 is at 00078146, we need to edit     ram:00078154 05 89           c.andi     a0,0x1
+  *(int16_t*)(0x200038AC) = 0x4505; //li a0,1
+  
+  // DAT_ram_20005618 -> 0x200059a0
+  volatile uint32_t *clr = (volatile uint32_t *)0x20005618;
+  for (uint32_t i = 0; i < ((0x388) >> 2); ++i) {
+      clr[i] = 0;
+  }
+
+  //0x20004948 should be 0x000791f0, it is the bootloader_main
+  asm( "la gp, 0x20005e10\n"
+      ".option arch, +zicsr\n"
+      "li t0, 0x20004948\n"
+      "jr t0\n");
+    // "csrw mepc, t0\n" // __set_MEPC is not available here
+    // "mret\n");
+}
+
 void APPJumpBoot(void)   //this section of code must run in RAM
 {
-  while(FLASH_EEPROM_CMD(0x01, 0, NULL, 4096) != 0x00) {
-    ;//ROM erase 4K size at address 0
+
+  //jump_isprom_strip(); //not working yet
+
+  if(1){
+    while(FLASH_EEPROM_CMD(0x01, 0, NULL, 4096) != 0x00) {
+      ;//ROM erase 4K size at address 0
+    }
+    FLASH_EEPROM_CMD(0x04, 0, NULL, 0);   //reset flash
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    //SAFEOPERATE;
+    asm("nop");
+    asm("nop");
+    R16_INT32K_TUNE = 0xFFFF;
+    R8_RST_WDOG_CTRL |= RB_SOFTWARE_RESET;
+    R8_SAFE_ACCESS_SIG = 0;//run to execute reset, reset type will be power-up reset.
   }
-  FLASH_EEPROM_CMD(0x04, 0, NULL, 0);   //reset flash
-  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-  //SAFEOPERATE;
-  asm("nop");
-  asm("nop");
-  R16_INT32K_TUNE = 0xFFFF;
-  R8_RST_WDOG_CTRL |= RB_SOFTWARE_RESET;
-  R8_SAFE_ACCESS_SIG = 0;//run to execute reset, reset type will be power-up reset.
   while(1);//Make bootloader think the chip is empty (first 4 bytes are 0xFF)
 }
 #elif defined (CH572)
@@ -78,6 +132,11 @@ __attribute__((noinline, used)) static void jump_isprom_strip()
 
   /* Word copy like WCH FLASH_ROM_READ: flash ROM reads are naturally 32-bit. */
   // RAM 0x20000000 is from 0x0003c0c0 in flash
+
+  // after rebase dumped bootloader to 0x0, Ghidra shows:
+  // gp = 0x20002398;
+  // puVar1 = &DAT_ram_000000c0;
+  // puVar2 = (undefined4 *)&DAT_ram_20000000;
   volatile uint32_t *dst = (volatile uint32_t *)0x20000000;
   const uint32_t *src = (const uint32_t *)(0x0003c000 + 0xc0);
   const uint32_t words = 0x2000u >> 2;
@@ -87,6 +146,7 @@ __attribute__((noinline, used)) static void jump_isprom_strip()
 
   *(int32_t*)(0x20000100 + 0xc) = 0x00014505; // nop \n li a0,1, patch PA1 detection
   
+  // DAT_ram_20001ba0 -> 0x20002014
   volatile uint32_t *clr = (volatile uint32_t *)0x20001ba0;
   for (uint32_t i = 0; i < (0x0474u >> 2); ++i) {
       clr[i] = 0;
