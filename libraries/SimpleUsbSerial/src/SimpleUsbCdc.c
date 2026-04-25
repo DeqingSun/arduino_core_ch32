@@ -38,8 +38,6 @@ uint8_t usbWritePointer = 0;
 #endif
 
 #if defined (CH573)
-__attribute__((section(".highcode")))
-
 // This function can not be in RAM, as we are copying bootloader code to RAM.
 __attribute__((noinline, used)) static void jump_isprom_strip()
 {
@@ -88,12 +86,12 @@ __attribute__((noinline, used)) static void jump_isprom_strip()
     // "mret\n");
 }
 
+__attribute__((section(".highcode")))
 void APPJumpBoot(void)   //this section of code must run in RAM
 {
-
-  //jump_isprom_strip(); //not working yet
-
-  if(1){
+  if (*((const uint16_t *)(0x00078154)) == 0x8905u) {
+    jump_isprom_strip();
+  } else {
     while(FLASH_EEPROM_CMD(0x01, 0, NULL, 4096) != 0x00) {
       ;//ROM erase 4K size at address 0
     }
