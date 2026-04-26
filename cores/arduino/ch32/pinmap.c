@@ -239,7 +239,7 @@ void pin_function(PinName pin, int function)
 
   }
 
-#if defined(CH32X035) || defined(CH573)
+#if defined(CH32X035) || defined(CH573) || defined(CH585)
   GPIO_InitStructure.GPIO_Pin = ch_pinx; // fixed by Ngo Hung Cuong: pin_16, 17, ..., 23
 #else
   GPIO_InitStructure.GPIO_Pin = (uint16_t) ch_pinx;
