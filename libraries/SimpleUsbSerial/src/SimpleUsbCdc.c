@@ -37,6 +37,10 @@ uint16_t usbWritePointer = 0;
 uint8_t usbWritePointer = 0;
 #endif
 
+void __attribute__((weak)) preAppJumpBoot(void) {
+  // empty weak function, can be overridden by user code
+}
+
 #if defined (CH573)
 // This function can not be in RAM, as we are copying bootloader code to RAM.
 __attribute__((noinline, used)) static void jump_isprom_strip()
@@ -400,6 +404,7 @@ void setControlLineStateHandler() {
   // We check DTR state to determine if host port is open (bit 0 of lineState).
   if (((controlLineState & 0x01) == 0) &&
       (baud == 1200)) { 
+          preAppJumpBoot();
           APPJumpBoot();
   }
 }
