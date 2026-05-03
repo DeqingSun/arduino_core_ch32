@@ -767,6 +767,23 @@ void USB_EP0_IN(){
             USBFSD->UEP0_CTRL_H = USBFS_UEP_R_RES_ACK | USBFS_UEP_T_RES_NAK;
             #endif
             break;
+        case SET_LINE_CODING: // for some reason CH585 will read this
+            uint8_t len = getLineCodingHandler();
+            #if defined (CH573) || defined (CH572)
+            R8_UEP0_T_LEN = len;
+            R8_UEP0_CTRL ^= RB_UEP_T_TOG;                    //Switch between DATA0 and DATA1
+            #elif defined (CH585)
+            R16_U2EP0_T_LEN = len;
+            R8_U2EP0_TX_CTRL ^= USBHS_UEP_T_TOG_DATA1;                    //Switch between DATA0 and DATA1
+            R8_U2EP0_TX_CTRL = ( R8_U2EP0_TX_CTRL & ~USBHS_UEP_T_RES_MASK) | USBHS_UEP_T_RES_ACK;
+            // if( USBHS_SetupReqLen == 0 ){
+            //    R8_U2EP0_RX_CTRL = USBHS_UEP_R_TOG_DATA1 | USBHS_UEP_R_RES_ACK;
+            // }
+            #elif defined (CH32X035)
+            USBFSD->UEP0_TX_LEN = len;
+            USBFSD->UEP0_CTRL_H ^= USBFS_UEP_T_TOG;                    //Switch between DATA0 and DATA1
+            #endif
+            break;
         default:
             #if defined (CH573) || defined (CH572)
             R8_UEP0_T_LEN = 0;                                                      // End of transaction
