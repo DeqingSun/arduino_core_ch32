@@ -12,6 +12,55 @@
                 {
                     "name": "CH32 MCU EVT Boards",
                     "architecture": "ch32v",
+                    "version": "26.5.8",
+                    "category": "Contributed",
+                    "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/arduino_core_ch32_26.5.8_8254067.zip",
+                    "archiveFileName": "arduino_core_ch32_26.5.8_8254067.zip",
+                    "checksum": "SHA-256:e06a33a4d9039c2b1a6d3e35d7374d7ec8c9816b069b871b15d76a6f2f1e1607",
+                    "size": "2748000",
+                    "boards": [
+                        {
+                            "name": "CH32X035 EVT Board"
+                        },
+                        {
+                            "name": "CH32V30x EVT Board"
+                        },
+                        {
+                            "name": "CH32V20x EVT Board"
+                        },
+                        {
+                            "name": "CH32V10x EVT Board"
+                        },
+                        {
+                            "name": "CH32V00x EVT Board"
+                        }
+                    ],
+                    "toolsDependencies": [
+                        {
+                            "packager": "WCH",
+                            "name": "riscv-none-embed-gcc",
+                            "version": "ide_2.2.0_trimmed"
+                        },
+                        {
+                            "packager": "WCH",
+                            "name": "openocd",
+                            "version": "ide_2.3.0_trimmed_packed"
+                        },
+                        {
+                            "packager": "WCH",
+                            "name": "wchisp",
+                            "version": "0.3.0_20251101"
+                        },
+                        {
+                            "packager": "WCH",
+                            "name": "beforeinstall",
+                            "version": "1.0.0"
+                        }
+                    ]
+                },
+                {
+                    "name": "CH32 MCU EVT Boards",
+                    "architecture": "ch32v",
                     "version": "26.2.6",
                     "category": "Contributed",
                     "url": "https://github.com/DeqingSun/arduino_core_ch32/releases/download/initBinStorage/arduino_core_ch32_26.2.6_93eb5dd.zip",
