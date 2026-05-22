@@ -68,7 +68,6 @@ void USBInitForCdc() {
   R8_UEP4_1_MOD = RB_UEP1_TX_EN;
 #elif defined (CH585)
   R16_U2EP_TX_EN |= RB_EP1_EN;
-  R16_U2EP_RX_EN |= RB_EP1_EN;
   R32_U2EP1_MAX_LEN = DEF_USBD_UEP1_SIZE;
   R16_U2EP1_T_LEN = 0;
 #elif defined (CH32X035)
