@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#if defined (CH585)
+#if defined (CH585) || defined (CH32V30x)
 #define DEFAULT_ENDP0_SIZE 64
 #define EP2_MAX_PACKET_SIZE 512
 #else
