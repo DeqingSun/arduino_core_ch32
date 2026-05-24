@@ -876,7 +876,7 @@ void USB_EP0_IN(){
             #elif defined (CH32V30x)
             USBHSD->UEP0_TX_LEN = len;
             USBHSD->UEP0_TX_CTRL ^= USBHS_UEP_T_TOG_DATA1;                    //Switch between DATA0 and DATA1
-            USBHSD->UEP0_TX_CTRL = ( USBHSD->UEP0_TX_CTRL & ~USBHS_UEP_T_RES_MASK) | USBHS_UEP_T_RES_ACK;
+            //USBHSD->UEP0_TX_CTRL = ( USBHSD->UEP0_TX_CTRL & ~USBHS_UEP_T_RES_MASK) | USBHS_UEP_T_RES_ACK;
             #endif
         }
             break;
@@ -1031,7 +1031,7 @@ void USBHS_IRQHandler(void) {
 #elif defined (CH32X035)
   if (USBFSD->INT_FG & USBFS_UIF_TRANSFER) {
 #elif defined (CH32V30x)
-  if (USBHSD->INT_FG & USBHS_UIF_TRANSFER) {
+  if (USBHSD->INT_FG & (USBHS_UIF_TRANSFER | USBHS_UIF_SETUP_ACT)) { // CH32V30x has setup bit in transfer interrupt
 #endif
     // there is difference in CH573 from CH552, there is RB_UIS_SETUP_ACT on bit7 of R8_USB_INT_ST
     // and it does not affect RB_UIS_TOG_OK, MASK_UIS_TOKEN , MASK_UIS_ENDP and R8_USB_RX_LEN

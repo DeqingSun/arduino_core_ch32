@@ -390,6 +390,8 @@ void setLineCodingHandler() {
   receiveLen = R16_U2EP0_RX_LEN;
 #elif defined (CH32X035)
   receiveLen = USBFSD->RX_LEN;
+#elif defined (CH32V30x)
+  receiveLen = USBHSD->RX_LEN;
 #endif
     for (uint8_t i = 0;
          i < ((LINE_CODEING_SIZE <= receiveLen) ? LINE_CODEING_SIZE : receiveLen);
@@ -480,6 +482,13 @@ void USBSerial_flush(void) {
       UpPoint2BusyFlag = 1;
       USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & ~USBFS_UEP_T_RES_MASK | USBFS_UEP_T_RES_ACK; // Respond ACK
       USBFSD->INT_EN = usbIntCopy;
+#elif defined (CH32V30x)
+      usbIntCopy = USBHSD->INT_EN;
+      USBHSD->INT_EN &= ~USBHS_UIE_TRANSFER;
+      USBHSD->UEP2_TX_LEN = usbWritePointer;
+      UpPoint2BusyFlag = 1;
+      USBHSD->UEP2_TX_CTRL = USBHSD->UEP2_TX_CTRL & ~USBHS_UEP_T_RES_MASK | USBHS_UEP_T_RES_ACK; // Respond ACK
+      USBHSD->INT_EN = usbIntCopy;
 #endif
 
     if (usbWritePointer ==
@@ -509,6 +518,13 @@ void USBSerial_flush(void) {
         UpPoint2BusyFlag = 1;
         USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & ~USBFS_UEP_T_RES_MASK | USBFS_UEP_T_RES_ACK; // Respond ACK
         USBFSD->INT_EN = usbIntCopy;
+#elif defined (CH32V30x)
+        usbIntCopy = USBHSD->INT_EN;
+        USBHSD->INT_EN &= ~USBHS_UIE_TRANSFER;
+        USBHSD->UEP2_TX_LEN = 0;
+        UpPoint2BusyFlag = 1;
+        USBHSD->UEP2_TX_CTRL = USBHSD->UEP2_TX_CTRL & ~USBHS_UEP_T_RES_MASK | USBHS_UEP_T_RES_ACK; // Respond ACK
+        USBHSD->INT_EN = usbIntCopy;
 #endif
       }
     }
@@ -575,6 +591,9 @@ char USBSerial_read() {
     R8_U2EP2_RX_CTRL &= ~USBHS_UEP_R_DONE;
 #elif defined(CH32X035)
     USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & ~USBFS_UEP_R_RES_MASK | USBFS_UEP_R_RES_ACK;
+#elif defined (CH32V30x)
+    USBHSD->UEP2_RX_CTRL ^= USBHS_UEP_R_TOG_DATA1;
+    USBHSD->UEP2_RX_CTRL = (USBHSD->UEP2_RX_CTRL & ~USBHS_UEP_R_RES_MASK) | USBHS_UEP_R_RES_ACK;
 #endif
   }
   return data;
@@ -601,6 +620,10 @@ void USB_EP2_IN() {
 #elif defined(CH32X035)
   USBFSD->UEP2_TX_LEN = 0; // No data to send anymore
   USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & ~USBFS_UEP_T_RES_MASK | USBFS_UEP_T_RES_NAK; // Respond NAK by default
+#elif defined (CH32V30x)
+  USBHSD->UEP2_TX_LEN = 0;
+  USBHSD->UEP2_TX_CTRL ^= USBHS_UEP_T_TOG_DATA1;
+  USBHSD->UEP2_TX_CTRL = USBHSD->UEP2_TX_CTRL & ~USBHS_UEP_T_RES_MASK | USBHS_UEP_T_RES_NAK;
 #endif
   UpPoint2BusyFlag = 0;                            // Clear busy flag
 }
@@ -633,6 +656,15 @@ void USB_EP2_OUT() {
     USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & ~USBFS_UEP_R_RES_MASK |
                   USBFS_UEP_R_RES_NAK; // Respond NAK after a packet. Let main code
                                  // change response after handling.
+  }
+#elif defined (CH32V30x)
+  if (USBHSD->INT_ST & USBHS_UIS_TOG_OK){ // Discard unsynchronized packets
+    USBByteCountEP2 = USBHSD->RX_LEN;
+    USBBufOutPointEP2 = 0; // Reset Data pointer for fetching
+    if (USBByteCountEP2){
+      USBHSD->UEP2_RX_CTRL ^= USBHS_UEP_R_TOG_DATA1;
+      USBHSD->UEP2_RX_CTRL = (USBHSD->UEP2_RX_CTRL & ~USBHS_UEP_R_RES_MASK) | USBHS_UEP_R_RES_NAK;
+    }
   }
 #endif
 }
