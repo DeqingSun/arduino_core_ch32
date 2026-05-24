@@ -85,6 +85,9 @@ const uint16_t SerDes[]={                                 //Serial String Descri
 #elif defined(CH32X035)
     0x0312,
     'C','H','3','2','X','0','3','5',
+#elif defined(CH32V30x)
+    0x0312,
+    'C','H','3','2','V','3','0','x',
 #endif
 };
 const uint16_t SerDesLen = sizeof(SerDes);
@@ -98,6 +101,9 @@ const uint16_t Prod_Des[]={                                //Produce String Desc
 #elif defined(CH32X035)
     0x031C,
     'C','H','3','2','X','0','3','5','d','u','i','n','o',
+#elif defined(CH32V30x)
+    0x031C,
+    'C','H','3','2','V','3','0','x','d','u','i','n','o',
 #endif
 };
 const uint16_t Prod_DesLen = sizeof(Prod_Des);
