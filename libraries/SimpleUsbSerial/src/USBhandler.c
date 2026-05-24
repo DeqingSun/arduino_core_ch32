@@ -212,6 +212,7 @@ void USB_EP0_SETUP() {
   len = 8;    //Although not specified in the datasheet, setup packet length seems not correct in CH32X035 either
 #elif defined (CH32V30x)
   uint16_t len = USBHSD->RX_LEN;
+  len = 8;  //Although not specified in the datasheet, setup packet length seems not correct in CH32V30x either
 #endif
 
   if (len == (sizeof(USB_SETUP_REQ_t))) {
