@@ -4,7 +4,7 @@
 //Device descriptor
 const uint8_t DevDesc[] = {
     0x12,0x01,
-#if defined(CH585)
+#if defined(CH585) || defined(CH32V30x)
     0x00,0x02,  //USB spec release number in BCD
 #else
     0x10,0x01,  //USB spec release number in BCD format, USB1.1 (0x10, 0x01).
@@ -42,7 +42,7 @@ const uint8_t CfgDesc[] ={
 
 const uint16_t CfgDescLen = sizeof(CfgDesc);
 
-#if defined(CH585)
+#if defined(CH585) || defined(CH32V30x)
 const uint8_t CfgHsDesc[] ={
     0x09,0x02,CfgDesc_SIZE_For_GCC & 0xff,CfgDesc_SIZE_For_GCC >> 8,
     0x02,0x01,0x00,0x80,0x64,             //Configuration descriptor (2 interfaces)

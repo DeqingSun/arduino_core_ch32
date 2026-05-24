@@ -2,7 +2,7 @@
 #include "SimpleUsbSerial.h"
 
 extern "C" {
-#if defined(CH585)
+#if defined(CH585) || defined(CH32V30x)
     uint16_t USBSerial_available();
 #else
     uint8_t USBSerial_available();

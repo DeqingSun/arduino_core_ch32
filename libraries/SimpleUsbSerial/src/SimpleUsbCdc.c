@@ -18,7 +18,7 @@ uint8_t LineCoding[LINE_CODEING_SIZE] = {
     0x00, 0x00, 0x08}; // Initialize for baudrate 57600, 1 stopbit, No parity,
                        // eight data bits
 
-#if defined(CH585)
+#if defined(CH585) || defined(CH32V30x)
 volatile uint16_t USBByteCountEP2 =
     0; // Bytes of received data on USB endpoint
 volatile uint16_t USBBufOutPointEP2 = 0; // Data pointer for fetching
@@ -31,7 +31,7 @@ volatile uint8_t USBBufOutPointEP2 = 0; // Data pointer for fetching
 volatile uint8_t UpPoint2BusyFlag = 0; // Flag of whether upload pointer is busy
 volatile uint8_t controlLineState = 0;
 
-#if defined(CH585)
+#if defined(CH585) || defined(CH32V30x)
 uint16_t usbWritePointer = 0;
 #else
 uint8_t usbWritePointer = 0;
@@ -316,6 +316,10 @@ void APPJumpBoot(void)   //this section of code must run in RAM
     //R32_PFIC_SCTLR
     *((uint32_t *)0xE000ED10) = (1<<31);
 }
+#elif defined (CH32V30x)
+void APPJumpBoot(void){
+  //Not verified but maybe not doable.
+}
 #endif
 
 
@@ -359,6 +363,15 @@ void USBInit(void){
     AFIO->CTLR = (AFIO->CTLR & ~(UDP_PUE_MASK | UDM_PUE_MASK )) | USB_PHY_V33 | UDP_PUE_1K5 | USB_IOEN;
   }
   PWR_PVDLevelConfig(PWR_PVDLevel_2V1);
+#elif defined (CH32V30x)
+  RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOB, ENABLE );
+
+  RCC_USBCLK48MConfig( RCC_USBCLK48MCLKSource_USBPHY );
+  RCC_USBHSPLLCLKConfig( RCC_HSBHSPLLCLKSource_HSE );
+  RCC_USBHSConfig( RCC_USBPLL_Div2 );
+  RCC_USBHSPLLCKREFCLKConfig( RCC_USBHSPLLCKREFCLK_4M );
+  RCC_USBHSPHYPLLALIVEcmd( ENABLE );
+  RCC_AHBPeriphClockCmd( RCC_AHBPeriph_USBHS, ENABLE );
 #endif
 
   USBInitForCdc();
@@ -541,7 +554,7 @@ uint8_t USBSerial_print_n(uint8_t *buf,int len) { // 3 bytes generic pointer, no
   return 0;
 }
 
-#if defined(CH585)
+#if defined(CH585) || defined(CH32V30x)
 uint16_t USBSerial_available() { return USBByteCountEP2; }
 #else
 uint8_t USBSerial_available() { return USBByteCountEP2; }

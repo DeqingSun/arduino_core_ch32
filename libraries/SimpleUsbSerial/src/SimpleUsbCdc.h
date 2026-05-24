@@ -14,6 +14,12 @@
 #include "core_riscv.h"
 #elif defined (CH32X035)
 #include "ch32x035_rcc.h"
+#elif defined (CH32V30x)
+#include "ch32v30x_rcc.h"
+// HSE might be needed for high speed USB
+#if !defined (SYSCLK_FREQ_144MHz_HSE)
+#error "High speed USB requires HSE. Please use 144M External as Clock Source"
+#endif
 #else
 #error "Unsupported platform"
 #endif

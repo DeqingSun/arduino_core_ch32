@@ -12,7 +12,7 @@ void USB_EP2_OUT();
 
 // clang-format off
 //end point ram
-#if !defined (CH585)
+#if !(defined (CH585) || defined(CH32V30x))
 __attribute__((aligned(4))) uint8_t Ep0Buffer[8];
 __attribute__((aligned(4))) uint8_t Ep1Buffer[8];
 __attribute__((aligned(4))) uint8_t Ep2Buffer[128];
@@ -26,7 +26,7 @@ __attribute__((aligned(16))) uint8_t Ep2Buffer[DEF_USBD_UEP2_SIZE*2];
 uint16_t SetupLen;
 uint8_t SetupReq;
 volatile uint8_t UsbConfig;
-#if defined (CH585)
+#if defined (CH585) || defined(CH32V30x)
 volatile uint8_t UsbDevSpeed;
 #endif
 
@@ -46,6 +46,9 @@ void USBInitForCdc() {
   R16_U2EP_RX_EN = 0;
 #elif defined (CH32X035)
   USBFSD->BASE_CTRL = 0x00;
+#elif defined (CH32V30x)
+  USBHSD->CONTROL = 0x00;
+  USBHSD->HOST_CTRL = USBHS_UH_PHY_SUSPENDM;
 #endif
 
   // Manual flip, OUT transaction returns
@@ -61,6 +64,11 @@ void USBInitForCdc() {
   R8_U2EP0_RX_CTRL = USBHS_UEP_R_RES_ACK;
 #elif defined (CH32X035)
   USBFSD->UEP0_CTRL_H = USBFS_UEP_R_RES_ACK | USBFS_UEP_T_RES_NAK;
+#elif defined (CH32V30x)
+  USBHSD->UEP0_TX_CTRL = USBHS_UEP_T_RES_NAK;
+  USBHSD->UEP0_RX_CTRL = USBHS_UEP_R_RES_ACK;
+  USBHSD->UEP0_MAX_LEN  = DEF_USBD_UEP0_SIZE;
+  USBHSD->UEP0_TX_LEN  = 0;
 #endif
 
   // Endpoint 1, single 64 bytes send buffer
@@ -72,6 +80,10 @@ void USBInitForCdc() {
   R16_U2EP1_T_LEN = 0;
 #elif defined (CH32X035)
   USBFSD->UEP4_1_MOD = USBFS_UEP1_TX_EN;
+#elif defined (CH32V30x)
+  USBHSD->ENDP_CONFIG |= USBHS_UEP1_T_EN;
+  USBHSD->UEP1_MAX_LEN = DEF_USBD_UEP1_SIZE;
+  USBHSD->UEP1_TX_LEN = 0;
 #endif
   // Endpoint 1 automatically flips the sync flag,
   // IN transaction returns NAK
@@ -81,6 +93,8 @@ void USBInitForCdc() {
   R8_U2EP1_TX_CTRL = USBHS_UEP_T_RES_NAK;
 #elif defined (CH32X035)
   USBFSD->UEP1_CTRL_H = USBFS_UEP_T_AUTO_TOG | USBFS_UEP_T_RES_NAK;
+#elif defined (CH32V30x)
+  USBHSD->UEP1_TX_CTRL = USBHS_UEP_T_RES_NAK;
 #endif
 
   // Endpoint 2, single 64 bytes receive buffer, single 64 bytes send buffer
@@ -93,6 +107,10 @@ void USBInitForCdc() {
   R16_U2EP2_T_LEN = 0;
 #elif defined (CH32X035)
   USBFSD->UEP2_3_MOD = USBFS_UEP2_RX_EN | USBFS_UEP2_TX_EN;
+#elif defined (CH32V30x)
+  USBHSD->ENDP_CONFIG |= USBHS_UEP2_R_EN | USBHS_UEP2_T_EN;
+  USBHSD->UEP2_MAX_LEN = DEF_USBD_UEP2_SIZE;
+  USBHSD->UEP2_TX_LEN = 0;
 #endif
   // Endpoint 2 automatically flips the sync flag, IN
   // transaction returns NAK, OUT transaction returns ACK
@@ -103,6 +121,9 @@ void USBInitForCdc() {
   R8_U2EP2_RX_CTRL = USBHS_UEP_R_RES_ACK;
 #elif defined (CH32X035)
   USBFSD->UEP2_CTRL_H = USBFS_UEP_T_AUTO_TOG | USBFS_UEP_T_RES_NAK | USBFS_UEP_R_RES_ACK;
+#elif defined (CH32V30x)
+  USBHSD->UEP2_TX_CTRL = USBHS_UEP_T_RES_NAK;
+  USBHSD->UEP2_RX_CTRL = USBHS_UEP_R_RES_ACK;
 #endif
 
 #if defined (CH573) || defined (CH572)
@@ -118,6 +139,11 @@ void USBInitForCdc() {
   USBFSD->UEP0_DMA = (uint32_t)&Ep0Buffer[0];
   USBFSD->UEP1_DMA = (uint32_t)&Ep1Buffer[0];
   USBFSD->UEP2_DMA = (uint32_t)&Ep2Buffer[0];
+#elif defined (CH32V30x)
+  USBHSD->UEP0_DMA = (uint32_t)&Ep0Buffer[0];
+  USBHSD->UEP1_RX_DMA = (uint32_t)&Ep1Buffer[0];
+  USBHSD->UEP2_RX_DMA = (uint32_t)&Ep2Buffer[0];
+  USBHSD->UEP2_TX_DMA = (uint32_t)&Ep2Buffer[DEF_USBD_UEP2_SIZE];
 #endif
 
   // clear interrupt flag
@@ -125,6 +151,8 @@ void USBInitForCdc() {
   R8_USB_INT_FG = 0xFF;
 #elif defined (CH32X035)
   USBFSD->INT_FG = 0xff;
+#elif defined (CH32V30x)
+  USBHSD->INT_FG = 0xff;
 #endif
 
   // Device address initialization
@@ -132,6 +160,8 @@ void USBInitForCdc() {
   R8_USB_DEV_AD = 0x00;
 #elif defined (CH32X035)
   USBFSD->DEV_ADDR = 0x00;
+#elif defined (CH32V30x)
+  USBHSD->DEV_AD = 0x00;
 #endif
   // USB device and internal pull-up enable,
   // automatically return to NAK before interrupt flag
@@ -150,6 +180,9 @@ void USBInitForCdc() {
 #elif defined (CH32X035)
   USBFSD->BASE_CTRL = USBFS_UC_DEV_PU_EN | USBFS_UC_INT_BUSY | USBFS_UC_DMA_EN;
   USBFSD->UDEV_CTRL = USBFS_UD_PD_DIS | USBFS_UD_PORT_EN;
+#elif defined (CH32V30x)
+  USBHSD->CONTROL = USBHS_UC_DMA_EN | USBHS_UC_INT_BUSY | USBHS_UC_SPEED_HIGH;
+  USBHSD->CONTROL |= USBHS_UC_DEV_PU_EN;
 #endif
 
   // enable interrupt
@@ -162,6 +195,9 @@ void USBInitForCdc() {
 #elif defined (CH32X035)
   USBFSD->INT_EN = USBFS_UIE_SUSPEND | USBFS_UIE_BUS_RST | USBFS_UIE_TRANSFER;
   NVIC_EnableIRQ( USBFS_IRQn );
+#elif defined (CH32V30x)
+  USBHSD->INT_EN = USBHS_UIE_SETUP_ACT | USBHS_UIE_TRANSFER | USBHS_UIE_BUS_RST | USBHS_UIE_SUSPEND;
+  NVIC_EnableIRQ( USBHS_IRQn );
 #endif
 }
 
@@ -174,6 +210,8 @@ void USB_EP0_SETUP() {
 #elif defined (CH32X035)
   uint8_t len = USBFSD->RX_LEN;
   len = 8;    //Although not specified in the datasheet, setup packet length seems not correct in CH32X035 either
+#elif defined (CH32V30x)
+  uint16_t len = USBHSD->RX_LEN;
 #endif
 
   if (len == (sizeof(USB_SETUP_REQ_t))) {
@@ -243,6 +281,16 @@ void USB_EP0_SETUP() {
             pDescr = DevDesc; // Put Device Descriptor into outgoing buffer
             len = DevDescLen;
           }
+          #elif defined (CH32V30x)
+            if( ( USBHSD->SPEED_TYPE & USBHS_SPEED_TYPE_MASK ) == USBHS_SPEED_HIGH ) {
+              UsbDevSpeed = USBHS_SPEED_HIGH;
+              pDescr = CfgHsDesc;
+              len = CfgHsDescLen;
+            } else {
+              UsbDevSpeed = USBHS_SPEED_FULL;
+              pDescr = DevDesc; // Put Device Descriptor into outgoing buffer
+              len = DevDescLen;
+            }
           #else
           pDescr = CfgDesc;
           len = CfgDescLen;
@@ -269,7 +317,7 @@ void USB_EP0_SETUP() {
               len = SerDesLen;
           }
           break;
-        #if defined (CH585)
+        #if defined (CH585) || defined (CH32V30x)
         case 6: //get usb device qualify descriptor
           pDescr = QualDesc;
           len = QualDescLen;
@@ -349,6 +397,8 @@ void USB_EP0_SETUP() {
               R8_U2EP4_TX_CTRL = USBHS_UEP_T_RES_NAK;
               #elif defined (CH32X035)
               USBFSD->UEP4_CTRL_H = USBFSD->UEP4_CTRL_H & ~ (USBFS_UEP_T_TOG | USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
+              #elif defined (CH32V30x)
+              USBHSD->UEP4_TX_CTRL = USBHS_UEP_T_RES_NAK;
               #endif
             break;
             case 0x04:
@@ -358,6 +408,8 @@ void USB_EP0_SETUP() {
               R8_U2EP4_RX_CTRL = USBHS_UEP_R_RES_ACK;
               #elif defined (CH32X035)
               USBFSD->UEP4_CTRL_H = USBFSD->UEP4_CTRL_H & ~(USBFS_UEP_R_TOG | USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK;
+              #elif defined (CH32V30x)
+              USBHSD->UEP4_RX_CTRL = USBHS_UEP_R_RES_ACK;
               #endif
             break;
             case 0x83:
@@ -367,6 +419,8 @@ void USB_EP0_SETUP() {
               R8_U2EP3_TX_CTRL = USBHS_UEP_T_RES_NAK;
               #elif defined (CH32X035)
               USBFSD->UEP3_CTRL_H = USBFSD->UEP3_CTRL_H & ~(USBFS_UEP_T_TOG | USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
+              #elif defined (CH32V30x)
+              USBHSD->UEP3_TX_CTRL = USBHS_UEP_T_RES_NAK;
               #endif
             break;
             case 0x03:
@@ -376,6 +430,8 @@ void USB_EP0_SETUP() {
               R8_U2EP3_RX_CTRL = USBHS_UEP_R_RES_ACK;
               #elif defined (CH32X035)
               USBFSD->UEP3_CTRL_H = USBFSD->UEP3_CTRL_H & ~(USBFS_UEP_R_TOG | USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK;
+              #elif defined (CH32V30x)
+              USBHSD->UEP3_RX_CTRL = USBHS_UEP_R_RES_ACK;
               #endif
             break;
             case 0x82:
@@ -385,6 +441,8 @@ void USB_EP0_SETUP() {
               R8_U2EP2_TX_CTRL = USBHS_UEP_T_RES_NAK;
               #elif defined (CH32X035)
               USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & ~(USBFS_UEP_T_TOG | USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
+              #elif defined (CH32V30x)
+              USBHSD->UEP2_TX_CTRL = USBHS_UEP_T_RES_NAK;
               #endif
             break;
             case 0x02:
@@ -394,6 +452,8 @@ void USB_EP0_SETUP() {
               R8_U2EP2_RX_CTRL = USBHS_UEP_R_RES_ACK;
               #elif defined (CH32X035)
               USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & ~(USBFS_UEP_R_TOG | USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK;
+              #elif defined (CH32V30x)
+              USBHSD->UEP2_RX_CTRL = USBHS_UEP_R_RES_ACK;
               #endif
             break;
             case 0x81:
@@ -403,6 +463,8 @@ void USB_EP0_SETUP() {
               R8_U2EP1_TX_CTRL = USBHS_UEP_T_RES_NAK;
               #elif defined (CH32X035)
               USBFSD->UEP1_CTRL_H = USBFSD->UEP1_CTRL_H & ~(USBFS_UEP_T_TOG | USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_NAK;
+              #elif defined (CH32V30x)
+              USBHSD->UEP1_TX_CTRL = USBHS_UEP_T_RES_NAK;
               #endif
             break;
             case 0x01:
@@ -412,6 +474,8 @@ void USB_EP0_SETUP() {
               R8_U2EP1_RX_CTRL = USBHS_UEP_R_RES_ACK;
               #elif defined (CH32X035)
               USBFSD->UEP1_CTRL_H = USBFSD->UEP1_CTRL_H & ~(USBFS_UEP_R_TOG | USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK;
+              #elif defined (CH32V30x)
+              USBHSD->UEP1_RX_CTRL = USBHS_UEP_R_RES_ACK;
               #endif
             break;
           default:
@@ -459,6 +523,8 @@ void USB_EP0_SETUP() {
               #elif defined (CH32X035)
               USBFSD->UEP4_CTRL_H = USBFSD->UEP4_CTRL_H & (~USBFS_UEP_T_TOG) |
                             USBFS_UEP_T_RES_STALL; // Set endpoint4 IN STALL
+              #elif defined (CH32V30x)
+              USBHSD->UEP4_TX_CTRL = ( USBHSD->UEP4_TX_CTRL & ~USBHS_UEP_T_RES_MASK ) | USBHS_UEP_T_RES_STALL;
               #endif
               break;
             case 0x04:
@@ -468,6 +534,8 @@ void USB_EP0_SETUP() {
               R8_U2EP4_RX_CTRL = ( R8_U2EP4_RX_CTRL & ~USBHS_UEP_R_RES_MASK ) | USBHS_UEP_R_RES_STALL;
               #elif defined (CH32X035)
               USBFSD->UEP4_CTRL_H = USBFSD->UEP4_CTRL_H & (~USBFS_UEP_R_TOG) | USBFS_UEP_R_RES_STALL; // Set endpoint4 OUT Stall
+              #elif defined (CH32V30x)
+              USBHSD->UEP4_RX_CTRL = ( USBHSD->UEP4_RX_CTRL & ~USBHS_UEP_R_RES_MASK ) | USBHS_UEP_R_RES_STALL;
               #endif
               break;
             case 0x83:
@@ -477,6 +545,8 @@ void USB_EP0_SETUP() {
               R8_U2EP3_TX_CTRL = ( R8_U2EP3_TX_CTRL & ~USBHS_UEP_T_RES_MASK ) | USBHS_UEP_T_RES_STALL;
               #elif defined (CH32X035)
               USBFSD->UEP3_CTRL_H = USBFSD->UEP3_CTRL_H & (~USBFS_UEP_T_TOG) | USBFS_UEP_T_RES_STALL; // Set endpoint3 IN STALL
+              #elif defined (CH32V30x)
+              USBHSD->UEP3_TX_CTRL = ( USBHSD->UEP3_TX_CTRL & ~USBHS_UEP_T_RES_MASK ) | USBHS_UEP_T_RES_STALL;
               #endif
               break;
             case 0x03:
@@ -486,6 +556,8 @@ void USB_EP0_SETUP() {
               R8_U2EP3_RX_CTRL = ( R8_U2EP3_RX_CTRL & ~USBHS_UEP_R_RES_MASK ) | USBHS_UEP_R_RES_STALL;
               #elif defined (CH32X035)
               USBFSD->UEP3_CTRL_H = USBFSD->UEP3_CTRL_H & (~USBFS_UEP_R_TOG) | USBFS_UEP_R_RES_STALL; // Set endpoint3 OUT Stall
+              #elif defined (CH32V30x)
+              USBHSD->UEP3_RX_CTRL = ( USBHSD->UEP3_RX_CTRL & ~USBHS_UEP_R_RES_MASK ) | USBHS_UEP_R_RES_STALL;
               #endif
               break;
             case 0x82:
@@ -495,6 +567,8 @@ void USB_EP0_SETUP() {
               R8_U2EP2_TX_CTRL = ( R8_U2EP2_TX_CTRL & ~USBHS_UEP_T_RES_MASK ) | USBHS_UEP_T_RES_STALL;
               #elif defined (CH32X035)
               USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & (~USBFS_UEP_T_TOG) | USBFS_UEP_T_RES_STALL; // Set endpoint2 IN STALL
+              #elif defined (CH32V30x)
+              USBHSD->UEP2_TX_CTRL = ( USBHSD->UEP2_TX_CTRL & ~USBHS_UEP_T_RES_MASK ) | USBHS_UEP_T_RES_STALL;
               #endif
               break;
             case 0x02:
@@ -504,6 +578,8 @@ void USB_EP0_SETUP() {
               R8_U2EP2_RX_CTRL = ( R8_U2EP2_RX_CTRL & ~USBHS_UEP_R_RES_MASK ) | USBHS_UEP_R_RES_STALL;
               #elif defined (CH32X035)
               USBFSD->UEP2_CTRL_H = USBFSD->UEP2_CTRL_H & (~USBFS_UEP_R_TOG) | USBFS_UEP_R_RES_STALL; // Set endpoint2 OUT Stall
+              #elif defined (CH32V30x)
+              USBHSD->UEP2_RX_CTRL = ( USBHSD->UEP2_RX_CTRL & ~USBHS_UEP_R_RES_MASK ) | USBHS_UEP_R_RES_STALL;
               #endif
               break;
             case 0x81:
@@ -513,6 +589,8 @@ void USB_EP0_SETUP() {
               R8_U2EP1_TX_CTRL = ( R8_U2EP1_TX_CTRL & ~USBHS_UEP_T_RES_MASK ) | USBHS_UEP_T_RES_STALL;
               #elif defined (CH32X035)
               USBFSD->UEP1_CTRL_H = USBFSD->UEP1_CTRL_H & (~USBFS_UEP_T_TOG) | USBFS_UEP_T_RES_STALL; // Set endpoint1 IN STALL
+              #elif defined (CH32V30x)
+              USBHSD->UEP1_TX_CTRL = ( USBHSD->UEP1_TX_CTRL & ~USBHS_UEP_T_RES_MASK ) | USBHS_UEP_T_RES_STALL;
               #endif
               break;
             case 0x01:
@@ -522,6 +600,8 @@ void USB_EP0_SETUP() {
               R8_U2EP1_RX_CTRL = ( R8_U2EP1_RX_CTRL & ~USBHS_UEP_R_RES_MASK ) | USBHS_UEP_R_RES_STALL;
               #elif defined (CH32X035)
               USBFSD->UEP1_CTRL_H = USBFSD->UEP1_CTRL_H & (~USBFS_UEP_R_TOG) | USBFS_UEP_R_RES_STALL; // Set endpoint1 OUT Stall
+              #elif defined (CH32V30x)
+              USBHSD->UEP1_RX_CTRL = ( USBHSD->UEP1_RX_CTRL & ~USBHS_UEP_R_RES_MASK ) | USBHS_UEP_R_RES_STALL;
               #endif
               break;
             default:
@@ -556,6 +636,10 @@ void USB_EP0_SETUP() {
               if (( USBFSD->UEP4_CTRL_H & USBFS_UEP_T_TOG ) == USBFS_UEP_T_RES_STALL) {
                 Ep0Buffer[0] = 0x01;
               }
+              #elif defined (CH32V30x)
+              if (( USBHSD->UEP4_TX_CTRL & USBHS_UEP_T_RES_MASK ) == USBHS_UEP_T_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
               #endif
               break;
             case 0x04:
@@ -569,6 +653,10 @@ void USB_EP0_SETUP() {
               }
               #elif defined (CH32X035)
               if (( USBFSD->UEP4_CTRL_H & USBFS_UEP_R_TOG ) == USBFS_UEP_R_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #elif defined (CH32V30x)
+              if (( USBHSD->UEP4_RX_CTRL & USBHS_UEP_R_RES_MASK ) == USBHS_UEP_R_RES_STALL) {
                 Ep0Buffer[0] = 0x01;
               }
               #endif
@@ -586,6 +674,10 @@ void USB_EP0_SETUP() {
               if (( USBFSD->UEP3_CTRL_H & USBFS_UEP_T_TOG ) == USBFS_UEP_T_RES_STALL) {
                 Ep0Buffer[0] = 0x01;
               }
+              #elif defined (CH32V30x)
+              if (( USBHSD->UEP3_TX_CTRL & USBHS_UEP_T_RES_MASK ) == USBHS_UEP_T_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
               #endif
               break;
             case 0x03:
@@ -599,6 +691,10 @@ void USB_EP0_SETUP() {
               }
               #elif defined (CH32X035)
               if (( USBFSD->UEP3_CTRL_H & USBFS_UEP_R_TOG ) == USBFS_UEP_R_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #elif defined (CH32V30x)
+              if (( USBHSD->UEP3_RX_CTRL & USBHS_UEP_R_RES_MASK ) == USBHS_UEP_R_RES_STALL) {
                 Ep0Buffer[0] = 0x01;
               }
               #endif
@@ -616,6 +712,10 @@ void USB_EP0_SETUP() {
               if (( USBFSD->UEP2_CTRL_H & USBFS_UEP_T_TOG ) == USBFS_UEP_T_RES_STALL) {
                 Ep0Buffer[0] = 0x01;
               }
+              #elif defined (CH32V30x)
+              if (( USBHSD->UEP2_TX_CTRL & USBHS_UEP_T_RES_MASK ) == USBHS_UEP_T_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
               #endif
               break;
             case 0x02:
@@ -629,6 +729,10 @@ void USB_EP0_SETUP() {
               }
               #elif defined (CH32X035)
               if (( USBFSD->UEP2_CTRL_H & USBFS_UEP_R_TOG ) == USBFS_UEP_R_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #elif defined (CH32V30x)
+              if (( USBHSD->UEP2_RX_CTRL & USBHS_UEP_R_RES_MASK ) == USBHS_UEP_R_RES_STALL) {
                 Ep0Buffer[0] = 0x01;
               }
               #endif
@@ -646,6 +750,10 @@ void USB_EP0_SETUP() {
               if (( USBFSD->UEP1_CTRL_H & USBFS_UEP_T_TOG ) == USBFS_UEP_T_RES_STALL) {
                 Ep0Buffer[0] = 0x01;
               }
+              #elif defined (CH32V30x)
+              if (( USBHSD->UEP1_TX_CTRL & USBHS_UEP_T_RES_MASK ) == USBHS_UEP_T_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
               #endif
               break;
             case 0x01:
@@ -659,6 +767,10 @@ void USB_EP0_SETUP() {
               }
               #elif defined (CH32X035)
               if (( USBFSD->UEP1_CTRL_H & USBFS_UEP_R_TOG ) == USBFS_UEP_R_RES_STALL) {
+                Ep0Buffer[0] = 0x01;
+              }
+              #elif defined (CH32V30x)
+              if (( USBHSD->UEP1_RX_CTRL & USBHS_UEP_R_RES_MASK ) == USBHS_UEP_R_RES_STALL) {
                 Ep0Buffer[0] = 0x01;
               }
               #endif
@@ -691,6 +803,9 @@ void USB_EP0_SETUP() {
     R8_U2EP0_RX_CTRL = USBHS_UEP_R_TOG_DATA1 | USBHS_UEP_R_RES_STALL;
     #elif defined (CH32X035)
     USBFSD->UEP0_CTRL_H = USBFS_UEP_R_TOG | USBFS_UEP_T_TOG | USBFS_UEP_R_RES_STALL | USBFS_UEP_T_RES_STALL; // STALL
+    #elif defined (CH32V30x)
+    USBHSD->UEP0_TX_CTRL = USBHS_UEP_T_TOG_DATA1 | USBHS_UEP_T_RES_STALL;
+    USBHSD->UEP0_RX_CTRL = USBHS_UEP_R_TOG_DATA1 | USBHS_UEP_R_RES_STALL;
     #endif
   } else if (len <= DEFAULT_ENDP0_SIZE) // Tx data to host or send 0-length packet
   {
@@ -706,6 +821,10 @@ void USB_EP0_SETUP() {
     USBFSD->UEP0_TX_LEN = len;
     USBFSD->UEP0_CTRL_H = USBFS_UEP_R_TOG | USBFS_UEP_T_TOG | USBFS_UEP_R_RES_ACK |
                 USBFS_UEP_T_RES_ACK; // Expect DATA1, Answer ACK
+    #elif defined (CH32V30x)
+    USBHSD->UEP0_TX_LEN = len;
+    USBHSD->UEP0_TX_CTRL = USBHS_UEP_T_TOG_DATA1 | USBHS_UEP_T_RES_ACK;
+    USBHSD->UEP0_RX_CTRL = USBHS_UEP_R_TOG_DATA1 | USBHS_UEP_R_RES_ACK;
     #endif
   } else {  //More data needs to be sent, wait for next transaction
     #if defined (CH573) || defined (CH572)
@@ -720,6 +839,10 @@ void USB_EP0_SETUP() {
     USBFSD->UEP0_TX_LEN = 0; // Tx data to host or send 0-length packet
     USBFSD->UEP0_CTRL_H = USBFS_UEP_R_TOG | USBFS_UEP_T_TOG | USBFS_UEP_R_RES_ACK |
                 USBFS_UEP_T_RES_ACK; // Expect DATA1, Answer ACK
+    #elif defined (CH32V30x)
+    USBHSD->UEP0_TX_LEN = 0;
+    USBHSD->UEP0_TX_CTRL = USBHS_UEP_T_TOG_DATA1 | USBHS_UEP_T_RES_ACK;
+    USBHSD->UEP0_RX_CTRL = USBHS_UEP_R_TOG_DATA1 | USBHS_UEP_R_RES_ACK;
     #endif
   }
 }
@@ -750,6 +873,10 @@ void USB_EP0_IN(){
             #elif defined (CH32X035)
             USBFSD->UEP0_TX_LEN = len;
             USBFSD->UEP0_CTRL_H ^= USBFS_UEP_T_TOG;                    //Switch between DATA0 and DATA1
+            #elif defined (CH32V30x)
+            USBHSD->UEP0_TX_LEN = len;
+            USBHSD->UEP0_TX_CTRL ^= USBHS_UEP_T_TOG_DATA1;                    //Switch between DATA0 and DATA1
+            USBHSD->UEP0_TX_CTRL = ( USBHSD->UEP0_TX_CTRL & ~USBHS_UEP_T_RES_MASK) | USBHS_UEP_T_RES_ACK;
             #endif
         }
             break;
@@ -764,6 +891,10 @@ void USB_EP0_IN(){
             #elif defined (CH32X035)
             USBFSD->DEV_ADDR = USBFSD->DEV_ADDR & USBFS_UDA_GP_BIT | SetupLen;
             USBFSD->UEP0_CTRL_H = USBFS_UEP_R_RES_ACK | USBFS_UEP_T_RES_NAK;
+            #elif defined (CH32V30x)
+            USBHSD->DEV_AD = SetupLen;
+            USBHSD->UEP0_TX_CTRL = USBHS_UEP_T_RES_NAK;
+            USBHSD->UEP0_RX_CTRL = USBHS_UEP_R_RES_ACK;
             #endif
             break;
         case SET_LINE_CODING: // for some reason CH585 will read this
@@ -781,6 +912,10 @@ void USB_EP0_IN(){
             #elif defined (CH32X035)
             USBFSD->UEP0_TX_LEN = len;
             USBFSD->UEP0_CTRL_H ^= USBFS_UEP_T_TOG;                    //Switch between DATA0 and DATA1
+            #elif defined (CH32V30x)
+            USBHSD->UEP0_TX_LEN = len;
+            USBHSD->UEP0_TX_CTRL ^= USBHS_UEP_T_TOG_DATA1;                    //Switch between DATA0 and DATA1
+            USBHSD->UEP0_TX_CTRL = ( USBHSD->UEP0_TX_CTRL & ~USBHS_UEP_T_RES_MASK) | USBHS_UEP_T_RES_ACK;
             #endif
             break;
         default:
@@ -794,6 +929,10 @@ void USB_EP0_IN(){
             #elif defined (CH32X035)
             USBFSD->UEP0_TX_LEN = 0;                                                      // End of transaction
             USBFSD->UEP0_CTRL_H = USBFS_UEP_R_RES_ACK | USBFS_UEP_T_RES_NAK;
+            #elif defined (CH32V30x)
+            USBHSD->UEP0_TX_LEN = 0;
+            USBHSD->UEP0_TX_CTRL = USBHS_UEP_T_RES_NAK;
+            USBHSD->UEP0_RX_CTRL = USBHS_UEP_R_RES_ACK;
             #endif
             break;
     }
@@ -812,6 +951,8 @@ void USB_EP0_OUT(){
         {
       #elif defined (CH32X035)
         if( USBFSD->INT_ST & USBFS_UIS_TOG_OK ){
+      #elif defined (CH32V30x)
+        if( USBHSD->INT_ST & USBHS_UIS_TOG_OK ){
       #endif
           setLineCodingHandler();
           #if defined (CH573) || defined (CH572)
@@ -824,6 +965,10 @@ void USB_EP0_OUT(){
           #elif defined (CH32X035)
           USBFSD->UEP0_TX_LEN = 0;
           USBFSD->UEP0_CTRL_H |= USBFS_UEP_R_RES_ACK | USBFS_UEP_T_RES_ACK;  // send 0-length packet
+          #elif defined (CH32V30x)
+          USBHSD->UEP0_TX_LEN = 0;
+          USBHSD->UEP0_TX_CTRL = USBHS_UEP_T_RES_ACK;
+          USBHSD->UEP0_RX_CTRL = USBHS_UEP_R_RES_ACK;
           #endif
         }
     }
@@ -839,6 +984,10 @@ void USB_EP0_OUT(){
       #elif defined (CH32X035)
         USBFSD->UEP0_TX_LEN = 0;
         USBFSD->UEP0_CTRL_H |= USBFS_UEP_R_RES_ACK | USBFS_UEP_T_RES_NAK;  //Respond Nak
+      #elif defined (CH32V30x)
+        USBHSD->UEP0_TX_LEN = 0;
+        USBHSD->UEP0_TX_CTRL = USBHS_UEP_T_RES_NAK;
+        USBHSD->UEP0_RX_CTRL = USBHS_UEP_R_RES_ACK;
       #endif
     }
     #if defined (CH585)
@@ -857,6 +1006,9 @@ void USB_EP1_IN() {
 #elif defined (CH32X035)
     USBFSD->UEP1_TX_LEN = 0;
     USBFSD->UEP1_CTRL_H = USBFSD->UEP1_CTRL_H & ~USBFS_UEP_T_RES_MASK | USBFS_UEP_T_RES_NAK; // Default NAK
+#elif defined (CH32V30x)
+    USBHSD->UEP1_TX_LEN = 0;
+    USBHSD->UEP1_TX_CTRL = USBHSD->UEP1_TX_CTRL & ~USBHS_UEP_T_RES_MASK | USBHS_UEP_T_RES_NAK; // Default NAK
 #endif
 }
 
@@ -868,6 +1020,8 @@ void USB_IRQHandler(void) {
 void USB2_DEVICE_IRQHandler(void) {
 #elif defined (CH32X035)
 void USBFS_IRQHandler(void) {
+#elif defined (CH32V30x)
+void USBHS_IRQHandler(void) {
 #endif
 
 #if defined (CH573) || defined (CH572)
@@ -876,6 +1030,8 @@ void USBFS_IRQHandler(void) {
   if (R8_USB2_INT_FG & USBHS_UDIF_TRANSFER) {
 #elif defined (CH32X035)
   if (USBFSD->INT_FG & USBFS_UIF_TRANSFER) {
+#elif defined (CH32V30x)
+  if (USBHSD->INT_FG & USBHS_UIF_TRANSFER) {
 #endif
     // there is difference in CH573 from CH552, there is RB_UIS_SETUP_ACT on bit7 of R8_USB_INT_ST
     // and it does not affect RB_UIS_TOG_OK, MASK_UIS_TOKEN , MASK_UIS_ENDP and R8_USB_RX_LEN
@@ -886,8 +1042,13 @@ void USBFS_IRQHandler(void) {
     if ( ((R8_USB2_INT_ST & (USBHS_UDIS_EP_ID_MASK | USBHS_UDIS_EP_DIR)) == 0) && (R8_U2EP0_RX_CTRL & USBHS_UEP_R_SETUP_IS) ) {
 #elif defined (CH32X035)
     if (USBFSD->INT_ST & USBFS_SETUP_ACT) {
+#elif defined (CH32V30x)
+    if (USBHSD->INT_FG & USBHS_UIF_SETUP_ACT) {
 #endif
         EP0_SETUP_Callback();
+#if defined (CH32V30x)
+        USBHSD->INT_FG = USBHS_UIF_SETUP_ACT;  // Clear interrupt flag, as only CH32V30x has setup bit in interrupt flag register
+#endif
     }else{
 #if defined (CH573) || defined (CH572)
         uint8_t callIndex = R8_USB_INT_ST & MASK_UIS_ENDP;
@@ -898,6 +1059,9 @@ void USBFS_IRQHandler(void) {
 #elif defined (CH32X035)
         uint8_t callIndex = USBFSD->INT_ST & USBFS_UIS_ENDP_MASK;
         switch (USBFSD->INT_ST & USBFS_UIS_TOKEN_MASK) {
+#elif defined (CH32V30x)
+        uint8_t callIndex = USBHSD->INT_ST & USBHS_UIS_ENDP_MASK;
+        switch (USBHSD->INT_ST & USBHS_UIS_TOKEN_MASK) {
 #endif
 
 #if defined (CH573) || defined (CH572)
@@ -906,6 +1070,8 @@ void USBFS_IRQHandler(void) {
           case 0: //RB_UDIS_EP_DIR is 0
 #elif defined (CH32X035)
           case USBFS_UIS_TOKEN_OUT:
+#elif defined (CH32V30x)
+          case USBHS_UIS_TOKEN_OUT:
 #endif
             {  // SDCC will take IRAM if array of function pointer is
                // used.
@@ -936,6 +1102,8 @@ void USBFS_IRQHandler(void) {
           case 0xFFFF: //USBHS_UDIF_RX_SOF seems not used in EVT example
 #elif defined (CH32X035)
           case USBFS_UIS_TOKEN_SOF:
+#elif defined (CH32V30x)
+          case USBHS_UIS_TOKEN_SOF:
 #endif
             {  // SDCC will take IRAM if array of function pointer is
                // used.
@@ -966,6 +1134,8 @@ void USBFS_IRQHandler(void) {
           case USBHS_UDIS_EP_DIR: // RB_UDIS_EP_DIR is 1
 #elif defined (CH32X035)
           case USBFS_UIS_TOKEN_IN:
+#elif defined (CH32V30x)
+          case USBHS_UIS_TOKEN_IN:
 #endif
             {  // SDCC will take IRAM if array of function pointer is
                // used.
@@ -998,6 +1168,8 @@ void USBFS_IRQHandler(void) {
     R8_USB2_INT_FG = USBHS_UDIF_TRANSFER;  // Clear interrupt flag
 #elif defined (CH32X035)
     USBFSD->INT_FG = USBFS_UIF_TRANSFER;  // Clear interrupt flag
+#elif defined (CH32V30x)
+    USBHSD->INT_FG = USBHS_UIF_TRANSFER;  // Clear interrupt flag
 #endif
   }
 
@@ -1014,6 +1186,8 @@ void USBFS_IRQHandler(void) {
     if (R8_USB2_INT_FG & USBHS_UDIF_BUS_RST){
 #elif defined (CH32X035)
     if (USBFSD->INT_FG & USBFS_UIF_BUS_RST){
+#elif defined (CH32V30x)
+    if (USBHSD->INT_FG & USBHS_UIF_BUS_RST){
 #endif
         // Manual flip, OUT transaction returns
         // ACK, IN transaction returns NAK
@@ -1025,6 +1199,9 @@ void USBFS_IRQHandler(void) {
           R8_U2EP0_RX_CTRL = USBHS_UEP_R_RES_ACK;
         #elif defined (CH32X035)
           USBFSD->UEP0_CTRL_H = USBFS_UEP_R_RES_ACK | USBFS_UEP_T_RES_NAK;
+        #elif defined (CH32V30x)
+          USBHSD->UEP0_TX_CTRL = USBHS_UEP_T_RES_NAK;
+          USBHSD->UEP0_RX_CTRL = USBHS_UEP_R_RES_ACK;
         #endif
         // Endpoint 1 automatically flips the sync flag,
         // IN transaction returns NAK
@@ -1034,6 +1211,8 @@ void USBFS_IRQHandler(void) {
           R8_U2EP1_TX_CTRL = USBHS_UEP_T_RES_NAK;
         #elif defined (CH32X035)
           USBFSD->UEP1_CTRL_H = USBFS_UEP_T_AUTO_TOG | USBFS_UEP_T_RES_NAK;
+        #elif defined (CH32V30x)
+          USBHSD->UEP1_TX_CTRL = USBHS_UEP_T_RES_NAK;
         #endif
         // Endpoint 2 automatically flips the sync flag, IN
         // transaction returns NAK, OUT transaction returns ACK
@@ -1044,6 +1223,9 @@ void USBFS_IRQHandler(void) {
           R8_U2EP2_RX_CTRL = USBHS_UEP_R_RES_ACK;
         #elif defined (CH32X035)
           USBFSD->UEP2_CTRL_H = USBFS_UEP_T_AUTO_TOG | USBFS_UEP_T_RES_NAK | USBFS_UEP_R_RES_ACK;
+        #elif defined (CH32V30x)
+          USBHSD->UEP2_TX_CTRL = USBHS_UEP_T_RES_NAK;
+          USBHSD->UEP2_RX_CTRL = USBHS_UEP_R_RES_ACK;
         #endif
 
         #if defined (CH573) || defined (CH572)
@@ -1055,6 +1237,9 @@ void USBFS_IRQHandler(void) {
         #elif defined (CH32X035)
         USBFSD->DEV_ADDR = 0x00;
         USBFSD->INT_FG = USBFS_UIF_SUSPEND|USBFS_UIF_TRANSFER|USBFS_UIF_BUS_RST; // Clear interrupt flag
+        #elif defined (CH32V30x)
+        USBHSD->DEV_AD = 0x00;
+        USBHSD->INT_FG = USBHS_UIF_BUS_RST; // Clear interrupt flag
         #endif
 
         UsbConfig = 0;
@@ -1069,6 +1254,8 @@ void USBFS_IRQHandler(void) {
     if (R8_USB2_INT_FG & USBHS_UDIF_SUSPEND) {
 #elif defined (CH32X035)
     if (USBFSD->INT_FG & USBFS_UIF_SUSPEND) {
+#elif defined (CH32V30x)
+    if (USBHSD->INT_FG & USBHS_UIF_SUSPEND) {
 #endif
 
 #if defined (CH573) || defined (CH572)
@@ -1077,6 +1264,8 @@ void USBFS_IRQHandler(void) {
         R8_USB2_INT_FG = USBHS_UDIF_SUSPEND; // Clear interrupt flag
 #elif defined (CH32X035)
         USBFSD->INT_FG = USBFS_UIF_SUSPEND; // Clear interrupt flag
+#elif defined (CH32V30x)
+        USBHSD->INT_FG = USBHS_UIF_SUSPEND; // Clear interrupt flag
 #endif
 
 #if defined (CH573) || defined (CH572)
@@ -1085,6 +1274,8 @@ void USBFS_IRQHandler(void) {
         if (R8_USB2_MIS_ST & USBHS_UDMS_SUSPEND) { // Suspend
 #elif defined (CH32X035)
         if (USBFSD->MIS_ST & USBFS_UMS_SUSPEND) { // Suspend
+#elif defined (CH32V30x)
+        if (USBHSD->MIS_ST & USBHS_UMS_SUSPEND) { // Suspend
 #endif
             //don't need to do anything
         }else{

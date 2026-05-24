@@ -15,7 +15,7 @@
 #define  GET_LINE_CODING                0X21            // This request allows the host to find out the currently configured line coding.
 #define  SET_CONTROL_LINE_STATE         0X22            // This request generates RS-232/V.24 style control signals.
 
-#if defined (CH585)
+#if defined (CH585) || defined (CH32V30x)
 #define USBHS_SPEED_TYPE_MASK         ((uint8_t)(0x03))
 #define USBHS_SPEED_LOW               ((uint8_t)(0x02))
 #define USBHS_SPEED_FULL              ((uint8_t)(0x00))
@@ -24,7 +24,7 @@
 
 extern const uint8_t DevDesc[];
 extern const uint8_t CfgDesc[];
-#if defined(CH585)
+#if defined(CH585) || defined(CH32V30x)
 extern const uint8_t CfgHsDesc[];
 extern const uint8_t QualDesc[];
 extern uint8_t CfgOtherDesc[];
@@ -39,7 +39,7 @@ extern const uint16_t Manuf_Des[];
 
 extern const uint16_t DevDescLen;
 extern const uint16_t CfgDescLen;
-#if defined(CH585)
+#if defined(CH585) || defined(CH32V30x)
 extern const uint16_t CfgHsDescLen;
 extern const uint16_t QualDescLen;
 #endif

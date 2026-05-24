@@ -18,6 +18,12 @@
 
 #elif defined (CH32X035)
 #include "ch32x035_usb_const.h"
+#elif defined (CH32V30x)
+#include "ch32v30x.h"
+#include "ch32v30x_usb.h"
+#define DEF_USBD_UEP0_SIZE           64     /* usb hs/fs device end-point 0 size */
+#define DEF_USBD_UEP1_SIZE           512     /* usb hs/fs device end-point 1 size */
+#define DEF_USBD_UEP2_SIZE           512     /* usb hs/fs device end-point 2 size */
 #endif
 #include "USBconstant.h"
 // clang-format on
