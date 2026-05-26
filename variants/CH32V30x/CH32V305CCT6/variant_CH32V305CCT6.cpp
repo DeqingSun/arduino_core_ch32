@@ -22,25 +22,43 @@ const PinName digitalPin[] = {
   PA_1,  //D1/A1
   PA_2,  //D2/A2
   PA_3,  //D3/A3
-  PA_4,  //D4/A4    SPI1_NSS
-  PA_5,  //D5/A5    SPI1_SCK
-
-  PA_10,  //D6      USART1_RX
-  PA_9,   //D7      USART1_TX
-  PA_8,   //D8   
-  PA_7,   //D9      SPI_MOSI    TIM8_CH1N  TIM3_CH2  
-  PA_6,   //D10     SPI1_MISO  
-  PB_5,   //D11                 TIM3_CH2_2 TIM10_CH3_1  
-  PB_8,   //D12                 TIM4_CH3 TIM10_CH1 TIM8_CH3_1
-  PB_9,   //D13                  
-  PB_1,   //D14                 TIM3_CH4 TIM8_CH3N TIM1_CH3N_1    TIM3_CH4_2 TIM9_CH2N_1 
-  PB_0,   //D15                 TIM3_CH3 TIM8_CH2N TIM1_CH2N_1    TIM3_CH3_2 TIM9_CH1N_1 
-  PB_12,  //D16    SPI2_NSS
-  PB_15,  //D17    SPI2_MOSI
-  PB_14,  //D18    SPI2_MISO 
-  PB_13,  //D19    SPI2_SCK 
-  PB_11,  //D20    I2C2_SDA
-  PB_10   //D21    I2C2_SCL
+  PA_4,  //D4/A4
+  PA_5,  //D5/A5
+  PA_6,  //D6/A6
+  PA_7,  //D7/A7
+  PB_0,  //D8/A8
+  PB_1,  //D9/A9
+  PC_0,  //D10/A10
+  PC_1,  //D11/A11
+  PC_2,  //D12/A12
+  PC_3,  //D13/A13
+  PC_4,  //D14/A14
+  PC_5,  //D15/A15
+  PA_8,  //D16
+  PA_9,  //D17
+  PA_10, //D18
+  PA_11, //D19
+  PA_12, //D20
+  PA_13, //D21
+  PA_14, //D22
+  PA_15, //D23
+  PB_2,  //D24
+  PB_3,  //D25
+  PB_4,  //D26
+  PB_5,  //D27
+  PB_6,  //D28
+  PB_7,  //D29
+  PB_8,  //D30
+  PB_9,  //D31
+  PB_10, //D32
+  PB_11, //D33
+  PB_12, //D34
+  PB_13, //D35
+  PB_14, //D36
+  PB_15, //D37
+  PC_6,  //D38
+  PD_0,  //D39
+  PD_1   //D40
 };
 
 // Analog (Ax) pin number array
@@ -50,7 +68,17 @@ const uint32_t analogInputPin[] = {
   2,  // A2,  PA2
   3,  // A3,  PA3
   4,  // A4,  PA4
-  5   // A5,  PA5
+  5,  // A5,  PA5
+  6,  // A6,  PA6
+  7,  // A7,  PA7
+  8,  // A8,  PB0
+  9,  // A9,  PB1
+  10, // A10, PC0
+  11, // A11, PC1
+  12, // A12, PC2
+  13, // A13, PC3
+  14, // A14, PC4
+  15  // A15, PC5
 };
 
 

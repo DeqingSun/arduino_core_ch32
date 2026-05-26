@@ -27,26 +27,43 @@
 #define PA3                     PIN_A3
 #define PA4                     PIN_A4
 #define PA5                     PIN_A5
+#define PA6                     PIN_A6
+#define PA7                     PIN_A7
+#define PB0                     PIN_A8
+#define PB1                     PIN_A9
+#define PC0                     PIN_A10
+#define PC1                     PIN_A11
+#define PC2                     PIN_A12
+#define PC3                     PIN_A13
+#define PC4                     PIN_A14
+#define PC5                     PIN_A15
+#define PA8                     16
+#define PA9                     17
+#define PA10                    18
+#define PA11                    19
+#define PA12                    20
+#define PA13                    21
+#define PA14                    22
+#define PA15                    23
+#define PB2                     24
+#define PB3                     25
+#define PB4                     26
+#define PB5                     27
+#define PB6                     28
+#define PB7                     29
+#define PB8                     30
+#define PB9                     31
+#define PB10                    32
+#define PB11                    33
+#define PB12                    34
+#define PB13                    35
+#define PB14                    36
+#define PB15                    37
+#define PC6                     38
+#define PD0                     39
+#define PD1                     40
 
-#define PA10                    6
-#define PA9                     7
-#define PA8                     8                     
-#define PA7                     9
-#define PA6                     10
-#define PB5                     11 
-#define PB8                     12
-#define PB9                     13
-#define PB1                     14
-#define PB0                     15
-#define PB12                    16
-#define PB15                    17       
-#define PB14                    18
-#define PB13                    19
-#define PB11                    20
-#define PB10                    21 
-
-
-// Alternate pins number
+// Alternate pins number, TODO: check how they works
 #define PA0_ALT1                (PA0  | ALT1) 
 #define PA1_ALT1                (PA1  | ALT1)
 #define PA2_ALT1                (PA2  | ALT1)
@@ -60,8 +77,8 @@
 
 
 
-#define NUM_DIGITAL_PINS        22
-#define NUM_ANALOG_INPUTS       6
+#define NUM_DIGITAL_PINS        41
+#define NUM_ANALOG_INPUTS       16
 // #define ADC_CTLR_ADCAL          
 #define ADC_RESOLUTION          12
 
