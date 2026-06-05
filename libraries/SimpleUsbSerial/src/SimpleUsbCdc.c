@@ -533,17 +533,15 @@ void USBSerial_flush(void) {
 }
   
 uint8_t USBSerial_write( char c) { // 3 bytes generic pointer
-  if (controlLineState > 0) {
-    while (true) {
-      if (USBSerial_wait_UpPoint2BusyFlag_clear() == 0)
-        return 0;
-      if (usbWritePointer < EP2_MAX_PACKET_SIZE) {
-        Ep2Buffer[EP2_MAX_PACKET_SIZE + usbWritePointer] = c;
-        usbWritePointer++;
-        return 1;
-      } else {
-        USBSerial_flush(); // go back to first while
-      }
+  while (true) {
+    if (USBSerial_wait_UpPoint2BusyFlag_clear() == 0)
+      return 0;
+    if (usbWritePointer < EP2_MAX_PACKET_SIZE) {
+      Ep2Buffer[EP2_MAX_PACKET_SIZE + usbWritePointer] = c;
+      usbWritePointer++;
+      return 1;
+    } else {
+      USBSerial_flush(); // go back to first while
     }
   }
   return 0;
