@@ -968,7 +968,7 @@ void USB_EP0_OUT(){
           USBFSD->UEP0_CTRL_H |= USBFS_UEP_R_RES_ACK | USBFS_UEP_T_RES_ACK;  // send 0-length packet
           #elif defined (CH32V30x)
           USBHSD->UEP0_TX_LEN = 0;
-          USBHSD->UEP0_TX_CTRL = USBHS_UEP_T_RES_ACK;
+          USBHSD->UEP0_TX_CTRL = USBHS_UEP_T_TOG_DATA1 | USBHS_UEP_T_RES_ACK;
           USBHSD->UEP0_RX_CTRL = USBHS_UEP_R_RES_ACK;
           #endif
         }
