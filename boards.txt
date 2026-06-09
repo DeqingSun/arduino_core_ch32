@@ -898,8 +898,8 @@ CH32V30x_EVT.menu.pnum.CH32V307VCT6.build.ch_extra_lib=-lprintfloat
 #CH32V305CCT6 EVT Board
 CH32V30x_EVT.menu.pnum.CH32V305CCT6=CH32V305CCT6 EVT
 CH32V30x_EVT.menu.pnum.CH32V305CCT6.node=NODE_V305CCT6
-CH32V30x_EVT.menu.pnum.CH32V305CCT6.upload.maximum_size=196608
-CH32V30x_EVT.menu.pnum.CH32V305CCT6.upload.maximum_data_size=131072
+CH32V30x_EVT.menu.pnum.CH32V305CCT6.upload.maximum_size=131072
+CH32V30x_EVT.menu.pnum.CH32V305CCT6.upload.maximum_data_size=196608
 CH32V30x_EVT.menu.pnum.CH32V305CCT6.build.mcu=QingKe-V4F
 CH32V30x_EVT.menu.pnum.CH32V305CCT6.build.board=CH32V305CCT6
 CH32V30x_EVT.menu.pnum.CH32V305CCT6.build.series=CH32V30x
@@ -910,7 +910,7 @@ CH32V30x_EVT.menu.pnum.CH32V305CCT6.build.mabi=ilp32f
 CH32V30x_EVT.menu.pnum.CH32V305CCT6.build.math_lib_gcc=-lm
 CH32V30x_EVT.menu.pnum.CH32V305CCT6.build.IQ_math_RV32=
 CH32V30x_EVT.menu.pnum.CH32V305CCT6.build.ch_extra_lib=-lprintfloat
-CH32V30x_EVT.menu.pnum.CH32V305CCT6.build.ldscript=Link_128k_ram.ld
+CH32V30x_EVT.menu.pnum.CH32V305CCT6.build.ldscript=Link_192k_ram.ld
 
 # USB support
 CH32V30x_EVT.menu.usb.none=None
