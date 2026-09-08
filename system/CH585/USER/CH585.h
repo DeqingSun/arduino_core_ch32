@@ -99,30 +99,6 @@ __attribute__( ( always_inline ) ) RV_STATIC_INLINE void NVIC_SetPriority(IRQn_T
   PFIC_SetPriority(IRQn, priority);
 }
 
-// #define ADC_Channel_0                     (CH_EXTIN_0)
-// #define ADC_Channel_1                     (CH_EXTIN_1)
-// #define ADC_Channel_2                     (CH_EXTIN_2)
-// #define ADC_Channel_3                     (CH_EXTIN_3)
-// #define ADC_Channel_4                     (CH_EXTIN_4)
-// #define ADC_Channel_5                     (CH_EXTIN_5)   
-// #define ADC_Channel_6                     (0)   
-// #define ADC_Channel_7                     (0)   
-
-
-// void TIM_DeInit(TIM_TypeDef *TIMx);
-// void TIM_CCxCmd(TIM_TypeDef *TIMx, uint16_t TIM_Channel, uint16_t TIM_CCx);
-
-
-// //does not exist in CH573, modify later
-// #define TIM_MOE 0
-
-
-// //may not exist in CH573, modify later
-// /* TIM_Capture_Compare_state */
-// #define TIM_CCx_Enable                     ((uint16_t)0x0001)
-// #define TIM_CCx_Disable                    ((uint16_t)0x0000)
-
-
 //todo: need more check
 /* EXTI_Lines */
 #define EXTI_Line0     ((uint32_t)0x00001) /* External interrupt line 0 */
@@ -206,6 +182,86 @@ void     GPIO_ResetBits(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin);
 // void     GPIO_Write(GPIO_TypeDef *GPIOx, uint16_t PortVal);
 
 
+/* Arduino-compatible ADC register view (BLE AUX ADC @ 0x40001058) */
+typedef struct
+{
+    __IO uint8_t ADC_CHANNEL;
+    __IO uint8_t ADC_CFG;
+    __IO uint8_t ADC_CONVERT;
+    __IO uint8_t TEM_SENSOR;
+    __IO uint16_t ADC_DATA;
+    __IO uint8_t ADC_INT_FLAG;
+    __IO uint32_t ADC_DMA_CTRL;
+    __IO uint8_t ADC_CTRL_DMA;
+    __IO uint8_t ADC_DMA_IF;
+    __IO uint8_t ADC_AUTO_CYCLE;
+    __IO uint16_t ADC_DMA_NOW;
+    __IO uint16_t ADC_DMA_BEG;
+    __IO uint16_t ADC_DMA_END;
+} ADC_TypeDef;
+
+#define ADC1 ((ADC_TypeDef *)0x40001058)
+
+#define ADC_Channel_0                               ((uint8_t)0x00)
+#define ADC_Channel_1                               ((uint8_t)0x01)
+#define ADC_Channel_2                               ((uint8_t)0x02)
+#define ADC_Channel_3                               ((uint8_t)0x03)
+#define ADC_Channel_4                               ((uint8_t)0x04)
+#define ADC_Channel_5                               ((uint8_t)0x05)
+#define ADC_Channel_6                               ((uint8_t)0x06)
+#define ADC_Channel_7                               ((uint8_t)0x07)
+#define ADC_Channel_8                               ((uint8_t)0x08)
+#define ADC_Channel_9                               ((uint8_t)0x09)
+#define ADC_Channel_10                              ((uint8_t)0x0A)
+#define ADC_Channel_11                              ((uint8_t)0x0B)
+#define ADC_Channel_12                              ((uint8_t)0x0C)
+#define ADC_Channel_13                              ((uint8_t)0x0D)
+#define ADC_Channel_14                              ((uint8_t)0x0E)
+#define ADC_Channel_15                              ((uint8_t)0x0F)
+
+#define ADC_Channel_TempSensor                      ((uint8_t)ADC_Channel_15)
+#define ADC_Channel_Vbat                            ((uint8_t)ADC_Channel_14)
+#define ADC_Channel_VBAT                            ((uint8_t)ADC_Channel_14)
+#define ADC_CHANNEL_TEMPSENSOR                      ADC_Channel_TempSensor
+#define ADC_CHANNEL_VBAT                            ADC_Channel_Vbat
+
+/* ADC Init structure definition */
+typedef struct
+{
+    uint32_t ADC_Mode;
+    FunctionalState ADC_ScanConvMode;
+    FunctionalState ADC_ContinuousConvMode;
+    uint32_t ADC_ExternalTrigConv;
+    uint32_t ADC_DataAlign;
+    uint8_t ADC_NbrOfChannel;
+    uint32_t ADC_OutputBuffer;
+    uint32_t ADC_Pga;
+} ADC_InitTypeDef;
+
+/* CH585 BLE ADC has no classic sample-time field used by Arduino path */
+#define ADC_SAMPLINGTIME 0
+#define ADC_SAMPLINGTIME_INTERNAL 0
+
+#define ADC_Mode_Independent                           ((uint32_t)0x00000000)
+#define ADC_ExternalTrigConv_None                      ((uint32_t)0x000E0000)
+
+#define ADC_FLAG_EOC                                   RB_ADC_IF_EOC
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void ADC_Cmd(ADC_TypeDef *ADCx, FunctionalState NewState);
+void ADC_DeInit(ADC_TypeDef *ADCx);
+void ADC_Init(ADC_TypeDef *ADCx, ADC_InitTypeDef *ADC_InitStruct);
+void ADC_RegularChannelConfig(ADC_TypeDef *ADCx, uint8_t ADC_Channel, uint8_t Rank, uint8_t ADC_SampleTime);
+void ADC_SoftwareStartConvCmd(ADC_TypeDef *ADCx, FunctionalState NewState);
+FlagStatus ADC_GetFlagStatus(ADC_TypeDef *ADCx, uint8_t ADC_FLAG);
+uint16_t ADC_ConvertPAGValueCH585(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif  // __CH585_H__

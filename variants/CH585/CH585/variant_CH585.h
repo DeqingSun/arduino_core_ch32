@@ -13,7 +13,7 @@
 #pragma once
 
 /* ENABLE Peripherals */
-// #define                         ADC_MODULE_ENABLED
+#define                         ADC_MODULE_ENABLED
 // #define                         UART_MODULE_ENABLED
 // #define                         SPI_MODULE_ENABLED  
 // #define                         I2C_MODULE_ENABLED
@@ -73,7 +73,8 @@
 
 
 #define NUM_DIGITAL_PINS        40
-#define NUM_ANALOG_INPUTS       15
+#define NUM_ANALOG_INPUTS       14
+#define ADC_RESOLUTION          12
 
 
 // On-board LED pin number
