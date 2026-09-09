@@ -217,24 +217,54 @@ void APPJumpBoot(void)   //this section of code must run in RAM
 }
 #elif defined (CH585)
 
+// HS detach must be visible on the wire before the FS bootloader attaches.
+// A-to-C / USB-A watches D+/D- and accepts a ~100us drop; a Mac USB-C C-C
+// port is already in HS and will not re-enumerate from that.
+static void usbhs_force_host_disconnect(void)
+{
+  const uint32_t usb2_dp_dm = bU2DM | bU2DP;
+
+  R8_USB2_INT_EN = 0x00;
+  PFIC_DisableIRQ(USB2_DEVICE_IRQn);
+
+  // Drop LPM and device enable, keep PHY awake so HS 45ohm terms actually
+  // release (RB_UD_DEV_EN / RB_UD_PHY_SUSPENDM).
+  R8_USB2_CTRL = USBHS_UD_PHY_SUSPENDM;
+  for (volatile uint32_t i = 0; i < 20000; ++i) {
+    __nop();
+  }
+
+  // Reset the HS link state machine, then stop advertising HS.
+  R8_USB2_CTRL = USBHS_UD_RST_LINK | USBHS_UD_PHY_SUSPENDM;
+  R8_USB2_BASE_MODE = USBHS_UD_SPEED_FULL;
+
+  // Disconnect USBHS analog from PB12/PB13 and float the pins.
+  R16_PIN_CONFIG &= (uint16_t)~RB_PIN_USB2_EN;
+  R32_PB_DIR &= ~usb2_dp_dm;
+  R32_PB_PU &= ~usb2_dp_dm;
+  R32_PB_PD_DRV &= ~usb2_dp_dm;
+
+  R8_USB2_DEV_AD = 0x00;
+  R16_U2EP_TX_EN = 0;
+  R16_U2EP_RX_EN = 0;
+
+  // Analog HS disconnect is ~2.5us; Mac C-C debounce is tens of ms.
+  for (volatile uint32_t i = 0; i < 1000000; ++i) {
+    __nop();
+  }
+
+  // Hold SIE/LINK in reset, PHY suspended, PLL off (POR CTRL is 0x07).
+  R8_USBHS_PLL_CTRL = 0x00;
+  R8_USB2_CTRL = USBHS_UD_RST_SIE | USBHS_UD_CLR_ALL | USBHS_UD_RST_LINK;
+}
+
 // This function can not be in RAM, as we are copying bootloader code to RAM.
 __attribute__((noinline, used)) static void jump_isprom_strip()
 {
-
-  R8_USB2_CTRL = USBHS_UD_RST_SIE | USBHS_UD_CLR_ALL;            
-  for (volatile uint32_t i = 0; i < 1000; ++i) {
-    __nop();
-  }
-  R8_USB2_INT_EN = 0x00;
-  R8_USB2_CTRL   = 0x00;
-  PFIC_DisableIRQ(USB2_DEVICE_IRQn);
+  usbhs_force_host_disconnect();
 
   PFIC_DisableIRQ(SysTick_IRQn);
   SysTick->CTLR = 0;
-
-  for (volatile uint32_t i = 0; i < 10000; ++i) {
-    __nop();
-  }
 
   volatile uint32_t *dst = (volatile uint32_t *)0x20000000;
   const uint32_t *src = (const uint32_t *)(0x00078000 + 0x88);
