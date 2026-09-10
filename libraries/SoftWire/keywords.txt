@@ -1,0 +1,12 @@
+SoftWire	KEYWORD1
+WireSW	KEYWORD2
+begin	KEYWORD2
+beginTransmission	KEYWORD2
+endTransmission	KEYWORD2
+requestFrom	KEYWORD2
+setClock	KEYWORD2
+read	KEYWORD2
+available	KEYWORD2
+peek	KEYWORD2
+flush	KEYWORD2
+write	KEYWORD2
