@@ -179,6 +179,14 @@ tools.wchisp.upload.params.verbose=
 tools.wchisp.upload.params.quiet=
 tools.wchisp.upload.pattern="{path}{cmd}" {upload.verbose} --retry 2 flash "{build.path}/{build.project_name}.elf"
 
+## wlink (WCH-Link)
+tools.wlink.path={runtime.tools.wlink.path}/
+tools.wlink.cmd=wlink
+tools.wlink.cmd.windows=wlink.exe
+tools.wlink.upload.params.verbose=
+tools.wlink.upload.params.quiet=
+tools.wlink.upload.pattern="{path}{cmd}" {upload.verbose} flash -e "{build.path}/{build.project_name}.elf"
+
 
 # Debugger configuration (general options)
 # ----------------------------------------

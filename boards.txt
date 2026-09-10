@@ -46,10 +46,32 @@ CH573_EVT.menu.upload_method.swdMethod=WCH-SWD
 CH573_EVT.menu.upload_method.swdMethod.upload.protocol=
 CH573_EVT.menu.upload_method.swdMethod.upload.options=
 CH573_EVT.menu.upload_method.swdMethod.upload.tool=WCH_linkE
+CH573_EVT.menu.upload_method.swdMethod.upload.use_1200bps_touch=false
 CH573_EVT.menu.upload_method.ispMethod=WCH-ISP
 CH573_EVT.menu.upload_method.ispMethod.upload.protocol=
 CH573_EVT.menu.upload_method.ispMethod.upload.options=
 CH573_EVT.menu.upload_method.ispMethod.upload.tool=wchisp
+CH573_EVT.menu.upload_method.ispMethod.upload.use_1200bps_touch=true
+CH573_EVT.menu.upload_method.wlinkMethod=WCH-Link (wlink)
+CH573_EVT.menu.upload_method.wlinkMethod.upload.protocol=
+CH573_EVT.menu.upload_method.wlinkMethod.upload.options=
+CH573_EVT.menu.upload_method.wlinkMethod.upload.tool=wlink
+CH573_EVT.menu.upload_method.wlinkMethod.upload.use_1200bps_touch=false
+CH573_EVT.menu.pnum.CH573.menu.upload_method.swdMethod=WCH-SWD
+CH573_EVT.menu.pnum.CH573.menu.upload_method.swdMethod.upload.protocol=
+CH573_EVT.menu.pnum.CH573.menu.upload_method.swdMethod.upload.options=
+CH573_EVT.menu.pnum.CH573.menu.upload_method.swdMethod.upload.tool=WCH_linkE
+CH573_EVT.menu.pnum.CH573.menu.upload_method.swdMethod.upload.use_1200bps_touch=false
+CH573_EVT.menu.pnum.CH573.menu.upload_method.ispMethod=WCH-ISP
+CH573_EVT.menu.pnum.CH573.menu.upload_method.ispMethod.upload.protocol=
+CH573_EVT.menu.pnum.CH573.menu.upload_method.ispMethod.upload.options=
+CH573_EVT.menu.pnum.CH573.menu.upload_method.ispMethod.upload.tool=wchisp
+CH573_EVT.menu.pnum.CH573.menu.upload_method.ispMethod.upload.use_1200bps_touch=true
+CH573_EVT.menu.pnum.CH573.menu.upload_method.wlinkMethod=WCH-Link (wlink)
+CH573_EVT.menu.pnum.CH573.menu.upload_method.wlinkMethod.upload.protocol=
+CH573_EVT.menu.pnum.CH573.menu.upload_method.wlinkMethod.upload.options=
+CH573_EVT.menu.pnum.CH573.menu.upload_method.wlinkMethod.upload.tool=wlink
+CH573_EVT.menu.pnum.CH573.menu.upload_method.wlinkMethod.upload.use_1200bps_touch=false
 
 # Optimizations
 CH573_EVT.menu.opt.osstd=Smallest (-Os default)
@@ -126,6 +148,22 @@ CH572_EVT.menu.upload_method.ispMethod=WCH-ISP
 CH572_EVT.menu.upload_method.ispMethod.upload.protocol=
 CH572_EVT.menu.upload_method.ispMethod.upload.options=
 CH572_EVT.menu.upload_method.ispMethod.upload.tool=wchisp
+CH572_EVT.menu.upload_method.wlinkMethod=WCH-Link (wlink)
+CH572_EVT.menu.upload_method.wlinkMethod.upload.protocol=
+CH572_EVT.menu.upload_method.wlinkMethod.upload.options=
+CH572_EVT.menu.upload_method.wlinkMethod.upload.tool=wlink
+CH572_EVT.menu.pnum.CH572.menu.upload_method.swdMethod=WCH-SWD
+CH572_EVT.menu.pnum.CH572.menu.upload_method.swdMethod.upload.protocol=
+CH572_EVT.menu.pnum.CH572.menu.upload_method.swdMethod.upload.options=
+CH572_EVT.menu.pnum.CH572.menu.upload_method.swdMethod.upload.tool=WCH_linkE
+CH572_EVT.menu.pnum.CH572.menu.upload_method.ispMethod=WCH-ISP
+CH572_EVT.menu.pnum.CH572.menu.upload_method.ispMethod.upload.protocol=
+CH572_EVT.menu.pnum.CH572.menu.upload_method.ispMethod.upload.options=
+CH572_EVT.menu.pnum.CH572.menu.upload_method.ispMethod.upload.tool=wchisp
+CH572_EVT.menu.pnum.CH572.menu.upload_method.wlinkMethod=WCH-Link (wlink)
+CH572_EVT.menu.pnum.CH572.menu.upload_method.wlinkMethod.upload.protocol=
+CH572_EVT.menu.pnum.CH572.menu.upload_method.wlinkMethod.upload.options=
+CH572_EVT.menu.pnum.CH572.menu.upload_method.wlinkMethod.upload.tool=wlink
 
 # Optimizations
 CH572_EVT.menu.opt.osstd=Smallest (-Os default)
@@ -202,6 +240,22 @@ CH585_EVT.menu.upload_method.ispMethod=WCH-ISP
 CH585_EVT.menu.upload_method.ispMethod.upload.protocol=
 CH585_EVT.menu.upload_method.ispMethod.upload.options=
 CH585_EVT.menu.upload_method.ispMethod.upload.tool=wchisp
+CH585_EVT.menu.upload_method.wlinkMethod=WCH-Link (wlink)
+CH585_EVT.menu.upload_method.wlinkMethod.upload.protocol=
+CH585_EVT.menu.upload_method.wlinkMethod.upload.options=
+CH585_EVT.menu.upload_method.wlinkMethod.upload.tool=wlink
+CH585_EVT.menu.pnum.CH585.menu.upload_method.swdMethod=WCH-SWD
+CH585_EVT.menu.pnum.CH585.menu.upload_method.swdMethod.upload.protocol=
+CH585_EVT.menu.pnum.CH585.menu.upload_method.swdMethod.upload.options=
+CH585_EVT.menu.pnum.CH585.menu.upload_method.swdMethod.upload.tool=WCH_linkE
+CH585_EVT.menu.pnum.CH585.menu.upload_method.ispMethod=WCH-ISP
+CH585_EVT.menu.pnum.CH585.menu.upload_method.ispMethod.upload.protocol=
+CH585_EVT.menu.pnum.CH585.menu.upload_method.ispMethod.upload.options=
+CH585_EVT.menu.pnum.CH585.menu.upload_method.ispMethod.upload.tool=wchisp
+CH585_EVT.menu.pnum.CH585.menu.upload_method.wlinkMethod=WCH-Link (wlink)
+CH585_EVT.menu.pnum.CH585.menu.upload_method.wlinkMethod.upload.protocol=
+CH585_EVT.menu.pnum.CH585.menu.upload_method.wlinkMethod.upload.options=
+CH585_EVT.menu.pnum.CH585.menu.upload_method.wlinkMethod.upload.tool=wlink
 
 # Optimizations
 CH585_EVT.menu.opt.osstd=Smallest (-Os default)
@@ -278,6 +332,10 @@ CH32V00x_EVT.menu.upload_method.ispMethod=WCH-ISP
 CH32V00x_EVT.menu.upload_method.ispMethod.upload.protocol=
 CH32V00x_EVT.menu.upload_method.ispMethod.upload.options=
 CH32V00x_EVT.menu.upload_method.ispMethod.upload.tool=wchisp
+CH32V00x_EVT.menu.upload_method.wlinkMethod=WCH-Link (wlink)
+CH32V00x_EVT.menu.upload_method.wlinkMethod.upload.protocol=
+CH32V00x_EVT.menu.upload_method.wlinkMethod.upload.options=
+CH32V00x_EVT.menu.upload_method.wlinkMethod.upload.tool=wlink
 
 
 # Clock Select
@@ -382,6 +440,10 @@ CH32VM00X_EVT.menu.upload_method.ispMethod=WCH-ISP
 CH32VM00X_EVT.menu.upload_method.ispMethod.upload.protocol=
 CH32VM00X_EVT.menu.upload_method.ispMethod.upload.options=
 CH32VM00X_EVT.menu.upload_method.ispMethod.upload.tool=wchisp
+CH32VM00X_EVT.menu.upload_method.wlinkMethod=WCH-Link (wlink)
+CH32VM00X_EVT.menu.upload_method.wlinkMethod.upload.protocol=
+CH32VM00X_EVT.menu.upload_method.wlinkMethod.upload.options=
+CH32VM00X_EVT.menu.upload_method.wlinkMethod.upload.tool=wlink
 
 
 # Clock Select
@@ -486,6 +548,10 @@ CH32X035_EVT.menu.upload_method.ispMethod=WCH-ISP
 CH32X035_EVT.menu.upload_method.ispMethod.upload.protocol=
 CH32X035_EVT.menu.upload_method.ispMethod.upload.options=
 CH32X035_EVT.menu.upload_method.ispMethod.upload.tool=wchisp
+CH32X035_EVT.menu.upload_method.wlinkMethod=WCH-Link (wlink)
+CH32X035_EVT.menu.upload_method.wlinkMethod.upload.protocol=
+CH32X035_EVT.menu.upload_method.wlinkMethod.upload.options=
+CH32X035_EVT.menu.upload_method.wlinkMethod.upload.tool=wlink
 
 
 # Clock Select
@@ -589,6 +655,10 @@ CH32V10x_EVT.menu.upload_method.ispMethod=WCH-ISP
 CH32V10x_EVT.menu.upload_method.ispMethod.upload.protocol=
 CH32V10x_EVT.menu.upload_method.ispMethod.upload.options=
 CH32V10x_EVT.menu.upload_method.ispMethod.upload.tool=wchisp
+CH32V10x_EVT.menu.upload_method.wlinkMethod=WCH-Link (wlink)
+CH32V10x_EVT.menu.upload_method.wlinkMethod.upload.protocol=
+CH32V10x_EVT.menu.upload_method.wlinkMethod.upload.options=
+CH32V10x_EVT.menu.upload_method.wlinkMethod.upload.tool=wlink
 
 
 # Clock Select
@@ -785,6 +855,10 @@ CH32V20x_EVT.menu.upload_method.ispMethod=WCH-ISP
 CH32V20x_EVT.menu.upload_method.ispMethod.upload.protocol=
 CH32V20x_EVT.menu.upload_method.ispMethod.upload.options=
 CH32V20x_EVT.menu.upload_method.ispMethod.upload.tool=wchisp
+CH32V20x_EVT.menu.upload_method.wlinkMethod=WCH-Link (wlink)
+CH32V20x_EVT.menu.upload_method.wlinkMethod.upload.protocol=
+CH32V20x_EVT.menu.upload_method.wlinkMethod.upload.options=
+CH32V20x_EVT.menu.upload_method.wlinkMethod.upload.tool=wlink
 
 
 # Clock Select
@@ -929,6 +1003,10 @@ CH32V30x_EVT.menu.upload_method.ispMethod=WCH-ISP
 CH32V30x_EVT.menu.upload_method.ispMethod.upload.protocol=
 CH32V30x_EVT.menu.upload_method.ispMethod.upload.options=
 CH32V30x_EVT.menu.upload_method.ispMethod.upload.tool=wchisp
+CH32V30x_EVT.menu.upload_method.wlinkMethod=WCH-Link (wlink)
+CH32V30x_EVT.menu.upload_method.wlinkMethod.upload.protocol=
+CH32V30x_EVT.menu.upload_method.wlinkMethod.upload.options=
+CH32V30x_EVT.menu.upload_method.wlinkMethod.upload.tool=wlink
 
 
 # Clock Select
@@ -1049,6 +1127,10 @@ CH32L10x_EVT.menu.upload_method.ispMethod=WCH-ISP
 CH32L10x_EVT.menu.upload_method.ispMethod.upload.protocol=
 CH32L10x_EVT.menu.upload_method.ispMethod.upload.options=
 CH32L10x_EVT.menu.upload_method.ispMethod.upload.tool=wchisp
+CH32L10x_EVT.menu.upload_method.wlinkMethod=WCH-Link (wlink)
+CH32L10x_EVT.menu.upload_method.wlinkMethod.upload.protocol=
+CH32L10x_EVT.menu.upload_method.wlinkMethod.upload.options=
+CH32L10x_EVT.menu.upload_method.wlinkMethod.upload.tool=wlink
 
 
 # Clock Select
@@ -1121,4 +1203,3 @@ CH32L10x_EVT.menu.rtlib.nanofps=Newlib Nano + Float Printf/Scanf
 CH32L10x_EVT.menu.rtlib.nanofps.build.flags.ldflags=--specs=nano.specs --specs=nosys.specs -u _printf_float -u _scanf_float
 CH32L10x_EVT.menu.rtlib.full=Newlib Standard
 CH32L10x_EVT.menu.rtlib.full.build.flags.ldflags=--specs=nosys.specs
-

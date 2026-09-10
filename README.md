@@ -13,6 +13,7 @@ This repo adds the support of CH32 MCU in Arduino IDE.<br>
 The file includes:
 * [Arduino_Core_CH32](https://github.com/openwch/arduino_core_ch32):Public library files.
 * [openocd](https://github.com/openwch/openocd_wch):can directly use WCH-LINKE to download and debug wch chips.
+* [wlink](https://github.com/ch32-rs/wlink):optional WCH-Link uploader available from the Upload Method menu.
 * [riscv-none-embed-gcc](https://github.com/openwch/risc-none-embed-gcc):A toolchain that supports WCH custom half word and byte compression instruction extensions and hardware stack push/pop functions.
 
 ## How to use
@@ -24,6 +25,11 @@ Add the following link in the "*Additional Boards Managers URLs*" field:
 https://github.com/openwch/board_manager_files/raw/main/package_ch32v_index.json
 
 Then you can search for "**wch**" through the "**board manager**", find the installation package, and install it.
+
+After selecting a board, you can choose upload tool from `Tools > Upload method`:
+- `WCH-SWD` (default, OpenOCD based)
+- `WCH-ISP`
+- `WCH-Link (wlink)` (autodetects target chip)
 
 ## Supported boards
 
@@ -68,7 +74,7 @@ It will be a long-term support and maintenance project, unless we encounter forc
 
 ## OS support
 
-Adopting toolchain and openocd under [MRS](http://www.mounriver.com/), supporting HPE, custom byte and half-word compression extensions,"upload" via WCH_LINKE. 
+Adopting toolchain and openocd under [MRS](http://www.mounriver.com/), supporting HPE, custom byte and half-word compression extensions, with upload via WCH_LINKE, WCH-ISP, or WCH-Link (`wlink`). 
 
 **Most importantly, the version of Arduino IDE is 2.0+.**
 
@@ -113,5 +119,4 @@ please contact the **MRS team** for assistance through "*support@mounriver.com*"
 
 If you have any questions, you could contact me through the email "*yy@wch.cn*".
 Or you could [file an issue on GitHub](https://github.com/openwch/arduino_core_ch32/issues/new).
-
 

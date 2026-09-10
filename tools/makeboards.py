@@ -196,6 +196,12 @@ def build_upload(series, values):
     print(f'{menu_isp}.upload.options=')
     print(f'{menu_isp}.upload.tool=wchisp')
 
+    menu_wlink = f'{menu}.wlinkMethod'
+    print(f'{menu_wlink}=WCH-Link (wlink)')
+    print(f'{menu_wlink}.upload.protocol=')
+    print(f'{menu_wlink}.upload.options=')
+    print(f'{menu_wlink}.upload.tool=wlink')
+
     print()
 
 
